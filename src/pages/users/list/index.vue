@@ -1,124 +1,131 @@
 <template>
   <div class="user-list-container">
-    <t-form :data="formData" :label-width="80" colon >
-      <t-row :gutter="[24, 24]">
-        <t-col :span="2">
-          <t-form-item label="用户名" name="name">
-            <t-input
-              v-model="formData.name"
-              class="form-item-content"
-              type="search"
-              :placeholder="t('components.commonTable.contractNamePlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="所属APP" name="status">
-            <t-input
-              v-model="formData.status"
-              class="form-item-content"
-              type="search"
-              :placeholder="t('components.commonTable.contractNamePlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="用户ID" name="no">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="手机号" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="帐号" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="设备类型" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="注册事件" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="账号状态" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="VIP状态" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="用户类型" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
-        </t-col>
-        <t-col :span="2">
-          <t-form-item label="选择APP" name="type">
-            <t-input
-              v-model="formData.no"
-              class="form-item-content"
-              :placeholder="t('components.commonTable.contractNumPlaceholder')"
-              :style="{ minWidth: '134px' }"
-            />
-          </t-form-item>
+    <t-form :data="formData" :label-width="80">
+      <t-row>
+        <t-col :span="10">
+          <t-row :gutter="[24, 24]">
+            <t-col :span="4">
+              <t-form-item label="用户名" name="name">
+                <t-input
+                  v-model="formData.name"
+                  class="form-item-content"
+                  type="search"
+                  :placeholder="t('components.commonTable.contractNamePlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="所属APP" name="status">
+                <t-input
+                  v-model="formData.status"
+                  class="form-item-content"
+                  type="search"
+                  :placeholder="t('components.commonTable.contractNamePlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="用户ID" name="no">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="手机号" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="帐号" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="设备类型" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="注册事件" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="账号状态" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="VIP状态" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="用户类型" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="选择APP" name="type">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  :placeholder="t('components.commonTable.contractNumPlaceholder')"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+          </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }">
-            查询
-          </t-button>
-          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" @click="handleCreate">
+          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
+          <t-button
+            theme="primary"
+            type="submit"
+            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
+            @click="handleCreate"
+          >
             新建用户
           </t-button>
         </t-col>
@@ -130,8 +137,8 @@
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="primary" @click="handleStop(row)">禁言</t-link>
-            <t-link theme="primary" @click="handleFreeze(row)">冻结</t-link>
+            <t-link theme="danger" @click="handleStop(row)">禁言</t-link>
+            <t-link theme="danger" @click="handleFreeze(row)">冻结</t-link>
           </t-space>
         </template>
       </t-table>
@@ -153,8 +160,8 @@
       </template>
     </t-dialog>
 
-    <CreateDialog ref="createDialogRef"/>
-    <DetailDialog ref="detailDialogRef"/>
+    <CreateDialog ref="createDialogRef" />
+    <DetailDialog ref="detailDialogRef" />
   </div>
 </template>
 
@@ -289,12 +296,12 @@ const onCancel = () => {
   // resetIdx();
 };
 // 创建用户
-const handleCreate = ()=>{
+const handleCreate = () => {
   createDialogRef.value?.open();
-}
+};
 // 编辑
 const handleEdit = (row: TableRowData) => {
-  detailDialogRef.value?.open({name: row.name, type: row.type});
+  detailDialogRef.value?.open({ name: row.name, type: row.type });
   console.log('编辑用户:', row);
 };
 // 禁言
@@ -322,11 +329,8 @@ const handleFreeze = (row: TableRowData) => {
   }
 }
 
-// 弹窗标题居中
-:deep(.t-dialog__header .t-dialog__header-content) {
-  justify-content: center;
-}
-:deep(.t-dialog__footer) {
-  text-align: center;
+
+.operation-container {
+  text-align: right;
 }
 </style>
