@@ -18,15 +18,7 @@
       </template>
     </t-table>
 
-    <t-pagination
-      v-model="pageSize"
-      :total="100"
-      size="small"
-      :totalContent="false"
-      @change="onChange"
-      @page-size-change="onPageSizeChange"
-      @current-change="onCurrentChange"
-    />
+    <Pagination v-model="pageSize" :total="100" @current-change="onCurrentChange" />
   </t-card>
 </template>
 <script setup lang="ts">
@@ -34,6 +26,7 @@ import type { TdBaseTableProps, TdPaginationProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import Trend from '@/components/trend/index.vue';
+import Pagination from '@/components/pagination/index.vue';
 import { t } from '@/locales';
 
 import { SALE_TEND_LIST } from '../constants';
