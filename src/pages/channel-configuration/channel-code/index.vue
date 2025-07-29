@@ -4,7 +4,7 @@
       <t-row>
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
-            <t-col :span="6">
+            <t-col :span="4">
               <t-form-item label="选择APP" name="code">
                 <t-input
                   v-model="formData.code"
@@ -73,37 +73,37 @@ const COLUMNS: PrimaryTableCol[] = [
     width: 80,
   },
   {
-    title: '渠道码链接',
+    title: '菜单级别',
     colKey: 'link',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '渠道码编码',
+    title: '菜单名称',
     colKey: 'code',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '素材名',
+    title: '父级名称',
     colKey: 'materialName',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '素材截图',
+    title: '展示模版',
     colKey: 'materialImage',
     align: 'center',
     width: 100,
   },
   {
-    title: '备注(后台可见)',
+    title: 'icon配置',
     colKey: 'remark',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '对应匹配标签',
+    title: '用户标签',
     colKey: 'tags',
     align: 'left',
     ellipsis: true,
@@ -115,10 +115,34 @@ const COLUMNS: PrimaryTableCol[] = [
     ellipsis: true,
   },
   {
+    title: '内容标签',
+    colKey: 'app',
+    align: 'left',
+    ellipsis: true,
+  },
+  {
+    title: '用户ID范围',
+    colKey: 'app',
+    align: 'left',
+    ellipsis: true,
+  },
+  {
+    title: '排序',
+    colKey: 'app',
+    align: 'left',
+    ellipsis: true,
+  },
+  {
+    title: '优先级',
+    colKey: 'app',
+    align: 'left',
+    ellipsis: true,
+  },
+  {
     title: '操作',
     colKey: 'operation',
     align: 'center',
-    width: 120,
+    width: 80,
   },
 ];
 
