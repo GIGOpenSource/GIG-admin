@@ -21,12 +21,4 @@ const { getComponentsLocale, locale } = useLocale();
 #nprogress .bar {
   background: var(--td-brand-color) !important;
 }
-
-// dialog弹窗标题居中
-:deep(.t-dialog__header .t-dialog__header-content) {
-  justify-content: center;
-}
-:deep(.t-dialog__footer) {
-  text-align: center;
-}
 </style>

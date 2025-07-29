@@ -145,7 +145,7 @@
     </div>
 
     <t-dialog
-      width="350px"
+    theme="danger"
       center
       v-model:visible="confirmVisible"
       header="提醒"
@@ -153,10 +153,7 @@
       @confirm="onConfirmOperation"
     >
       <template #body>
-        <div style="text-align: center">
-          <p>是否要{{ operationType }}该账号？</p>
-          <p>用户侧展示为封号状态</p>
-        </div>
+          <p>是否要{{ operationType }}该账号？用户侧展示为封号状态</p>
       </template>
     </t-dialog>
 
