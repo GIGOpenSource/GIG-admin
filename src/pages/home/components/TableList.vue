@@ -1,6 +1,6 @@
 <template>
   <t-card :bordered="false">
-    <t-table :data="SALE_TEND_LIST" :columns="TABLE_COLUMNS" row-key="productName">
+    <t-table :data="SALE_TEND_LIST" :columns="TABLE_COLUMNS" row-key="productName" :pagination="pagination">
       <template #index="{ rowIndex }">
         <span :class="getRankClass(rowIndex)">
           {{ rowIndex + 1 }}
@@ -18,7 +18,6 @@
       </template>
     </t-table>
 
-    <Pagination v-model="pageSize" :total="100" @current-change="onCurrentChange" />
   </t-card>
 </template>
 <script setup lang="ts">
@@ -26,7 +25,6 @@ import type { TdBaseTableProps, TdPaginationProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import Trend from '@/components/trend/index.vue';
-import Pagination from '@/components/pagination/index.vue';
 import { t } from '@/locales';
 
 import { SALE_TEND_LIST } from '../constants';
@@ -146,6 +144,14 @@ const rehandleClickOp = (val: MouseEvent) => {
 };
 const getRankClass = (index: number) => {
   return ['dashboard-rank', { 'dashboard-rank__top': index < 3 }];
+};
+
+const pagination: TdBaseTableProps['pagination'] = {
+  defaultCurrent: 1,
+  defaultPageSize: 10,
+  total: 999,
+  showFirstAndLastPageBtn: true,
+  totalContent: false
 };
 
 const pageSize = ref(10);
