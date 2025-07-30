@@ -2,14 +2,15 @@
   <div :class="layoutCls">
     <t-head-menu :class="menuCls" :theme="menuTheme" expand-type="popup" :value="active">
       <template #logo>
-        <span v-if="showLogo" class="header-logo-container" @click="handleNav('/dashboard/base')">
-          <logo-full class="t-logo" />
+        <span v-if="showLogo" class="header-logo-container" @click="handleNav('/home')">
+          <!-- <logo-full class="t-logo" /> -->
+           <h1>GIG Admin</h1>
         </span>
         <div v-else class="header-operate-left">
           <t-button theme="default" shape="square" variant="text" @click="changeCollapsed">
             <t-icon class="collapsed-icon" name="view-list" />
           </t-button>
-          <search :layout="layout" />
+          <!-- <search :layout="layout" /> -->
         </div>
       </template>
       <template v-if="layout !== 'side'" #default>
@@ -18,12 +19,12 @@
       <template #operations>
         <div class="operations-container">
           <!-- 搜索框 -->
-          <search v-if="layout !== 'side'" :layout="layout" />
+          <!-- <search v-if="layout !== 'side'" :layout="layout" /> -->
 
           <!-- 全局通知 -->
-          <notice />
+          <!-- <notice /> -->
 
-          <t-tooltip placement="bottom" :content="t('layout.header.code')">
+          <!-- <t-tooltip placement="bottom" :content="t('layout.header.code')">
             <t-button theme="default" shape="square" variant="text" @click="navToGitHub">
               <t-icon name="logo-github" />
             </t-button>
@@ -32,8 +33,8 @@
             <t-button theme="default" shape="square" variant="text" @click="navToHelper">
               <t-icon name="help-circle" />
             </t-button>
-          </t-tooltip>
-          <t-dropdown trigger="click">
+          </t-tooltip> -->
+          <!-- <t-dropdown trigger="click">
             <t-button theme="default" shape="square" variant="text">
               <translate-icon />
             </t-button>
@@ -46,7 +47,7 @@
                 >{{ lang.content }}</t-dropdown-item
               ></t-dropdown
             >
-          </t-dropdown>
+          </t-dropdown> -->
           <t-dropdown :min-column-width="120" trigger="click">
             <template #dropdown>
               <t-dropdown-item class="operations-dropdown-container-item" @click="handleNav('/user/index')">
@@ -64,6 +65,7 @@
               <template #suffix><chevron-down-icon /></template>
             </t-button>
           </t-dropdown>
+          <!-- 设置 -->
           <t-tooltip placement="bottom" :content="t('layout.header.setting')">
             <t-button theme="default" shape="square" variant="text" @click="toggleSettingPanel">
               <setting-icon />

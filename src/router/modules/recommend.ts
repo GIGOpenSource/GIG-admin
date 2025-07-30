@@ -1,5 +1,3 @@
-import { LogoutIcon } from 'tdesign-icons-vue-next';
-import { shallowRef } from 'vue';
 
 import Layout from '@/layouts/index.vue';
 
@@ -9,7 +7,7 @@ export default [
     name: 'TagRecommend',
     component: Layout,
     redirect: '/recommend/tags',
-    meta: { title: '标签与推荐', icon: 'user-circle' },
+    meta: { title: '标签与推荐', icon: 'tag',  orderNo: 3 },
     children: [
       {
         path: 'tags',

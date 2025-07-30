@@ -154,7 +154,7 @@ onMounted(() => {
 });
 
 const goHome = () => {
-  router.push('/dashboard/base');
+  router.push('/home');
 };
 
 const getLogo = () => {

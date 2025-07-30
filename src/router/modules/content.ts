@@ -1,6 +1,3 @@
-import { LogoutIcon } from 'tdesign-icons-vue-next';
-import { shallowRef } from 'vue';
-
 import Layout from '@/layouts/index.vue';
 
 export default [
@@ -9,7 +6,7 @@ export default [
     name: 'content',
     component: Layout,
     redirect: '/content/list',
-    meta: { title: '内容管理', icon: 'user-circle' },
+    meta: { title: '内容管理', icon: 'article',  orderNo: 4  },
     children: [
       {
         path: 'list',

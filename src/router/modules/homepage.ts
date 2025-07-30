@@ -1,4 +1,4 @@
-import { DashboardIcon } from 'tdesign-icons-vue-next';
+import { HomeIcon } from 'tdesign-icons-vue-next';
 import { shallowRef } from 'vue';
 
 import Layout from '@/layouts/index.vue';
@@ -14,7 +14,7 @@ export default [
         zh_CN: '首页',
         en_US: 'Home',
       },
-      icon: shallowRef(DashboardIcon),
+      icon: shallowRef(HomeIcon),
       orderNo: 0,
       single: true,
     },

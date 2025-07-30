@@ -28,7 +28,8 @@ export const usePermissionStore = defineStore('permission', {
     async buildAsyncRoutes() {
       try {
         // 发起菜单权限请求 获取菜单列表
-        const asyncRoutes: Array<RouteItem> = (await getMenuList()).list;
+        // const asyncRoutes: Array<RouteItem> = (await getMenuList()).list;
+        const asyncRoutes: Array<RouteItem> = [];
         this.asyncRoutes = transformObjectToRoute(asyncRoutes);
         await this.initRoutes();
         return this.asyncRoutes;

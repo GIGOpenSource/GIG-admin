@@ -9,7 +9,7 @@ export default [
     name: 'users',
     component: Layout,
     redirect: '/users/list',
-    meta: { title: '用户管理', icon: 'user-circle' },
+    meta: { title: '用户管理', icon: 'user-circle', orderNo: 1 },
     children: [
       {
         path: 'list',
