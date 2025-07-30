@@ -36,7 +36,7 @@
 
       <div class="check-container remember-pwd">
         <t-checkbox>{{ t('pages.login.remember') }}</t-checkbox>
-        <span class="tip">{{ t('pages.login.forget') }}</span>
+        <!-- <span class="tip">{{ t('pages.login.forget') }}</span> -->
       </div>
     </template>
 
@@ -71,13 +71,13 @@
       <t-button block size="large" type="submit"> {{ t('pages.login.signIn') }} </t-button>
     </t-form-item>
 
-    <div class="switch-container">
+    <!-- <div class="switch-container">
       <span v-if="type !== 'password'" class="tip" @click="switchType('password')">{{
         t('pages.login.accountLogin')
       }}</span>
       <span v-if="type !== 'qrcode'" class="tip" @click="switchType('qrcode')">{{ t('pages.login.wechatLogin') }}</span>
       <span v-if="type !== 'phone'" class="tip" @click="switchType('phone')">{{ t('pages.login.phoneLogin') }}</span>
-    </div>
+    </div> -->
   </t-form>
 </template>
 <script setup lang="ts">

@@ -4,7 +4,7 @@
       <template #logo>
         <span v-if="showLogo" class="header-logo-container" @click="handleNav('/home')">
           <!-- <logo-full class="t-logo" /> -->
-           <h1>GIG Admin</h1>
+          <h1>GIG Admin</h1>
         </span>
         <div v-else class="header-operate-left">
           <t-button theme="default" shape="square" variant="text" @click="changeCollapsed">
@@ -77,7 +77,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ChevronDownIcon, PoweroffIcon, SettingIcon, TranslateIcon, UserCircleIcon } from 'tdesign-icons-vue-next';
+import { ChevronDownIcon, PoweroffIcon, SettingIcon, C1R, UserCircleIcon } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
