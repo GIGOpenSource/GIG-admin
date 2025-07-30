@@ -38,7 +38,7 @@
         </t-col>
         <t-col :span="2" class="operation-container">
           <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 新建 </t-button>
+          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" @click="handleCreate"> 新建 </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -85,10 +85,13 @@ const formData = ref<FormData>({
   code: '',
   link: '',
 });
-
+// 小说动漫漫画编辑
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
+// 审核
 const auditDialogRef = ref<InstanceType<typeof AuditDialog>>();
+// 常规编辑
 const editDefaultDialogRef = ref<InstanceType<typeof EditDeafultDialog>>();
+// 数据
 const dataViewsRef = ref<InstanceType<typeof DataViews>>();
 
 // 表格字段
@@ -167,6 +170,9 @@ const handleAudit = (row: TableRowData) => {
 };
 const handleViewData = (row: TableRowData) => {
   dataViewsRef.value.open(row);
+};
+const handleCreate = () => {
+  editDialogRef.value.open();
 };
 const handleEdit = (row: TableRowData) => {
   editDialogRef.value.open(row);

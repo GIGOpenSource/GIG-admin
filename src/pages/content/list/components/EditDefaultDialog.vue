@@ -1,6 +1,6 @@
 <template>
   <!-- 常规内容编辑 -->
-  <t-dialog v-model:visible="visible" :width="600" header="小说/动漫/漫画编辑" @cancel="onCancel" confirm-btn="保存">
+  <t-dialog v-model:visible="visible" :width="600" header="内容编辑" @cancel="onCancel" confirm-btn="保存">
     <t-form :model="data" ref="formRef" label-width="80px" label-align="left">
       <t-form-item label="主标题" name="email">
         <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly/>
