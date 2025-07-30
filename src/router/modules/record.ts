@@ -1,4 +1,3 @@
-
 import Layout from '@/layouts/index.vue';
 
 export default [
@@ -7,7 +6,7 @@ export default [
     name: 'record',
     component: Layout,
     redirect: '/record/recharge',
-    meta: { title: '记录查询', icon: 'chat-bubble-history',  orderNo: 7 },
+    meta: { title: '记录查询', icon: 'chat-bubble-history', orderNo: 7 },
     children: [
       {
         path: 'recharge',

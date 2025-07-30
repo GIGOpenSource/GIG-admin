@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -29,7 +29,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -38,7 +38,14 @@
         </t-col>
         <t-col :span="2" class="operation-container">
           <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" @click="handleCreate"> 新建 </t-button>
+          <t-button
+            theme="primary"
+            type="submit"
+            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
+            @click="handleCreate"
+          >
+            新建
+          </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -57,24 +64,23 @@
     </div>
 
     <!-- 小说/动漫/漫画新建编辑 -->
-    <EditDialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" />
     <!-- 常规编辑 -->
-    <EditDeafultDialog ref="editDefaultDialogRef" />
+    <edit-deafult-dialog ref="editDefaultDialogRef" />
     <!-- 审核 -->
-    <AuditDialog ref="auditDialogRef" />
+    <audit-dialog ref="auditDialogRef" />
     <!-- 数据 -->
-    <DataViews ref="dataViewsRef"/>
+    <data-views ref="dataViewsRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
+import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
-import type { DateRangePickerProps, TdBaseTableProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 
-import EditDialog from './components/EditDialog.vue';
-import EditDeafultDialog from './components/EditDefaultDialog.vue';
 import AuditDialog from './components/AuditDialog.vue';
 import DataViews from './components/DataViews.vue';
+import EditDeafultDialog from './components/EditDefaultDialog.vue';
+import EditDialog from './components/EditDialog.vue';
 
 interface FormData {
   code: string;
@@ -181,7 +187,6 @@ const handleDelete = (row: TableRowData) => {
   editDialogRef.value.open(row);
 };
 </script>
-
 <style lang="less" scoped>
 .channel-code-list-container {
   background-color: var(--td-bg-color-container);

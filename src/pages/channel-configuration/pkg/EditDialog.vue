@@ -1,6 +1,6 @@
 <template>
-  <t-dialog v-model:visible="visible" :width="600" header="产品包编辑" @cancel="onCancel" confirm-btn="保存">
-    <t-form :model="data" ref="formRef" label-width="120px" label-align="left">
+  <t-dialog v-model:visible="visible" :width="600" header="产品包编辑" confirm-btn="保存" @cancel="onCancel">
+    <t-form ref="formRef" :model="data" label-width="120px" label-align="left">
       <t-form-item label="产品名" name="username">
         <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
       </t-form-item>
@@ -22,11 +22,9 @@
     </t-form>
   </t-dialog>
 </template>
-
 <script setup lang="ts">
+import type { DialogProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
-
-import { DialogProps } from 'tdesign-vue-next';
 
 interface FormData {
   name: string;
@@ -52,5 +50,4 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="less" scoped></style>

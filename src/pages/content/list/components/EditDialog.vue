@@ -4,11 +4,11 @@
     v-model:visible="visible"
     :width="600"
     header="小说/动漫/漫画编辑"
-    @cancel="onCancel"
     confirm-btn="保存"
     style="width: 100%"
+    @cancel="onCancel"
   >
-    <t-form :model="data" ref="formRef" label-width="60px" label-align="right">
+    <t-form ref="formRef" :model="data" label-width="60px" label-align="right">
       <t-row>
         <t-col :span="4">
           <t-form-item label="封面" name="email">
@@ -37,23 +37,23 @@
       <!-- 分集列表 -->
       <div class="diversity-list">
         <t-row
-        align="middle"
-        :gutter="16"
-        :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
-        v-for="(diversity, index) in diversitys"
-        :key="diversity.key"
-      >
-        <t-col :span="1" style="text-align: right">{{ index + 1 }}</t-col>
-        <t-col :span="4">
-          <t-input v-model="diversity.name" class="form-item-content" placeholder="分集名称" />
-        </t-col>
-        <t-col :span="6">
-          <t-input v-model="diversity.file" class="form-item-content" placeholder="上传文件" />
-        </t-col>
-        <t-col :span="1">
-          <t-link theme="danger" @click="handleDeleDiversitys(diversity.key)">删除</t-link>
-        </t-col>
-      </t-row>
+          v-for="(diversity, index) in diversitys"
+          :key="diversity.key"
+          align="middle"
+          :gutter="16"
+          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
+        >
+          <t-col :span="1" style="text-align: right">{{ index + 1 }}</t-col>
+          <t-col :span="4">
+            <t-input v-model="diversity.name" class="form-item-content" placeholder="分集名称" />
+          </t-col>
+          <t-col :span="4">
+            <t-input v-model="diversity.file" class="form-item-content" placeholder="上传文件" />
+          </t-col>
+          <t-col :span="1">
+            <t-link theme="danger" @click="handleDeleDiversitys(diversity.key)">删除</t-link>
+          </t-col>
+        </t-row>
       </div>
 
       <!-- 添加分集 -->
@@ -63,11 +63,9 @@
     </t-form>
   </t-dialog>
 </template>
-
 <script setup lang="ts">
+import type { DialogProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
-
-import { DialogProps } from 'tdesign-vue-next';
 
 interface FormData {
   name: string;
@@ -115,9 +113,8 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="less" scoped>
-.diversity-list{
+.diversity-list {
   margin-top: var(--td-comp-margin-xxl);
   max-height: 300px;
   overflow: hidden auto;

@@ -17,7 +17,6 @@
         }}</t-link>
       </template>
     </t-table>
-
   </t-card>
 </template>
 <script setup lang="ts">
@@ -151,7 +150,7 @@ const pagination: TdBaseTableProps['pagination'] = {
   defaultPageSize: 10,
   total: 999,
   showFirstAndLastPageBtn: true,
-  totalContent: false
+  totalContent: false,
 };
 
 const pageSize = ref(10);

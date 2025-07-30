@@ -1,7 +1,7 @@
 <template>
   <header class="login-header">
     <!-- <logo-full-icon class="logo" /> -->
-     <h1>GIG Admin</h1>
+    <h1>GIG Admin</h1>
     <div class="operations-container">
       <!-- <t-button theme="default" shape="square" variant="text" @click="navToGitHub">
         <t-icon name="logo-github" class="icon" />

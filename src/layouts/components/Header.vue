@@ -77,7 +77,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ChevronDownIcon, PoweroffIcon, SettingIcon, C1R, UserCircleIcon } from 'tdesign-icons-vue-next';
+import { C1R, ChevronDownIcon, PoweroffIcon, SettingIcon, UserCircleIcon } from 'tdesign-icons-vue-next';
 import type { PropType } from 'vue';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';

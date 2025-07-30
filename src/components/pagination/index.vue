@@ -1,22 +1,21 @@
 <template>
-<div class="pagination-container">
+  <div class="pagination-container">
     <t-pagination
-    v-model="innerCurrent"
-    :page-size="innerPageSize"
-    :total="total"
-    :size="size"
-    :total-content="totalContent"
-    showFirstAndLastPageBtn
-    @change="handleChange"
-    @page-size-change="handlePageSizeChange"
-    @current-change="handleCurrentChange"
-  />
-</div>
+      v-model="innerCurrent"
+      :page-size="innerPageSize"
+      :total="total"
+      :size="size"
+      :total-content="totalContent"
+      show-first-and-last-page-btn
+      @change="handleChange"
+      @page-size-change="handlePageSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </div>
 </template>
-
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import type { TdPaginationProps } from 'tdesign-vue-next';
+import { ref, watch } from 'vue';
 
 const props = defineProps<{
   modelValue?: number; // 当前页
@@ -64,13 +63,12 @@ const handleCurrentChange: TdPaginationProps['onCurrentChange'] = (index, pageIn
   emit('update:modelValue', index);
 };
 </script>
-
 <style>
-.pagination-container{
+.pagination-container {
   margin-top: 16px;
 }
 
-.t-pagination{
+.t-pagination {
   justify-content: center;
 }
 </style>

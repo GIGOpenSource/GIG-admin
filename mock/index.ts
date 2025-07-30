@@ -152,7 +152,7 @@ export default [
       code: 0,
       data: {
         ...Mock.mock({
-          list:[]
+          list: [],
           // list: [
           //   {
           //     path: '/list',

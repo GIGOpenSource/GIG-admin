@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.id"
                   type="search"
-                  :placeholder="'请输入对话ID'"
+                  placeholder="请输入对话ID"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-select
                   v-model="formData.status"
                   :options="statusOptions"
-                  :placeholder="'请选择状态'"
+                  placeholder="请选择状态"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -43,13 +43,12 @@
       </t-table>
     </div>
   </div>
-  <router-view/>
+  <router-view />
 </template>
-
 <script setup lang="ts">
+import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 
 const router = useRouter();
 
@@ -99,13 +98,12 @@ const tableData = ref<TableRowData[]>([
 ]);
 
 const handleView = (row: TableRowData) => {
-  console.log("🚀 ~ row:", row)
+  console.log('🚀 ~ row:', row);
 
   // 查看对话逻辑
-  router.push({path: '/message/chat/detail'});
+  router.push({ path: '/message/chat/detail' });
 };
 </script>
-
 <style lang="less" scoped>
 .private-chat-list-container {
   background-color: var(--td-bg-color-container);

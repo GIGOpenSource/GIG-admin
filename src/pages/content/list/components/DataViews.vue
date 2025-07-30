@@ -1,9 +1,9 @@
 <template>
   <!-- 常规内容编辑 -->
-  <t-dialog v-model:visible="visible" :width="600" header="小说/动漫/漫画编辑" @cancel="onCancel" confirm-btn="保存">
+  <t-dialog v-model:visible="visible" :width="600" header="小说/动漫/漫画编辑" confirm-btn="保存" @cancel="onCancel">
     <t-space>
-        <p>评论：2323626</p>
-        <p>点赞：47474856858658</p>
+      <p>评论：2323626</p>
+      <p>点赞：47474856858658</p>
     </t-space>
 
     <div class="table-container">
@@ -17,12 +17,10 @@
     </div>
   </t-dialog>
 </template>
-
 <script setup lang="ts">
+import type { DialogProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import { DialogPlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
-import type { TdBaseTableProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-
-import { DialogProps, DialogPlugin } from 'tdesign-vue-next';
 
 interface FormData {
   name: string;
@@ -87,7 +85,7 @@ const handleDelete = (row: TableRowData) => {
   });
 };
 const open = (row: any) => {
-  console.log("🚀 ~ row:", row)
+  console.log('🚀 ~ row:', row);
   visible.value = true;
 };
 
@@ -99,5 +97,4 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="less" scoped></style>

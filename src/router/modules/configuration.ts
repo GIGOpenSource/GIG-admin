@@ -6,7 +6,7 @@ export default [
     name: 'configuration',
     component: Layout,
     redirect: '/configuration/code',
-    meta: { title: '渠道与配置', icon: 'logo-cinema4d',  orderNo: 2 },
+    meta: { title: '渠道与配置', icon: 'logo-cinema4d', orderNo: 2 },
     children: [
       {
         path: 'code',

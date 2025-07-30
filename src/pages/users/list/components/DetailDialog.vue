@@ -1,6 +1,6 @@
 <template>
-  <t-dialog v-model:visible="visible" :width="600" header="用户详情" confirmBtn="保存" @cancel="onCancel">
-    <t-form :model="data" ref="formRef" label-align="left" label-width="80px">
+  <t-dialog v-model:visible="visible" :width="600" header="用户详情" confirm-btn="保存" @cancel="onCancel">
+    <t-form ref="formRef" :model="data" label-align="left" label-width="80px">
       <h3 style="margin-bottom: 16px">用户资料</h3>
       <t-form-item label="用户名" name="username">
         <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
@@ -47,7 +47,6 @@
     </t-form>
   </t-dialog>
 </template>
-
 <script lang="ts" setup>
 import { ref } from 'vue';
 
@@ -77,5 +76,4 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="scss" scoped></style>

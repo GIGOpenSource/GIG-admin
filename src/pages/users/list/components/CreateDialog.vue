@@ -1,6 +1,6 @@
 <template>
   <t-dialog v-model:visible="visible" :width="600" header="新建用户" @cancel="onCancel">
-    <t-form :model="data" ref="formRef">
+    <t-form ref="formRef" :model="data">
       <t-form-item label="用户名" name="username">
         <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
       </t-form-item>
@@ -16,11 +16,10 @@
     </t-form>
   </t-dialog>
 </template>
-
 <script lang="ts" setup>
+import type { DialogProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
-import { DialogProps } from 'tdesign-vue-next';
 interface FormData {
   name: string;
   type: string;
@@ -45,5 +44,4 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="scss" scoped></style>

@@ -4,7 +4,7 @@
       <t-row>
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
-            <t-col :span="6">
+            <t-col :span="4">
               <t-form-item label="选择时间" name="id">
                 <t-date-range-picker allow-input clearable @pick="onPick" @change="onChange" />
               </t-form-item>
@@ -22,12 +22,9 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
+import type { DateRangePickerProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
 import { ref } from 'vue';
-import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-
-import { DateRangePickerProps } from 'tdesign-vue-next';
 
 interface FormData {
   id: string;
@@ -79,7 +76,6 @@ const onChange: DateRangePickerProps['onChange'] = (value, context) => {
   );
 };
 </script>
-
 <style lang="less" scoped>
 .private-chat-list-container {
   background-color: var(--td-bg-color-container);

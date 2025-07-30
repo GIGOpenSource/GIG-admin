@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -29,7 +29,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -38,7 +38,14 @@
         </t-col>
         <t-col :span="2" class="operation-container">
           <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" @click="handleCreate"> 新建 </t-button>
+          <t-button
+            theme="primary"
+            type="submit"
+            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
+            @click="handleCreate"
+          >
+            新建
+          </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -54,13 +61,13 @@
       </t-table>
     </div>
 
-    <EditDialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
+import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import { DialogPlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
-import { type DateRangePickerProps, type TdBaseTableProps, type PrimaryTableCol, type TableRowData, DialogPlugin } from 'tdesign-vue-next';
 
 import EditDialog from './EditDialog.vue';
 
@@ -155,7 +162,6 @@ const handleDelete = (row: TableRowData) => {
   });
 };
 </script>
-
 <style lang="less" scoped>
 .channel-code-list-container {
   background-color: var(--td-bg-color-container);

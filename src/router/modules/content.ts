@@ -6,7 +6,7 @@ export default [
     name: 'content',
     component: Layout,
     redirect: '/content/list',
-    meta: { title: '内容管理', icon: 'article',  orderNo: 4  },
+    meta: { title: '内容管理', icon: 'article', orderNo: 4 },
     children: [
       {
         path: 'list',

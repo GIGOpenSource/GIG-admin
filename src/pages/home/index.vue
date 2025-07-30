@@ -3,18 +3,18 @@
     <t-card :bordered="false" style="margin-bottom: 16px">
       <t-row>
         <t-col :span="10">
-           <t-form label-align="left" label-width="80px">
-        <t-form-item label="选择APP" name="name" initial-data="TDesign">
-          <t-select style="width: 200px">
-            <t-option key="apple" label="Apple" value="apple" />
-            <t-option key="orange" label="Orange" value="orange">OrangeContentSlot</t-option>
-            <t-option key="banana" label="Banana" value="banana" />
-          </t-select>
-        </t-form-item>
-      </t-form>
+          <t-form label-align="left" label-width="80px">
+            <t-form-item label="选择APP" name="name" initial-data="TDesign">
+              <t-select style="width: 200px">
+                <t-option key="apple" label="Apple" value="apple" />
+                <t-option key="orange" label="Orange" value="orange">OrangeContentSlot</t-option>
+                <t-option key="banana" label="Banana" value="banana" />
+              </t-select>
+            </t-form-item>
+          </t-form>
         </t-col>
         <t-col :span="2" align="right">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" > 查询 </t-button>
+          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
         </t-col>
       </t-row>
     </t-card>

@@ -6,7 +6,7 @@ export default [
     name: 'product',
     component: Layout,
     redirect: '/product/list',
-    meta: { title: '商品管理', icon: 'shop-1',  orderNo: 6  },
+    meta: { title: '商品管理', icon: 'shop-1', orderNo: 6 },
     children: [
       {
         path: 'list',

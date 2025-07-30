@@ -4,7 +4,14 @@
       <t-row>
         <t-col :span="10"> </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" @click="handleCreate"> 新建 </t-button>
+          <t-button
+            theme="primary"
+            type="submit"
+            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
+            @click="handleCreate"
+          >
+            新建
+          </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -20,13 +27,12 @@
       </t-table>
     </div>
 
-    <EditDialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" />
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref } from 'vue';
 import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { ref } from 'vue';
 
 import EditDialog from './Dialog.vue';
 
@@ -69,7 +75,6 @@ const handleEdit = (row: TableRowData) => {
 };
 const handleDel = (row: TableRowData) => {};
 </script>
-
 <style lang="less" scoped>
 .private-chat-list-container {
   background-color: var(--td-bg-color-container);

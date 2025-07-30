@@ -50,7 +50,7 @@
             </t-col>
             <t-col :span="4">
               <t-form-item label="时间" name="name">
-               <t-date-range-picker allow-input clearable @pick="onPick" @change="onChange" />
+                <t-date-range-picker allow-input clearable @pick="onPick" @change="onChange" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
@@ -77,13 +77,11 @@
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
-import type { DateRangePickerProps, TdBaseTableProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-
+import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
-import { t } from '@/locales';
 
+import { t } from '@/locales';
 
 interface FormData {
   id: string;
@@ -203,7 +201,6 @@ const tableData = ref<TableRowData[]>([
   },
 ]);
 </script>
-
 <style lang="less" scoped>
 .user-list-container {
   background-color: var(--td-bg-color-container);
@@ -214,7 +211,7 @@ const tableData = ref<TableRowData[]>([
     margin-top: var(--td-comp-margin-xxl);
   }
 }
-.operation-container{
+.operation-container {
   text-align: right;
 }
 </style>

@@ -1,4 +1,3 @@
-
 import Layout from '@/layouts/index.vue';
 
 export default [
@@ -7,7 +6,7 @@ export default [
     name: 'TagRecommend',
     component: Layout,
     redirect: '/recommend/tags',
-    meta: { title: '标签与推荐', icon: 'tag',  orderNo: 3 },
+    meta: { title: '标签与推荐', icon: 'tag', orderNo: 3 },
     children: [
       {
         path: 'tags',

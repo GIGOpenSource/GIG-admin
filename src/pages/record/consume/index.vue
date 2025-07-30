@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.id"
                   type="search"
-                  :placeholder="'请输入博主ID'"
+                  placeholder="请输入博主ID"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-select
                   v-model="formData.status"
                   :options="statusOptions"
-                  :placeholder="'请选择状态'"
+                  placeholder="请选择状态"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -27,29 +27,20 @@
             </t-col>
           </t-row>
         </t-col>
-        <t-col :span="2" >
+        <t-col :span="2">
           <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
         </t-col>
       </t-row>
     </t-form>
 
     <div class="table-container">
-      <t-table
-        hover
-        :data="tableData"
-        :columns="COLUMNS"
-        row-key="id"
-      >
-      </t-table>
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id"> </t-table>
     </div>
-
   </div>
 </template>
-
 <script lang="ts" setup>
-import { ref } from 'vue';
 import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-
+import { ref } from 'vue';
 
 interface FormData {
   id: string;
@@ -60,7 +51,6 @@ const formData = ref<FormData>({
   id: '',
   status: '',
 });
-
 
 const statusOptions = [
   { label: '全部', value: '' },
@@ -149,7 +139,6 @@ const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
 </script>
-
 <style lang="less" scoped>
 .blogger-crawler-list-container {
   background-color: var(--td-bg-color-container);
@@ -160,5 +149,4 @@ const handleDelete = (row: TableRowData) => {
     margin-top: var(--td-comp-margin-xxl);
   }
 }
-
 </style>

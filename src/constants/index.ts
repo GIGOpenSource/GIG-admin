@@ -35,3 +35,9 @@ export enum ContentTypeEnum {
   FormURLEncoded = 'application/x-www-form-urlencoded;charset=UTF-8',
   FormData = 'multipart/form-data;charset=UTF-8',
 }
+
+// app 列表
+export const APP_LIST = {
+  GIG: 0,
+  DY: 1,
+};

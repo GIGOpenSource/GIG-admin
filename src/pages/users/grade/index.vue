@@ -19,7 +19,14 @@
         </t-col>
         <t-col :span="2" class="operation-container">
           <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button theme="primary" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }" @click="handleCreate"> 新建 </t-button>
+          <t-button
+            theme="primary"
+            type="submit"
+            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
+            @click="handleCreate"
+          >
+            新建
+          </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -36,14 +43,13 @@
       </t-table>
     </div>
 
-    <DetailDialog ref="detailDialogRef" />
+    <detail-dialog ref="detailDialogRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
-import type { TdBaseTableProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+
 import { t } from '@/locales';
 
 import DetailDialog from './components/DetailDialog.vue';
@@ -158,7 +164,6 @@ const handleCreate = () => {
   }
 };
 </script>
-
 <style lang="less" scoped>
 .user-list-container {
   background-color: var(--td-bg-color-container);

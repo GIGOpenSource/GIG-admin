@@ -9,7 +9,7 @@
                 <t-select
                   v-model="formData.package"
                   :options="packageOptions"
-                  :placeholder="'请选择策略ID'"
+                  placeholder="请选择策略ID"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -32,12 +32,7 @@
     </t-form>
 
     <div class="table-container">
-      <t-table
-        hover
-        :data="tableData"
-        :columns="COLUMNS"
-        row-key="id"
-      >
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
@@ -46,13 +41,13 @@
         </template>
       </t-table>
     </div>
-    <ConfigDialog ref="dialogRef" />
+    <config-dialog ref="dialogRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
-import { ref } from 'vue';
 import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { ref } from 'vue';
+
 import ConfigDialog from './Dialog.vue';
 
 interface FormData {
@@ -130,7 +125,6 @@ const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
 </script>
-
 <style lang="less" scoped>
 .product-config-list-container {
   background-color: var(--td-bg-color-container);

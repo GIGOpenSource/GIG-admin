@@ -1,5 +1,5 @@
-import Layout from '@/layouts/index.vue';
 import Blank from '@/layouts/blank.vue';
+import Layout from '@/layouts/index.vue';
 
 export default [
   {

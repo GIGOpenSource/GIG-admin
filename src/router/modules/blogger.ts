@@ -6,7 +6,7 @@ export default [
     name: 'blogger',
     component: Layout,
     redirect: '/blogger/list',
-    meta: { title: '博主管理', icon: 'usergroup',  orderNo: 5  },
+    meta: { title: '博主管理', icon: 'usergroup', orderNo: 5 },
     children: [
       {
         path: 'list',

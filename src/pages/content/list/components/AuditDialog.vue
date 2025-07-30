@@ -1,13 +1,18 @@
 <template>
-  <t-dialog v-model:visible="visible" :width="600" header="是否通过审核" @cancel="onCancel" cancel-btn="驳回" confirm-btn="通过">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly/>
+  <t-dialog
+    v-model:visible="visible"
+    :width="600"
+    header="是否通过审核"
+    cancel-btn="驳回"
+    confirm-btn="通过"
+    @cancel="onCancel"
+  >
+    <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
   </t-dialog>
 </template>
-
 <script setup lang="ts">
+import type { DialogProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
-
-import { DialogProps } from 'tdesign-vue-next';
 
 interface FormData {
   name: string;
@@ -22,7 +27,7 @@ const data = ref<FormData>({
 });
 
 const open = (row: any) => {
-  console.log("🚀 ~ row:", row)
+  console.log('🚀 ~ row:', row);
   visible.value = true;
 };
 
@@ -35,5 +40,4 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="less" scoped></style>

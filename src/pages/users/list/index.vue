@@ -145,27 +145,26 @@
     </div>
 
     <t-dialog
-    theme="danger"
-      center
       v-model:visible="confirmVisible"
+      theme="danger"
+      center
       header="提醒"
       :on-cancel="onCancel"
       @confirm="onConfirmOperation"
     >
       <template #body>
-          <p>是否要{{ operationType }}该账号？用户侧展示为封号状态</p>
+        <p>是否要{{ operationType }}该账号？用户侧展示为封号状态</p>
       </template>
     </t-dialog>
 
-    <CreateDialog ref="createDialogRef" />
-    <DetailDialog ref="detailDialogRef" />
+    <create-dialog ref="createDialogRef" />
+    <detail-dialog ref="detailDialogRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
-import type { PageInfo, TdBaseTableProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-
+import type { PageInfo, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+
 import { t } from '@/locales';
 
 import CreateDialog from './components/CreateDialog.vue';
@@ -314,7 +313,6 @@ const handleFreeze = (row: TableRowData) => {
   console.log('冻结用户:', row);
 };
 </script>
-
 <style lang="less" scoped>
 .user-list-container {
   background-color: var(--td-bg-color-container);
@@ -325,7 +323,6 @@ const handleFreeze = (row: TableRowData) => {
     margin-top: var(--td-comp-margin-xxl);
   }
 }
-
 
 .operation-container {
   text-align: right;

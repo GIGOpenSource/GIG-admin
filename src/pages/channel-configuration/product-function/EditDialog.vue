@@ -1,6 +1,6 @@
 <template>
-  <t-dialog v-model:visible="visible" :width="600" header="产品功能编辑" @cancel="onCancel" confirm-btn="保存">
-    <t-form :model="data" ref="formRef" label-width="120px" label-align="left">
+  <t-dialog v-model:visible="visible" :width="600" header="产品功能编辑" confirm-btn="保存" @cancel="onCancel">
+    <t-form ref="formRef" :model="data" label-width="120px" label-align="left">
       <t-form-item label="选择菜单级别" name="username">
         <t-select v-model="data.type" placeholder="请选择用户标签">
           <t-option label="一级" />
@@ -34,12 +34,9 @@
     </t-form>
   </t-dialog>
 </template>
-
 <script setup lang="ts">
+import type { DialogProps, SelectProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
-import { SelectProps } from 'tdesign-vue-next';
-
-import { DialogProps } from 'tdesign-vue-next';
 
 interface FormData {
   name: string;
@@ -95,5 +92,4 @@ defineExpose({
   open,
 });
 </script>
-
 <style lang="less" scoped></style>

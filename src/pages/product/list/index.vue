@@ -9,7 +9,7 @@
                 <t-select
                   v-model="formData.package"
                   :options="packageOptions"
-                  :placeholder="'请选择包'"
+                  placeholder="请选择包"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -20,7 +20,7 @@
                 <t-select
                   v-model="formData.status"
                   :options="statusOptions"
-                  :placeholder="'请选择状态'"
+                  placeholder="请选择状态"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -31,7 +31,7 @@
                 <t-select
                   v-model="formData.scene"
                   :options="sceneOptions"
-                  :placeholder="'请选择场景'"
+                  placeholder="请选择场景"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -54,12 +54,7 @@
     </t-form>
 
     <div class="table-container">
-      <t-table
-        hover
-        :data="tableData"
-        :columns="COLUMNS"
-        row-key="id"
-      >
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="success" @click="handleOnline(row)">上线/下线</t-link>
@@ -69,13 +64,13 @@
         </template>
       </t-table>
     </div>
-    <ConfigDialog ref="dialogRef" />
+    <config-dialog ref="dialogRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
-import { ref } from 'vue';
 import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { ref } from 'vue';
+
 import ConfigDialog from './Dialog.vue';
 
 interface FormData {
@@ -160,7 +155,6 @@ const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
 </script>
-
 <style lang="less" scoped>
 .product-config-list-container {
   background-color: var(--td-bg-color-container);

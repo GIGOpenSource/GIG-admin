@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -29,7 +29,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  :placeholder="'请输入渠道码编码'"
+                  placeholder="请输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -61,14 +61,13 @@
       </t-table>
     </div>
 
-    <EditDialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" />
   </div>
 </template>
-
 <script lang="ts" setup>
-import { ref } from 'vue';
-import type { DateRangePickerProps, TdBaseTableProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { DialogPlugin } from 'tdesign-vue-next';
+import { ref } from 'vue';
 
 import EditDialog from './EditDialog.vue';
 
@@ -207,7 +206,6 @@ const handleDelete = (row: TableRowData) => {
   });
 };
 </script>
-
 <style lang="less" scoped>
 .channel-code-list-container {
   background-color: var(--td-bg-color-container);

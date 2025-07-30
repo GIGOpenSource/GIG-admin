@@ -4,30 +4,29 @@
     header="编辑通知"
     :confirm-btn="confirmBtn"
     :cancel-btn="cancelBtn"
+    width="500px"
     @confirm="handleConfirm"
     @close="handleClose"
-    width="500px"
   >
     <t-form :data="formData" :label-width="100">
       <t-form-item label="所属APP" name="strategyName">
-        <t-input v-model="formData.strategyName" :placeholder="'请输入策略名称'" />
+        <t-input v-model="formData.strategyName" placeholder="请输入策略名称" />
       </t-form-item>
       <t-form-item label="类型关系" name="scene">
-        <t-input v-model="formData.scene" :placeholder="'请输入场景'" />
+        <t-input v-model="formData.scene" placeholder="请输入场景" />
       </t-form-item>
       <t-form-item label="用户类型" name="userTags">
-        <t-input v-model="formData.userTags" :placeholder="'请输入用户浏览标签'" />
+        <t-input v-model="formData.userTags" placeholder="请输入用户浏览标签" />
       </t-form-item>
       <t-form-item label="通知内容" name="promotionCopy">
-        <t-input v-model="formData.promotionCopy" :placeholder="'请输入促销文案'" />
+        <t-input v-model="formData.promotionCopy" placeholder="请输入促销文案" />
       </t-form-item>
       <t-form-item label="发送时间" name="price">
-        <t-input v-model="formData.price" :placeholder="'请输入价格'" />
+        <t-input v-model="formData.price" placeholder="请输入价格" />
       </t-form-item>
     </t-form>
   </t-dialog>
 </template>
-
 <script lang="ts" setup>
 import { ref } from 'vue';
 
