@@ -43,6 +43,7 @@
       </t-table>
     </div>
   </div>
+  <router-view/>
 </template>
 
 <script setup lang="ts">

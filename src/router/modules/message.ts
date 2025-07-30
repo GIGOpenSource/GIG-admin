@@ -1,4 +1,5 @@
 import Layout from '@/layouts/index.vue';
+import Blank from '@/layouts/blank.vue';
 
 export default [
   {
@@ -10,16 +11,26 @@ export default [
     children: [
       {
         path: 'chat',
-        name: 'messageChat',
-        component: () => import('@/pages/message/private-chat/index.vue'),
+        name: 'messageChats',
+        component: Blank,
+        redirect: '/message/chat',
         meta: { title: '私聊管理' },
+        children: [
+          {
+            path: '',
+            name: 'messageChat',
+            component: () => import('@/pages/message/private-chat/index.vue'),
+            meta: { title: '', hidden: true },
+          },
+          {
+            path: 'detail',
+            name: 'messageChatDetail',
+            component: () => import('@/pages/message/private-chat/detail.vue'),
+            meta: { title: '对话详情', hidden: true },
+          },
+        ],
       },
-      {
-        path: 'chat/detail',
-        name: 'messageChatDetail',
-        component: () => import('@/pages/message/private-chat/detail.vue'),
-        meta: { title: '对话详情', hidden: true },
-      },
+
       {
         path: 'notice',
         name: 'messageNotice',
