@@ -6,31 +6,23 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="选择APP" name="name">
-                <t-input
-                  v-model="formData.type"
-                  class="form-item-content"
-                  type="search"
-                  :placeholder="t('components.commonTable.contractNamePlaceholder')"
-                  :style="{ minWidth: '134px' }"
-                />
+                <select-app v-model="formData.name" @change="handleChangeApp" />
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button
-            theme="primary"
-            type="submit"
-            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
-            @click="handleCreate"
-          >
-            新建
-          </t-button>
+          <t-button theme="primary"> 查询 </t-button>
+          <t-button theme="default"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
 
+    <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+      <t-button theme="primary" @click="handleCreate">
+        新建
+      </t-button>
+    </t-row>
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
         <template #operation="{ row }">
@@ -47,25 +39,35 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps, SelectProps } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
 import { t } from '@/locales';
 
 import DetailDialog from './components/DetailDialog.vue';
+import style from '@/config/style';
 
 interface FormData {
   id: string;
   time: string;
   type: string;
+  name: string;
 }
 
 const searchForm = {
   id: '',
   time: '',
   type: '',
+  name: '',
 };
 const formData = ref<FormData>({ ...searchForm });
+
+// 切换APP
+const handleChangeApp: SelectProps['onChange'] = (ctx) => {
+  console.log('Selected app:', ctx);
+  // 这里可以添加处理逻辑，比如更新图表或列表数据
+};
 
 // 表格
 const COLUMNS: PrimaryTableCol[] = [
@@ -119,13 +121,7 @@ const COLUMNS: PrimaryTableCol[] = [
     width: 150,
   },
 ];
-const pagination = ref<TdBaseTableProps['pagination']>({
-  defaultCurrent: 1,
-  defaultPageSize: 10,
-  total: 999,
-  showFirstAndLastPageBtn: true,
-  totalContent: false,
-});
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
 const tableData = ref<TableRowData[]>([
   {

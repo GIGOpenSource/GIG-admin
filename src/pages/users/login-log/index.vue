@@ -21,20 +21,15 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="选择APP" name="name">
-                <t-input
-                  v-model="formData.type"
-                  class="form-item-content"
-                  type="search"
-                  :placeholder="t('components.commonTable.contractNamePlaceholder')"
-                  :style="{ minWidth: '134px' }"
-                />
+              <t-form-item label="选择APP" name="app">
+                <select-app v-model="formData.app" @change="handleChangeApp"> </select-app>
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
+          <t-button theme="primary"> 查询 </t-button>
+          <t-button theme="default"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -45,21 +40,30 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import type {
+  DateRangePickerProps,
+  PrimaryTableCol,
+  TableRowData,
+  TdBaseTableProps,
+  SelectProps,
+} from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
 import { t } from '@/locales';
 
 interface FormData {
   id: string;
   time: string;
   type: string;
+  app: string;
 }
 
 const searchForm = {
   id: '',
   time: '',
   type: '',
+  app: '',
 };
 const formData = ref<FormData>({ ...searchForm });
 
@@ -74,6 +78,12 @@ const onChange: DateRangePickerProps['onChange'] = (value, context) => {
     'YYYYMMDD:',
     context.dayjsValue.map((d) => d.format('YYYYMMDD')),
   );
+};
+
+// 切换APP
+const handleChangeApp: SelectProps['onChange'] = (ctx) => {
+  console.log('Selected app:', ctx);
+  // 这里可以添加处理逻辑，比如更新图表或列表数据
 };
 
 // 表格
@@ -134,13 +144,7 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'name',
   },
 ];
-const pagination = ref<TdBaseTableProps['pagination']>({
-  defaultCurrent: 1,
-  defaultPageSize: 10,
-  total: 999,
-  showFirstAndLastPageBtn: true,
-  totalContent: false,
-});
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
 const tableData = ref<TableRowData[]>([
   {

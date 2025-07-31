@@ -11,13 +11,13 @@
         <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
       </t-form-item>
       <t-form-item label="所属APP" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <select-app v-model="data.name" @click="handleChangeApp" />
       </t-form-item>
     </t-form>
   </t-dialog>
 </template>
 <script setup lang="ts">
-import type { DialogProps } from 'tdesign-vue-next';
+import type { DialogProps, SelectProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 interface FormData {
@@ -36,6 +36,11 @@ const open = () => {
 
 const onCancel: DialogProps['onCancel'] = () => {
   visible.value = false;
+};
+// 切换APP
+const handleChangeApp: SelectProps['onChange'] = (ctx) => {
+  console.log('Selected app:', ctx);
+  // 这里可以添加处理逻辑，比如更新图表或列表数据
 };
 
 defineExpose({

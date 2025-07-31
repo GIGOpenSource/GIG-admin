@@ -108,6 +108,17 @@ const storeModeWatch = watch(
     renderCharts();
   },
 );
+
+const refreshCharts = () => {
+  renderCharts();
+  nextTick(() => {
+    updateContainer();
+  });
+};
+
+defineExpose({
+  refreshCharts,
+});
 </script>
 <style lang="less" scoped>
 .dashboard-chart-card {

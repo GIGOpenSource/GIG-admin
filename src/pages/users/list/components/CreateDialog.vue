@@ -1,6 +1,6 @@
 <template>
   <t-dialog v-model:visible="visible" :width="600" header="新建用户" @cancel="onCancel">
-    <t-form ref="formRef" :model="data">
+    <t-form ref="formRef" :model="data" label-width="80px">
       <t-form-item label="用户名" name="username">
         <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
       </t-form-item>

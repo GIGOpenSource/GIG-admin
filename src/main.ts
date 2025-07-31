@@ -11,7 +11,11 @@ import 'tdesign-vue-next/es/style/index.css';
 import '@/style/index.less';
 import './permission';
 
+import SelectApp from '@/components/select-app/index.vue';
+
 const app = createApp(App);
+
+app.component('SelectApp', SelectApp);
 
 app.use(TDesign);
 app.use(store);

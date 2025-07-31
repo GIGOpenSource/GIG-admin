@@ -7,13 +7,10 @@
             <t-row>
               <t-col :span="4">
                 <t-form-item label="选择APP" name="name" initial-data="TDesign">
-                  <t-select
+                  <select-app
                     v-model="formData.app"
-                    :options="appOptions"
-                    placeholder="请选择APP"
                     @change="handleChangeApp"
-                  >
-                  </t-select>
+                  />
                 </t-form-item>
               </t-col>
             </t-row>
@@ -49,15 +46,6 @@ const formData = reactive({
   app: '',
 });
 
-// APP列表数据
-const appOptions = ref<SelectProps['options']>([
-  { label: '抖音', value: 'DY' },
-  { label: 'GIG', value: 'GIG' },
-  { label: '快手', value: 'KS' },
-  { label: '微信', value: 'WX' },
-  { label: '小红书', value: 'YX' },
-]);
-
 // 切换APP
 const handleChangeApp: SelectProps['onChange'] = (ctx) => {
   console.log('Selected app:', ctx);
@@ -68,7 +56,7 @@ const handleQueryData = () => {
   console.log('Querying data for app:', formData);
   // 触发子组件更新
   tabListRef.value?.refreshData();
-  // chartRef.value?.refreshCharts();
+  chartRef.value?.refreshCharts();
 };
 // 重置表单
 const handleReset = () => {
