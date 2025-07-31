@@ -6,29 +6,23 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="选择APP" name="code">
-                <t-input
+                <select-app
                   v-model="formData.code"
-                  type="search"
-                  placeholder="请输入渠道码编码"
-                  :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button
-            theme="primary"
-            type="submit"
-            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
-            @click="handleCreate"
-          >
-            新建
-          </t-button>
+          <t-button theme="primary"> 查询 </t-button>
+          <t-button theme="default"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
+
+    <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+      <t-button theme="primary" @click="handleCreate"> 新建 </t-button>
+    </t-row>
 
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">

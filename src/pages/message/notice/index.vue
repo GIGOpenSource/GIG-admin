@@ -1,20 +1,13 @@
 <template>
   <div class="private-chat-list-container">
-    <t-form>
       <t-row>
-        <t-col :span="10"> </t-col>
-        <t-col :span="2" class="operation-container">
           <t-button
             theme="primary"
-            type="submit"
-            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
             @click="handleCreate"
           >
             新建
           </t-button>
-        </t-col>
       </t-row>
-    </t-form>
 
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId">
