@@ -22,6 +22,8 @@ export function getLineChartDataSet({
   const timeArray = [];
   const inArray = [];
   const outArray = [];
+  const waterArray = [];
+  const lineArray = [];
   for (let i = 0; i < divideNum; i++) {
     if (dateTime.length > 0) {
       const dateAbsTime: number = (new Date(dateTime[1]).getTime() - new Date(dateTime[0]).getTime()) / divideNum;
@@ -38,6 +40,8 @@ export function getLineChartDataSet({
 
     inArray.push(getRandomArray().toString());
     outArray.push(getRandomArray().toString());
+    waterArray.push(getRandomArray().toString());
+    lineArray.push(getRandomArray().toString());
   }
 
   const dataSet = {
@@ -106,6 +110,38 @@ export function getLineChartDataSet({
       {
         name: '日活',
         data: inArray,
+        type: 'line',
+        smooth: false,
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        itemStyle: {
+          borderColor,
+          borderWidth: 1,
+        },
+        areaStyle: {
+          opacity: 0.1,
+        },
+      },
+      {
+        name: '注册',
+        data: waterArray,
+        type: 'line',
+        smooth: false,
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        itemStyle: {
+          borderColor,
+          borderWidth: 1,
+        },
+        areaStyle: {
+          opacity: 0.1,
+        },
+      },
+      {
+        name: '流水',
+        data: lineArray,
         type: 'line',
         smooth: false,
         showSymbol: true,

@@ -36,8 +36,13 @@ export enum ContentTypeEnum {
   FormData = 'multipart/form-data;charset=UTF-8',
 }
 
-// app 列表
-export const APP_LIST = {
-  GIG: 0,
-  DY: 1,
+/** ⬇️ 业务新增  ⬆️ 模版自带 */
+
+// table默认分页参数
+export const DEFAULT_PAGE_PARAMS = {
+  defaultCurrent: 1,
+  defaultPageSize: 10,
+  total: 0,
+  showFirstAndLastPageBtn: true,
+  totalContent: false,
 };

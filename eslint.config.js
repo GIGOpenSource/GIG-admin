@@ -9,7 +9,7 @@ import typescript from 'typescript-eslint';
 export default antfu(
   {
     typescript: true,
-    vue: true,
+    vue: false,
     jsonc: false,
     yaml: false,
     markdown: false,
