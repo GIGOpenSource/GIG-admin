@@ -10,7 +10,6 @@
                   v-model="formData.id"
                   type="search"
                   placeholder="请输入博主ID"
-                  :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
             </t-col>
@@ -21,14 +20,14 @@
                   :options="statusOptions"
                   placeholder="请选择状态"
                   clearable
-                  :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
-        <t-col :span="2">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
+        <t-col :span="2" align="right">
+          <t-button theme="primary"> 查询 </t-button>
+          <t-button theme="default" > 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
