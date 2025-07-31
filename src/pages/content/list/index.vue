@@ -37,24 +37,23 @@
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="default" type="submit" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button
-            theme="primary"
-            type="submit"
-            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
-            @click="handleCreate"
-          >
-            新建
-          </t-button>
+          <t-button theme="primary"> 查询 </t-button>
+          <t-button theme="default"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
+
+    <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+      <t-dropdown :options="createDropdownOptions" trigger="click">
+        <t-button theme="primary" @click="handleCreate"> 新建内容 </t-button>
+      </t-dropdown>
+    </t-row>
 
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
-            <t-link theme="primary" @click="handleAudit(row)">过审</t-link>
+            <t-link theme="primary" @click="handleAudit(row)">审核</t-link>
             <t-link theme="primary" @click="handleViewData(row)">数据</t-link>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
@@ -77,6 +76,8 @@
 import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
+
 import AuditDialog from './components/AuditDialog.vue';
 import DataViews from './components/DataViews.vue';
 import EditDeafultDialog from './components/EditDefaultDialog.vue';
@@ -91,6 +92,12 @@ const formData = ref<FormData>({
   code: '',
   link: '',
 });
+
+const createDropdownOptions = ref([
+  { content: '小说/动漫/漫画', value: 1, onClick: () => editDialogRef.value.open() },
+  { content: '常规内容', value: 2, onClick: () => editDefaultDialogRef.value.open() },
+]);
+
 // 小说动漫漫画编辑
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 // 审核
@@ -164,13 +171,8 @@ const tableData = ref([
   { id: 2, code: 'QDM002', link: 'https://example.com/qdm002' },
 ]);
 
-const pagination = ref<TdBaseTableProps['pagination']>({
-  defaultCurrent: 1,
-  defaultPageSize: 10,
-  total: 999,
-  showFirstAndLastPageBtn: true,
-  totalContent: false,
-});
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+
 const handleAudit = (row: TableRowData) => {
   auditDialogRef.value.open(row);
 };
@@ -178,13 +180,13 @@ const handleViewData = (row: TableRowData) => {
   dataViewsRef.value.open(row);
 };
 const handleCreate = () => {
-  editDialogRef.value.open();
+  // editDialogRef.value.open();
 };
 const handleEdit = (row: TableRowData) => {
   editDialogRef.value.open(row);
 };
 const handleDelete = (row: TableRowData) => {
-  editDialogRef.value.open(row);
+  // editDialogRef.value.open(row);
 };
 </script>
 <style lang="less" scoped>

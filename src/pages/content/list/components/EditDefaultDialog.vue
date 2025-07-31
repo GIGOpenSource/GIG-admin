@@ -33,7 +33,7 @@ const data = ref<FormData>({
   range: ['', ''],
 });
 
-const open = (row: any) => {
+const open = (row?: any) => {
   console.log('🚀 ~ row:', row);
   visible.value = true;
 };
