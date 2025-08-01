@@ -10,7 +10,7 @@
   >
     <template v-if="type === 'password'">
       <t-form-item name="account">
-        <t-input v-model="formData.account" size="large" :placeholder="`${t('pages.login.input.account')}：admin`">
+        <t-input v-model="formData.username" size="large" :placeholder="`${t('pages.login.input.account')}：admin`">
           <template #prefix-icon>
             <t-icon name="user" />
           </template>
@@ -95,7 +95,7 @@ const userStore = useUserStore();
 
 const INITIAL_DATA = {
   phone: '',
-  account: 'admin',
+  username: 'admin',
   password: 'admin',
   verifyCode: '',
   checked: false,
@@ -103,7 +103,7 @@ const INITIAL_DATA = {
 
 const FORM_RULES: Record<string, FormRule[]> = {
   phone: [{ required: true, message: t('pages.login.required.phone'), type: 'error' }],
-  account: [{ required: true, message: t('pages.login.required.account'), type: 'error' }],
+  username: [{ required: true, message: t('pages.login.required.account'), type: 'error' }],
   password: [{ required: true, message: t('pages.login.required.password'), type: 'error' }],
   verifyCode: [{ required: true, message: t('pages.login.required.verification'), type: 'error' }],
 };

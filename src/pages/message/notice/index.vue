@@ -1,13 +1,8 @@
 <template>
   <div class="private-chat-list-container">
-      <t-row>
-          <t-button
-            theme="primary"
-            @click="handleCreate"
-          >
-            新建
-          </t-button>
-      </t-row>
+    <t-row>
+      <t-button theme="primary" @click="handleCreate"> 新建 </t-button>
+    </t-row>
 
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId">
