@@ -2,6 +2,13 @@ import * as echarts from 'echarts/core';
 import type { Ref, ShallowRef } from 'vue';
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 /**
  * eChart hook
  * @param domId
@@ -59,3 +66,13 @@ export const useCounter = (duration = 60): [Ref<number>, () => void] => {
     },
   ];
 };
+
+
+// 格式化时间
+export function useFormatDate() {
+  const formatDate = (date: string | number | Date | null | undefined) => {
+    if (!date) return '';
+    return dayjs(date).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss');
+  };
+  return { formatDate };
+}

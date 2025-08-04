@@ -13,7 +13,7 @@ const InitUserInfo: UserInfo = {
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    token: 'main_token', // 默认token不走权限
+    token: '', // 默认token不走权限
     userInfo: { ...InitUserInfo },
   }),
   getters: {
@@ -25,8 +25,11 @@ export const useUserStore = defineStore('user', {
     // 登录
     async login(userInfo: LoginForm) {
       const res = await login(userInfo);
-      if (res.code === 200) {
-        this.token = res.data;
+      console.log("🚀 ~ res:", res)
+      // if (res.code === 200) {
+      if (res.data && res.data.token) {
+        this.token = res.data.token;
+        this.userInfo = res.data
       } else {
         throw res;
       }

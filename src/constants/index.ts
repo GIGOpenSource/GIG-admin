@@ -46,3 +46,29 @@ export const DEFAULT_PAGE_PARAMS = {
   showFirstAndLastPageBtn: true,
   totalContent: false,
 };
+
+// 性别
+export const GENDER = {
+  male:'男',
+  female: '女'
+}
+
+// 用户状态
+export const USER_STATUS = {
+  active: {
+    text: '正常',
+    theme: 'success',
+  },
+  inactive: {
+    text: '非活跃',
+    theme: 'default',
+  },
+  suspended: {
+    text: '暂停',
+    theme: 'warning',
+  },
+  banned: {
+    text: '封禁',
+    theme: 'danger',
+  },
+};

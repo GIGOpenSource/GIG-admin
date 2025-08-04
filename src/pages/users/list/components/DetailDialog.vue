@@ -1,40 +1,60 @@
 <template>
-  <t-dialog v-model:visible="visible" :width="600" header="用户详情" confirm-btn="保存" @cancel="onCancel">
+  <t-dialog
+    v-model:visible="visible"
+    :width="600"
+    header="用户详情"
+    confirm-btn="保存"
+    @cancel="onCancel"
+    @confirm="onConfirm"
+  >
     <t-tabs :default-value="1">
       <t-tab-panel :value="1" label="用户资料">
-        <t-form ref="formRef" :model="data" label-width="80px" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+        <t-form
+          ref="formRef"
+          :model="data.userProfile"
+          label-width="80px"
+          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
+        >
           <t-form-item label="用户名" name="username">
-            <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+            <t-input v-model="data.userProfile.username" class="form-item-content" placeholder="请输入用户名" />
           </t-form-item>
-          <t-form-item label="昵称" name="username">
-            <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+          <t-form-item label="昵称" name="nickname">
+            <t-input v-model="data.userProfile.nickname" class="form-item-content" placeholder="请输入昵称" />
           </t-form-item>
-          <t-form-item label="简介" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          <t-form-item label="简介" name="bio">
+            <t-input v-model="data.userProfile.bio" class="form-item-content" placeholder="请输入简介" />
           </t-form-item>
-          <t-form-item label="粉丝量" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          <t-form-item label="粉丝量" name="followerCount">
+            <t-input v-model="data.userProfile.followerCount" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
-          <t-form-item label="关注" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          <t-form-item label="关注" name="followingCount">
+            <t-input v-model="data.userProfile.followingCount" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
-          <t-form-item label="性别" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          <t-form-item label="性别" name="gender">
+            <t-radio-group v-model="data.userProfile.gender" default-value="male">
+              <t-radio value="male">{{ GENDER['male'] }}</t-radio>
+              <t-radio value="female">{{ GENDER['female'] }}</t-radio>
+            </t-radio-group>
           </t-form-item>
-          <t-form-item label="推广码" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          <t-form-item label="推广码" name="inviteCode">
+            <t-input v-model="data.userProfile.inviteCode" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
-          <t-form-item label="头像" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          <t-form-item label="头像" name="avatar">
+            <t-input v-model="data.userProfile.avatar" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
         </t-form>
       </t-tab-panel>
       <t-tab-panel :value="2" label="用户状态">
-        <t-form ref="formRef" :model="data" label-width="90px" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+        <t-form
+          ref="formRef"
+          :model="data.userStatus"
+          label-width="90px"
+          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
+        >
           <t-form-item label="VIP状态" name="username">
-            <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+            <t-input v-model="data.userStatus.status" class="form-item-content" placeholder="请输入用户名" />
           </t-form-item>
-          <t-form-item label="用户状态" name="username">
+          <!-- <t-form-item label="用户状态" name="username">
             <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
           </t-form-item>
           <t-form-item label="设备" name="email">
@@ -42,24 +62,29 @@
           </t-form-item>
           <t-form-item label="IP" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+          </t-form-item> -->
+          <t-form-item label="注册时间" name="createTime">
+            <t-input v-model="data.userStatus.createTime" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
-          <t-form-item label="注册时间" name="email">
+          <t-form-item label="最后活跃时间" name="lastLoginTime">
+            <t-input v-model="data.userStatus.lastLoginTime" class="form-item-content" placeholder="请输入邮箱" />
+          </t-form-item>
+          <!-- <t-form-item label="被邀请码" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
-          </t-form-item>
-          <t-form-item label="最后活跃时间" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
-          </t-form-item>
-          <t-form-item label="被邀请码" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
-          </t-form-item>
+          </t-form-item> -->
         </t-form>
       </t-tab-panel>
       <t-tab-panel :value="3" label="用户账户">
-        <t-form ref="formRef" :model="data" label-width="80px" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
-          <t-form-item label="手机号" name="username">
-            <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-form
+          ref="formRef"
+          :model="data.userAccount"
+          label-width="80px"
+          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
+        >
+          <t-form-item label="手机号" name="phone">
+            <t-input v-model="data.userAccount.phone" class="form-item-content" placeholder="请输入用户名" />
           </t-form-item>
-          <t-form-item label="渠道码" name="username">
+          <!-- <t-form-item label="渠道码" name="username">
             <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
           </t-form-item>
           <t-form-item label="用户类型" name="email">
@@ -73,33 +98,63 @@
           </t-form-item>
           <t-form-item label="用户标签" name="username">
             <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
-          </t-form-item>
+          </t-form-item> -->
         </t-form>
       </t-tab-panel>
     </t-tabs>
   </t-dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { getUserInfo, editUserInfo } from '@/api/user';
+import { GENDER } from '@/constants';
 
-interface FormData {
-  name: string;
-  type: string;
-}
 
-const data = ref<FormData>({
-  name: '',
-  type: '',
-});
+const id = ref(0);
+
+const defaultData = {
+  userAccount: {
+    phone: '',
+    email: '',
+  },
+  userProfile: {
+    username: '',
+    nickname: '',
+    gender: '',
+    inviteCode: '',
+    avatar: '',
+    bio: '',
+    followerCount: 0,
+    followingCount: 0,
+  },
+  userStatus: {
+    status: '',
+    lastLoginTime: '',
+    createTime: '',
+  },
+};
+
+const data = reactive({ ...defaultData });
 
 const visible = ref(false);
 
-const open = (detail: FormData) => {
-  console.log('🚀 ~ detail:', detail);
-  data.value = { ...detail };
+const open = (i: number) => {
+  id.value = i;
+  initData(i);
+};
+
+const initData = async (id: number) => {
+  const res = await getUserInfo(id);
+  console.log('🚀 ~ res:', res);
+  Object.assign(data, res.data);
   visible.value = true;
 };
 
+const onConfirm = async () => {
+  const res = await editUserInfo({ ...data, id: id.value });
+  console.log('🚀 ~ res:', res);
+  visible.value = false;
+};
 const onCancel = () => {
   visible.value = false;
 };

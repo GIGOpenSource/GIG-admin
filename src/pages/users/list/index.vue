@@ -10,7 +10,7 @@
                   v-model="formData.username"
                   class="form-item-content"
                   type="search"
-                  :placeholder="t('components.commonTable.contractNamePlaceholder')"
+                  placeholder="请输入用户名"
                 />
               </t-form-item>
             </t-col>
@@ -34,9 +34,9 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="手机号" name="mobile">
+              <t-form-item label="手机号" name="phone">
                 <t-input
-                  v-model="formData.mobile"
+                  v-model="formData.phone"
                   class="form-item-content"
                   :placeholder="t('components.commonTable.contractNumPlaceholder')"
                 />
@@ -70,9 +70,9 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="账号状态" name="accountStatus">
+              <t-form-item label="账号状态" name="status">
                 <t-input
-                  v-model="formData.accountStatus"
+                  v-model="formData.status"
                   class="form-item-content"
                   :placeholder="t('components.commonTable.contractNumPlaceholder')"
                 />
@@ -145,11 +145,13 @@
     <detail-dialog ref="detailDialogRef" />
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="tsx" setup>
 import type { SelectProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import { useFormatDate } from '@/hooks';
 
-import { DEFAULT_PAGE_PARAMS } from '@/constants';
+import { DEFAULT_PAGE_PARAMS, USER_STATUS } from '@/constants';
+import { getUserList } from '@/api/user';
 
 import { t } from '@/locales';
 
@@ -159,11 +161,11 @@ import DetailDialog from './components/DetailDialog.vue';
 interface FormData {
   uid: string;
   username: string;
-  mobile: string;
+  phone: string;
   account: string;
   deviceType: string;
   channelCode: string;
-  accountStatus: string;
+  status: string;
   registerStatus: string;
   registerEvent: string;
   vipStatus: string;
@@ -174,11 +176,11 @@ interface FormData {
 const searchForm = {
   uid: '',
   username: '',
-  mobile: '',
+  phone: '',
   account: '',
   deviceType: '',
   channelCode: '',
-  accountStatus: '',
+  status: '',
   registerStatus: '',
   userType: '',
   registerEvent: '',
@@ -193,7 +195,7 @@ const COLUMNS: PrimaryTableCol[] = [
     title: 'UID',
     fixed: 'left',
     ellipsis: true,
-    colKey: 'uid',
+    colKey: 'id',
   },
   {
     title: '用户名',
@@ -203,22 +205,31 @@ const COLUMNS: PrimaryTableCol[] = [
   {
     title: '手机号',
     ellipsis: true,
-    colKey: 'mobile',
+    colKey: 'phone',
   },
-  {
-    title: '渠道码',
-    ellipsis: true,
-    colKey: 'channelCode',
-  },
+  // {
+  //   title: '渠道码',
+  //   ellipsis: true,
+  //   colKey: 'channelCode',
+  // },
   {
     title: '账号状态',
     ellipsis: true,
-    colKey: 'accountStatus',
+    colKey: 'status',
+    cell: (h, { row }) => {
+      const statusKey = row.status as keyof typeof USER_STATUS;
+      return (
+        <t-tag shape="round" theme={USER_STATUS[statusKey].theme} variant="light-outline">
+          {USER_STATUS[statusKey].text}
+        </t-tag>
+      );
+    },
   },
   {
     title: '注册时间',
     ellipsis: true,
-    colKey: 'registerTime',
+    colKey: 'createTime',
+    cell: (h, { row }) => useFormatDate().formatDate(row.createTime),
   },
   {
     title: 'VIP状态',
@@ -238,30 +249,7 @@ const COLUMNS: PrimaryTableCol[] = [
 ];
 const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
-const tableData = ref<TableRowData[]>([
-  {
-    id: 1,
-    uid: '10001',
-    username: '用户1',
-    mobile: '1234567890',
-    channelCode: 'QDM001',
-    accountStatus: '正常',
-    registerTime: '2025-07-30 10:00:00',
-    vipStatus: 'VIP',
-    app: 'APP-A',
-  },
-  {
-    id: 2,
-    uid: '10002',
-    username: '用户2',
-    mobile: '0987654321',
-    channelCode: 'QDM002',
-    accountStatus: '禁用',
-    registerTime: '2025-07-29 09:30:00',
-    vipStatus: '普通',
-    app: 'APP-B',
-  },
-]);
+const tableData = ref<TableRowData[]>([]);
 
 // 新建编辑
 const createDialogRef = ref<InstanceType<typeof CreateDialog>>(null);
@@ -304,9 +292,10 @@ const handleReset = () => {
 const handleCreate = () => {
   createDialogRef.value?.open();
 };
+
 // 编辑
 const handleEdit = (row: TableRowData) => {
-  detailDialogRef.value?.open({ name: row.name, type: row.type });
+  detailDialogRef.value?.open(row.id);
   console.log('编辑用户:', row);
 };
 // 禁言
@@ -321,6 +310,16 @@ const handleFreeze = (row: TableRowData) => {
   confirmVisible.value = true;
   console.log('冻结用户:', row);
 };
+
+const initData = async () => {
+  const res = await getUserList(formData.value);
+  tableData.value = res.data;
+  pagination.value.total = res.total
+};
+
+onMounted(() => {
+  initData();
+});
 </script>
 
 <style lang="less" scoped>
