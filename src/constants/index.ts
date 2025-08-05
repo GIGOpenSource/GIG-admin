@@ -45,6 +45,7 @@ export const DEFAULT_PAGE_PARAMS = {
   total: 0,
   showFirstAndLastPageBtn: true,
   totalContent: false,
+  showPageSize: false
 };
 
 // 性别
@@ -55,20 +56,24 @@ export const GENDER = {
 
 // 用户状态
 export const USER_STATUS = {
-  active: {
+  normal: {
     text: '正常',
     theme: 'success',
+    value: 'normal'
   },
-  inactive: {
-    text: '非活跃',
+  abnormal: {
+    text: '异常',
     theme: 'default',
-  },
-  suspended: {
-    text: '暂停',
-    theme: 'warning',
+    value: 'abnormal'
   },
   banned: {
-    text: '封禁',
+    text: '禁言',
+    theme: 'warning',
+    value: 'banned'
+  },
+  blockde: {
+    text: '冻结',
     theme: 'danger',
+    value: 'blockde'
   },
 };

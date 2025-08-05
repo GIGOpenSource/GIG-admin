@@ -40,7 +40,7 @@ export function editUserInfo(data: any) {
   });
 }
 
-// 编辑用户（冻结）状态
+// 编辑用户状态
 export function editUserStatus(data: any) {
   return request.post({
     url: Api.EditStatus,

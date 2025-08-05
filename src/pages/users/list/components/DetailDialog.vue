@@ -40,7 +40,7 @@
             <t-input v-model="data.userProfile.inviteCode" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
           <t-form-item label="头像" name="avatar">
-            <t-input v-model="data.userProfile.avatar" class="form-item-content" placeholder="请输入邮箱" />
+            <t-avatar shape="round" size="large" :image="data.userProfile.avatar" />
           </t-form-item>
         </t-form>
       </t-tab-panel>
@@ -51,13 +51,16 @@
           label-width="90px"
           :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
         >
-          <t-form-item label="VIP状态" name="username">
+          <!-- <t-form-item label="VIP状态" name="username">
             <t-input v-model="data.userStatus.status" class="form-item-content" placeholder="请输入用户名" />
+          </t-form-item> -->
+          <t-form-item label="用户状态" name="status">
+            <!-- <t-input v-model="data.userStatus.status" class="form-item-content" placeholder="请选择用户状态" /> -->
+            <t-select v-model:value="data.userStatus.status" placeholder="请选择账号状态">
+              <t-option v-for="op in USER_STATUS" :key="op.text" :label="op.text" :value="op.value"></t-option>
+            </t-select>
           </t-form-item>
-          <!-- <t-form-item label="用户状态" name="username">
-            <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
-          </t-form-item>
-          <t-form-item label="设备" name="email">
+          <!-- <t-form-item label="设备" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
           </t-form-item>
           <t-form-item label="IP" name="email">
@@ -107,8 +110,10 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 import { getUserInfo, editUserInfo } from '@/api/user';
-import { GENDER } from '@/constants';
+import { GENDER, USER_STATUS } from '@/constants';
+import { useFormatDate } from '@/hooks';
 
+const { formatDate } = useFormatDate();
 
 const id = ref(0);
 
@@ -145,7 +150,14 @@ const open = (i: number) => {
 
 const initData = async (id: number) => {
   const res = await getUserInfo(id);
+
   console.log('🚀 ~ res:', res);
+  // 格式化时间字段
+  if (res.data && res.data.userStatus) {
+    res.data.userStatus.createTime = formatDate(res.data.userStatus.createTime);
+    res.data.userStatus.lastLoginTime = formatDate(res.data.userStatus.lastLoginTime);
+  }
+
   Object.assign(data, res.data);
   visible.value = true;
 };
