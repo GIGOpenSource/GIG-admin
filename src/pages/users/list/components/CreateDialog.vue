@@ -1,5 +1,5 @@
 <template>
-  <t-dialog v-model:visible="visible" :width="600" header="新建用户" @cancel="onCancel">
+  <t-dialog v-model:visible="visible" :width="600" header="新建用户" @cancel="onCancel" @confirm="onConfirm">
     <t-form ref="formRef" :model="data" label-width="80px">
       <t-form-item label="用户名" name="username">
         <t-input v-model="data.username" placeholder="请输入用户名" />
@@ -19,6 +19,7 @@
 <script lang="ts" setup>
 import type { DialogProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
+import { createUser } from '@/api/user';
 
 interface FormData {
   username: string;
@@ -36,6 +37,11 @@ const visible = ref(false);
 
 const open = () => {
   visible.value = true;
+};
+
+const onConfirm: DialogProps['onConfirm'] = async () => {
+  const res = await createUser(data.value);
+  console.log("🚀 ~ res:", res)
 };
 
 const onCancel: DialogProps['onCancel'] = () => {

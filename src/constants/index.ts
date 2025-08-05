@@ -56,24 +56,24 @@ export const GENDER = {
 
 // 用户状态
 export const USER_STATUS = {
-  normal: {
+  0: {
     text: '正常',
     theme: 'success',
-    value: 'normal'
+    value: '0'
   },
-  abnormal: {
-    text: '异常',
-    theme: 'default',
-    value: 'abnormal'
-  },
-  banned: {
+  1: {
     text: '禁言',
-    theme: 'warning',
-    value: 'banned'
+    theme: 'danger',
+    value: '1'
   },
-  blockde: {
+  2: {
     text: '冻结',
     theme: 'danger',
-    value: 'blockde'
+    value: '2'
+  },
+  3: {
+    text: '其他',
+    theme: 'warning',
+    value: '3'
   },
 };

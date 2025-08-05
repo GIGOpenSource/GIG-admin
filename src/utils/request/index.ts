@@ -33,7 +33,7 @@ const transform: AxiosTransform = {
     }
     // 不进行任何处理，直接返回
     // 用于页面代码可能需要直接获取code，data，message这些信息时开启
-    if (!isTransformResponse) {
+    if (isTransformResponse) {
       return res.data;
     }
 

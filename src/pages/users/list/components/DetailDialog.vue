@@ -163,7 +163,7 @@ const initData = async (id: number) => {
 };
 
 const onConfirm = async () => {
-  const res = await editUserInfo({ ...data, id: id.value });
+  const res = await editUserInfo({ ...data.userAccount,...data.userProfile, ...data.userStatus, id: id.value });
   console.log('🚀 ~ res:', res);
   visible.value = false;
 };

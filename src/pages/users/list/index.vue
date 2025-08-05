@@ -100,19 +100,21 @@
       </t-row>
     </t-form>
 
-    <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+    <!-- <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
       <t-col>
         <t-button theme="primary" @click="handleCreate"> 新建用户 </t-button>
       </t-col>
-    </t-row>
+    </t-row> -->
 
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" @change="onPageChange">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="danger" @click="handleStop(row)">禁言</t-link>
-            <t-link theme="danger" @click="handleFreeze(row)">冻结</t-link>
+            <t-link theme="danger" @click="handleOperation('stop', 1, row)" v-if="row.bannedStatus == 0">禁言</t-link>
+            <t-link theme="warning" @click="handleOperation('stop', 0, row)" v-else>解禁</t-link>
+            <t-link theme="danger" @click="handleOperation('freeze', 1, row)" v-if="row.freezeStatus == 0">冻结</t-link>
+            <t-link theme="warning" @click="handleOperation('freeze', 0, row)" v-else>解冻</t-link>
           </t-space>
         </template>
       </t-table>
@@ -127,23 +129,30 @@
       @confirm="onConfirmOperation"
     >
       <template #body>
-        <p>是否要{{ operationType }}该账号？用户侧展示为封号状态</p>
+        <p>{{ operations.content }}</p>
       </template>
     </t-dialog>
 
-    <create-dialog ref="createDialogRef" />
+    <!-- <create-dialog ref="createDialogRef" /> -->
     <detail-dialog ref="detailDialogRef" />
   </div>
 </template>
 <script lang="tsx" setup>
-import type { SelectProps, PrimaryTableCol, TableRowData, TdBaseTableProps, TableProps } from 'tdesign-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import {
+  type SelectProps,
+  type PrimaryTableCol,
+  type TableRowData,
+  type TdBaseTableProps,
+  type TableProps,
+  MessagePlugin,
+} from 'tdesign-vue-next';
+import { reactive, onMounted, ref } from 'vue';
 import { useFormatDate } from '@/hooks';
 
 import { DEFAULT_PAGE_PARAMS, USER_STATUS } from '@/constants';
 import { getUserList, editUserStatus } from '@/api/user';
 
-import CreateDialog from './components/CreateDialog.vue';
+// import CreateDialog from './components/CreateDialog.vue';
 import DetailDialog from './components/DetailDialog.vue';
 
 interface FormData {
@@ -183,7 +192,7 @@ const editId = ref(0);
 // 表格
 const COLUMNS: PrimaryTableCol[] = [
   {
-    title: 'id',
+    title: 'UID',
     fixed: 'left',
     ellipsis: true,
     colKey: 'id',
@@ -208,7 +217,12 @@ const COLUMNS: PrimaryTableCol[] = [
     ellipsis: true,
     colKey: 'status',
     cell: (h, { row }) => {
-      const statusKey = row.status as keyof typeof USER_STATUS;
+      let statusKey = 0 as keyof typeof USER_STATUS;
+      if (row.status == 1) {
+        if (row.bannedStatus == 1) statusKey = 1;
+        if (row.freezeStatus == 1) statusKey = 2;
+      }
+      // const statusKey = row.status as keyof typeof USER_STATUS;
       return (
         <t-tag shape="round" theme={USER_STATUS[statusKey].theme} variant="light-outline">
           {USER_STATUS[statusKey].text}
@@ -222,16 +236,16 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'createTime',
     cell: (h, { row }) => useFormatDate().formatDate(row.createTime),
   },
-  {
-    title: 'VIP状态',
-    ellipsis: true,
-    colKey: 'vipStatus',
-  },
-  {
-    title: '所属APP',
-    ellipsis: true,
-    colKey: 'app',
-  },
+  // {
+  //   title: 'VIP状态',
+  //   ellipsis: true,
+  //   colKey: 'vipStatus',
+  // },
+  // {
+  //   title: '所属APP',
+  //   ellipsis: true,
+  //   colKey: 'app',
+  // },
   {
     title: '操作',
     width: 150,
@@ -242,33 +256,54 @@ const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS 
 
 const tableData = ref<TableRowData[]>([]);
 
-// 新建编辑
-const createDialogRef = ref<InstanceType<typeof CreateDialog>>(null);
+// 新建
+// const createDialogRef = ref<InstanceType<typeof CreateDialog>>(null);
+// 编辑
 const detailDialogRef = ref<InstanceType<typeof DetailDialog>>(null);
 
 // 确认弹窗
 const confirmVisible = ref(false);
-const operationType = ref('冻结');
 
+const defaultOperation = {
+  content: '',
+  bannedStatus: 0,
+  freezeStatus: 0,
+};
+// 弹窗名称
+const operations = reactive({
+  ...defaultOperation,
+});
+
+// 确认操作
 const onConfirmOperation = async () => {
   const res = await editUserStatus({
-    id: editId.value,
-    status: 'suspended',
+    userId: editId.value,
+    freezeStatus: operations.freezeStatus,
+    bannedStatus: operations.bannedStatus,
   });
-  console.log("🚀 ~ res:", res)
-  // 真实业务请发起请求
+
+  if (res.code !== 0) {
+    return MessagePlugin.error({
+      content: res.message,
+    });
+  }
+  MessagePlugin.success({
+    content: res.message,
+  });
+  fetchDataList();
   confirmVisible.value = false;
 };
 
 const onCancel = () => {
-  editId.value = 0
+  editId.value = 0;
+  Object.assign(operations, defaultOperation);
 };
 
 // 切换APP
-const handleChangeApp: SelectProps['onChange'] = (ctx) => {
-  console.log('Selected app:', ctx);
-  // 这里可以添加处理逻辑，比如更新图表或列表数据
-};
+// const handleChangeApp: SelectProps['onChange'] = (ctx) => {
+//   console.log('Selected app:', ctx);
+// };
+
 // 查询
 const handleQuery = () => {
   fetchDataList();
@@ -280,46 +315,44 @@ const handleReset = () => {
 };
 
 // 创建用户
-const handleCreate = () => {
-  createDialogRef.value?.open();
-};
+// const handleCreate = () => {
+//   createDialogRef.value?.open();
+// };
 
 // 编辑
 const handleEdit = (row: TableRowData) => {
   detailDialogRef.value?.open(row.id);
-  console.log('编辑用户:', row);
 };
-// 禁言
-const handleStop = (row: TableRowData) => {
+// 禁言/冻结
+const handleOperation = (type: string = 'stop', status: number = 1, row: TableRowData) => {
   editId.value = row.id;
-  console.log('禁言用户:', row);
-  operationType.value = '禁言';
+  if (type === 'stop') {
+    operations.bannedStatus = status;
+    operations.freezeStatus = row.freezeStatus;
+    operations.content = status === 1 ? '是否要禁言该账号？用户侧展示为封号状态' : '是否要解除禁言该账号？';
+  } else {
+    operations.freezeStatus = status;
+    operations.bannedStatus = row.bannedStatus;
+    operations.content = status === 1 ? '是否要冻结该账号？用户侧展示为封号状态' : '是否要解除冻结该账号？';
+  }
   confirmVisible.value = true;
-};
-// 冻结
-const handleFreeze = (row: TableRowData) => {
-  editId.value = row.id;
-  operationType.value = '冻结';
-  confirmVisible.value = true;
-  console.log('冻结用户:', row);
 };
 
 // 分页变化
 const onPageChange: TableProps['onChange'] = async (changeParams, triggerAndData) => {
-  console.log('🚀 ~ changeParams:', changeParams);
   const { current } = changeParams.pagination;
   fetchDataList(current);
 };
 
 // 请求数据
 const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
-  const res = await getUserList({
+  const { data } = await getUserList({
     ...formData.value,
     page,
     size: pagination.value.defaultPageSize,
   });
-  tableData.value = res.data;
-  pagination.value.total = res.total;
+  tableData.value = data.data;
+  pagination.value.total = data.total;
   pagination.value.current = page;
 };
 
