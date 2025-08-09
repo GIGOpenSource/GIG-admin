@@ -5,8 +5,8 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="选择级别" name="code">
-                <t-select v-model="formData.code" placeholder="选择级别">
+              <t-form-item label="选择级别" name="level">
+                <t-select v-model="formData.level" placeholder="选择级别">
                   <t-option value="1">一级</t-option>
                   <t-option value="2">二级</t-option>
                   <t-option value="3">三级</t-option>
@@ -14,9 +14,9 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="父级名称" name="code">
+              <t-form-item label="父级名称" name="parentId">
                 <t-input
-                  v-model="formData.code"
+                  v-model="formData.parentId"
                   type="search"
                   placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
@@ -24,9 +24,9 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="分类名称" name="code">
+              <t-form-item label="分类名称" name="name">
                 <t-input
-                  v-model="formData.code"
+                  v-model="formData.name"
                   type="search"
                   placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
@@ -62,18 +62,24 @@
 <script lang="ts" setup>
 import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { DialogPlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
+
+import { contentCategory } from '@/api/content'
 
 import EditDialog from './EditDialog.vue';
 
 interface FormData {
-  code: string;
-  link: string;
+  level: string;
+  name: string;
+  parentId: string;
 }
 
 const formData = ref<FormData>({
-  code: '',
-  link: '',
+  level: '',
+  name: '',
+  parentId: '',
 });
 
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
@@ -82,32 +88,26 @@ const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '序号',
-    colKey: 'index',
-    align: 'center',
-    width: 80,
+    colKey: 'serial-number',
   },
   {
     title: '分类名称',
-    colKey: 'link',
-    align: 'left',
+    colKey: 'name',
     ellipsis: true,
   },
   {
     title: '分类级别',
-    colKey: 'code',
-    align: 'left',
+    colKey: 'level',
     ellipsis: true,
   },
   {
     title: '父级',
-    colKey: 'materialName',
-    align: 'left',
+    colKey: 'parentName',
     ellipsis: true,
   },
   {
     title: '分类icon',
-    colKey: 'materialImage',
-    align: 'center',
+    colKey: 'iconUrl',
   },
   {
     title: '操作',
@@ -117,18 +117,9 @@ const COLUMNS: PrimaryTableCol[] = [
   },
 ];
 
-const tableData = ref([
-  { id: 1, code: 'QDM001', link: 'https://example.com/qdm001' },
-  { id: 2, code: 'QDM002', link: 'https://example.com/qdm002' },
-]);
+const tableData = ref([]);
 
-const pagination = ref<TdBaseTableProps['pagination']>({
-  defaultCurrent: 1,
-  defaultPageSize: 10,
-  total: 999,
-  showFirstAndLastPageBtn: true,
-  totalContent: false,
-});
+const pagination = ref<TdBaseTableProps['pagination']>({...DEFAULT_PAGE_PARAMS});
 
 // 创建
 const handleCreate = (row: TableRowData) => {
@@ -156,6 +147,24 @@ const handleDelete = (row: TableRowData) => {
     },
   });
 };
+
+// 初始化数据
+const initData = async (page: number = pagination.value.defaultCurrent) => {
+  const params = {
+    ...formData.value,
+    page,
+    size: pagination.value.defaultPageSize,
+  };
+  const res = await contentCategory(params);
+  console.log('🚀 ~ initData ~ res:', res);
+
+  tableData.value = res.data.data.records;
+  pagination.value.total = res.data.data.total;
+};
+
+onMounted(() => {
+  initData();
+});
 </script>
 <style lang="less" scoped>
 .channel-code-list-container {

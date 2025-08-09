@@ -8,6 +8,10 @@ const Api = {
   DataStatistics: '/content-chapter/statistics/',
   DelCommment: '/content-chapter/comment/delete',
   ContentChapters: '/content-chapter/chapters',
+
+  ContentCategory: '/content-chapter/category/list',
+  CteateCatrgory: '/content-chapter/category/create',
+  UpdateCatrgory: '/content-chapter/category/update'
 };
 
 // 创建内容
@@ -65,4 +69,29 @@ export function delCommment(data: any) {
     url: Api.DelCommment,
     data,
   });
+}
+
+
+// 内容分类
+export function contentCategory(data: any) {
+  return request.post({
+    url: Api.ContentCategory,
+    data,
+  })
+}
+
+// 创建分类
+export function createCategory(data: any) {
+  return request.post({
+    url: Api.CteateCatrgory,
+    data,
+  })
+}
+
+// 更新分类
+export function updateCategory(data: any) {
+  return request.put({
+    url: Api.UpdateCatrgory,
+    data,
+  })
 }
