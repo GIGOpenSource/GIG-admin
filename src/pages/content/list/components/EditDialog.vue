@@ -3,7 +3,7 @@
   <t-dialog
     v-model:visible="visible"
     :width="600"
-    header="小说/动漫/漫画编辑"
+    :header="title"
     confirm-btn="保存"
     style="width: 100%"
     @cancel="onCancel"
@@ -17,20 +17,20 @@
         </t-col>
         <t-col :span="8">
           <t-form-item label="名称" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+            <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
           </t-form-item>
           <t-form-item label="作者" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+            <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
           </t-form-item>
           <t-form-item label="标签" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+            <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
           </t-form-item>
         </t-col>
       </t-row>
       <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
         <t-col :span="12">
           <t-form-item label="简介" name="email">
-            <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+            <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item>
         </t-col>
       </t-row>
@@ -79,6 +79,9 @@ interface Diversity {
   key: number;
 }
 const visible = ref(false);
+
+const title = ref('小说/动漫/漫画编辑');
+
 const data = ref<FormData>({
   name: '',
   type: '',
@@ -87,6 +90,7 @@ const data = ref<FormData>({
 
 const open = (row?: any) => {
   console.log('🚀 ~ row:', row);
+  title.value = row?.id ? '小说/动漫/漫画编辑' : '小说/动漫/漫画新建';
   visible.value = true;
 };
 

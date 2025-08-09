@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.id"
                   type="search"
-                  placeholder="请输入博主ID"
+                  placeholder="输入博主ID"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-select
                   v-model="formData.status"
                   :options="statusOptions"
-                  placeholder="请选择状态"
+                  placeholder="选择状态"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />

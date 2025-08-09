@@ -10,28 +10,28 @@
   >
     <t-form :data="formData" :label-width="100">
       <t-form-item label="策略名称" name="strategyName">
-        <t-input v-model="formData.strategyName" placeholder="请输入策略名称" />
+        <t-input v-model="formData.strategyName" placeholder="输入策略名称" />
       </t-form-item>
       <t-form-item label="场景" name="scene">
-        <t-input v-model="formData.scene" placeholder="请输入场景" />
+        <t-input v-model="formData.scene" placeholder="输入场景" />
       </t-form-item>
       <t-form-item label="用户浏览标签" name="userTags">
-        <t-input v-model="formData.userTags" placeholder="请输入用户浏览标签" />
+        <t-input v-model="formData.userTags" placeholder="输入用户浏览标签" />
       </t-form-item>
       <t-form-item label="促销文案" name="promotionCopy">
-        <t-input v-model="formData.promotionCopy" placeholder="请输入促销文案" />
+        <t-input v-model="formData.promotionCopy" placeholder="输入促销文案" />
       </t-form-item>
       <t-form-item label="价格" name="price">
-        <t-input v-model="formData.price" placeholder="请输入价格" />
+        <t-input v-model="formData.price" placeholder="输入价格" />
       </t-form-item>
       <t-form-item label="商品名称" name="productName">
-        <t-input v-model="formData.productName" placeholder="请输入商品名称" />
+        <t-input v-model="formData.productName" placeholder="输入商品名称" />
       </t-form-item>
       <t-form-item label="包名" name="package">
-        <t-input v-model="formData.package" placeholder="请输入包名" />
+        <t-input v-model="formData.package" placeholder="输入包名" />
       </t-form-item>
       <t-form-item label="优先级" name="priority">
-        <t-input v-model="formData.priority" placeholder="请输入优先级" />
+        <t-input v-model="formData.priority" placeholder="输入优先级" />
       </t-form-item>
     </t-form>
   </t-dialog>

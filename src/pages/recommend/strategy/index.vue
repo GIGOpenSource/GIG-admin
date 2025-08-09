@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  placeholder="请输入渠道码编码"
+                  placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -19,7 +19,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  placeholder="请输入渠道码编码"
+                  placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -29,7 +29,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  placeholder="请输入渠道码编码"
+                  placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -39,7 +39,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  placeholder="请输入渠道码编码"
+                  placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>

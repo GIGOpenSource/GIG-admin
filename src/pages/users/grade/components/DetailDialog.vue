@@ -2,13 +2,13 @@
   <t-dialog v-model:visible="visible" :width="600" header="等级详情" confirm-btn="保存" @cancel="onCancel">
     <t-form ref="formRef" :model="data" label-width="120px" label-align="left">
       <t-form-item label="等级标识" name="username">
-        <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
       </t-form-item>
       <t-form-item label="等级最小消费金额" name="username">
-        <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
       </t-form-item>
       <t-form-item label="等级最大消费金额" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="所属APP" name="email">
         <select-app v-model="data.name" @click="handleChangeApp" />

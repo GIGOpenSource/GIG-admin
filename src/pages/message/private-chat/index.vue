@@ -9,7 +9,7 @@
                 <t-input
                   v-model="formData.id"
                   type="search"
-                  placeholder="请输入对话ID"
+                  placeholder="输入对话ID"
                 />
               </t-form-item>
             </t-col>
@@ -18,7 +18,7 @@
                 <t-select
                   v-model="formData.status"
                   :options="statusOptions"
-                  placeholder="请选择状态"
+                  placeholder="选择状态"
                   clearable
                 />
               </t-form-item>

@@ -6,7 +6,7 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="选择级别" name="code">
-                <t-select v-model="formData.code" placeholder="请选择级别">
+                <t-select v-model="formData.code" placeholder="选择级别">
                   <t-option value="1">一级</t-option>
                   <t-option value="2">二级</t-option>
                   <t-option value="3">三级</t-option>
@@ -18,7 +18,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  placeholder="请输入渠道码编码"
+                  placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -28,7 +28,7 @@
                 <t-input
                   v-model="formData.code"
                   type="search"
-                  placeholder="请输入渠道码编码"
+                  placeholder="输入渠道码编码"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>

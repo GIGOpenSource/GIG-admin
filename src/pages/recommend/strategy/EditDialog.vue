@@ -2,25 +2,25 @@
   <t-dialog v-model:visible="visible" :width="600" header="推荐策略编辑" confirm-btn="保存" @cancel="onCancel">
     <t-form ref="formRef" :model="data" label-width="130px" label-align="left">
       <t-form-item label="位置" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
       </t-form-item>
       <t-form-item label="策略名称(后台可见)" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
       </t-form-item>
       <t-form-item label="所属APP" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
       </t-form-item>
       <t-form-item label="优先级" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="用户标签" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="内容/博主标签" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="尾数ID" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
     </t-form>
   </t-dialog>

@@ -27,9 +27,9 @@ export const useUserStore = defineStore('user', {
       const res = await login(userInfo);
       console.log("🚀 ~ res:", res)
       // if (res.code === 200) {
-      if (res.data && res.data.token) {
-        this.token = res.data.token;
-        this.userInfo = res.data
+      if (res.code === 0 && res.data.data.token) {
+        this.token = res.data.data.token;
+        this.userInfo = res.data.data
       } else {
         throw res;
       }

@@ -2,19 +2,19 @@
   <t-dialog v-model:visible="visible" :width="600" header="引导页配置编辑" confirm-btn="保存" @cancel="onCancel">
     <t-form ref="formRef" :model="data" label-width="120px" label-align="left">
       <t-form-item label="配置名称" name="username">
-        <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
       </t-form-item>
       <t-form-item label="选择渠道码" name="username">
-        <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
       </t-form-item>
       <t-form-item label="内容标签" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="选择APP" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="用户ID范围" name="email">
-        <t-range-input v-model="data.range" class="form-item-content" placeholder="请输入邮箱" />
+        <t-range-input v-model="data.range" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="优先级" name="email">
         <t-input v-model="data.type" class="form-item-content" placeholder="数字大优先级高" />

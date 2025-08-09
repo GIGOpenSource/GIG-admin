@@ -2,7 +2,7 @@
   <t-select
     v-model="innerValue"
     :options="appOptions"
-    placeholder="请选择APP"
+    placeholder="选择APP"
     @change="handleChangeApp"
   />
 </template>

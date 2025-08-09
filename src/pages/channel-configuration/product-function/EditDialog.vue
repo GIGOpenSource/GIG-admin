@@ -2,28 +2,28 @@
   <t-dialog v-model:visible="visible" :width="600" header="产品功能编辑" confirm-btn="保存" @cancel="onCancel">
     <t-form ref="formRef" :model="data" label-width="120px" label-align="left">
       <t-form-item label="选择菜单级别" name="username">
-        <t-select v-model="data.type" placeholder="请选择用户标签">
+        <t-select v-model="data.type" placeholder="选择用户标签">
           <t-option label="一级" />
           <t-option label="二/三级" />
         </t-select>
       </t-form-item>
       <t-form-item label="选择父级" name="username">
-        <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
       </t-form-item>
       <t-form-item label="选择模版" name="username">
-        <t-input v-model="data.name" class="form-item-content" placeholder="请输入用户名" />
+        <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
       </t-form-item>
       <t-form-item label="用户标签(多选)" name="email">
-        <t-select v-model="data.type" :options="userTags" placeholder="请选择用户标签" multiple />
+        <t-select v-model="data.type" :options="userTags" placeholder="选择用户标签" multiple />
       </t-form-item>
       <t-form-item label="内容标签(多选)" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="选择APP" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="用户ID范围" name="email">
-        <t-range-input v-model="data.range" class="form-item-content" placeholder="请输入邮箱" />
+        <t-range-input v-model="data.range" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
       <t-form-item label="排序" name="email">
         <t-input v-model="data.type" class="form-item-content" placeholder="从左到右/从上到下，数字小靠前" />

@@ -9,7 +9,7 @@
                 <t-select
                   v-model="formData.package"
                   :options="packageOptions"
-                  placeholder="请选择包"
+                  placeholder="选择包"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -20,7 +20,7 @@
                 <t-select
                   v-model="formData.status"
                   :options="statusOptions"
-                  placeholder="请选择状态"
+                  placeholder="选择状态"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />
@@ -31,7 +31,7 @@
                 <t-select
                   v-model="formData.scene"
                   :options="sceneOptions"
-                  placeholder="请选择场景"
+                  placeholder="选择场景"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />

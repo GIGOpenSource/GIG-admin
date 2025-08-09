@@ -6,7 +6,7 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="话题名称" name="code">
-                <t-input v-model="formData.code" type="search" placeholder="请输入渠道码编码" />
+                <t-input v-model="formData.code" type="search" placeholder="输入渠道码编码" />
               </t-form-item>
             </t-col>
           </t-row>

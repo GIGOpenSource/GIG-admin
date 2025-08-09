@@ -9,7 +9,7 @@
                 <t-select
                   v-model="formData.package"
                   :options="packageOptions"
-                  placeholder="请选择策略ID"
+                  placeholder="选择策略ID"
                   clearable
                   :style="{ minWidth: '134px' }"
                 />

@@ -10,7 +10,7 @@
   >
     <template v-if="type === 'phone'">
       <t-form-item name="phone">
-        <t-input v-model="formData.phone" :maxlength="11" size="large" placeholder="请输入您的手机号">
+        <t-input v-model="formData.phone" :maxlength="11" size="large" placeholder="输入您的手机号">
           <template #prefix-icon>
             <t-icon name="user" />
           </template>
@@ -20,7 +20,7 @@
 
     <template v-if="type === 'email'">
       <t-form-item name="email">
-        <t-input v-model="formData.email" type="text" size="large" placeholder="请输入您的邮箱">
+        <t-input v-model="formData.email" type="text" size="large" placeholder="输入您的邮箱">
           <template #prefix-icon>
             <t-icon name="mail" />
           </template>
@@ -34,7 +34,7 @@
         size="large"
         :type="showPsw ? 'text' : 'password'"
         clearable
-        placeholder="请输入登录密码"
+        placeholder="输入登录密码"
       >
         <template #prefix-icon>
           <t-icon name="lock-on" />
@@ -47,7 +47,7 @@
 
     <template v-if="type === 'phone'">
       <t-form-item class="verification-code" name="verifyCode">
-        <t-input v-model="formData.verifyCode" size="large" placeholder="请输入验证码" />
+        <t-input v-model="formData.verifyCode" size="large" placeholder="输入验证码" />
         <t-button variant="outline" :disabled="countDown > 0" @click="handleCounter">
           {{ countDown === 0 ? '发送验证码' : `${countDown}秒后可重发` }}
         </t-button>
@@ -91,7 +91,7 @@ const FORM_RULES: Record<string, FormRule[]> = {
   phone: [{ required: true, message: '手机号必填', type: 'error' }],
   email: [
     { required: true, message: '邮箱必填', type: 'error' },
-    { email: true, message: '请输入正确的邮箱', type: 'warning' },
+    { email: true, message: '输入正确的邮箱', type: 'warning' },
   ],
   password: [{ required: true, message: '密码必填', type: 'error' }],
   verifyCode: [{ required: true, message: '验证码必填', type: 'error' }],

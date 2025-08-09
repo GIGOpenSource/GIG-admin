@@ -2,16 +2,16 @@
   <t-dialog v-model:visible="visible" :width="600" header="标签编辑" confirm-btn="保存" @cancel="onCancel">
     <t-form ref="formRef" :model="data" label-width="80px" label-align="left">
       <t-form-item label="标签名" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
       </t-form-item>
       <t-form-item label="标签类型" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
       </t-form-item>
       <t-form-item label="标签等级" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" readonly />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" readonly />
       </t-form-item>
       <t-form-item label="标签说明" name="email">
-        <t-input v-model="data.type" class="form-item-content" placeholder="请输入邮箱" />
+        <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
       </t-form-item>
     </t-form>
   </t-dialog>

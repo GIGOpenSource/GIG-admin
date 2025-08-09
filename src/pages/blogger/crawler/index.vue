@@ -6,12 +6,12 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="输入ID" name="id">
-                <t-input v-model="formData.id" type="search" placeholder="'请输入博主ID'" />
+                <t-input v-model="formData.id" type="search" placeholder="'输入博主ID'" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
               <t-form-item label="选择状态" name="status">
-                <t-select v-model="formData.status" :options="statusOptions" placeholder="请选择状态" clearable />
+                <t-select v-model="formData.status" :options="statusOptions" placeholder="选择状态" clearable />
               </t-form-item>
             </t-col>
           </t-row>

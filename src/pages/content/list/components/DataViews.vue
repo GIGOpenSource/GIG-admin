@@ -1,9 +1,9 @@
 <template>
   <!-- 常规内容编辑 -->
-  <t-dialog v-model:visible="visible" :width="600" header="小说/动漫/漫画编辑" confirm-btn="保存" @cancel="onCancel">
+  <t-dialog v-model:visible="visible" :width="600" header="数据" confirm-btn="确认"  @confirm="onConfirm" @cancel="onCancel">
     <t-space>
-      <p>评论：2323626</p>
-      <p>点赞：47474856858658</p>
+      <p>评论：{{ nums.totalCommentCount}}</p>
+      <p>点赞：{{ nums.totalLikeCount}}</p>
     </t-space>
 
     <div class="table-container">
@@ -20,38 +20,39 @@
 <script setup lang="ts">
 import type { DialogProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { DialogPlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 
-interface FormData {
-  name: string;
-  type: string;
-  range: Array<string | number>;
-}
+import { dataStatistics, delCommment } from '@/api/content';
+
 const visible = ref(false);
+
+const id = ref(0);
+
+// 点赞评论数
+const nums = reactive({
+  totalCommentCount: 0,
+  totalLikeCount: 0,
+});
 
 // 表格字段
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '评论人ID',
-    colKey: 'index',
-    align: 'center',
+    colKey: 'userId',
   },
   {
     title: '评论时间',
-    colKey: 'link',
-    align: 'left',
+    colKey: 'commentTime',
     ellipsis: true,
   },
   {
     title: '评论文案',
-    colKey: 'code',
-    align: 'left',
+    colKey: 'commentContent',
     ellipsis: true,
   },
   {
     title: '评论点赞',
-    colKey: 'materialName',
-    align: 'left',
+    colKey: 'commentLikeCount',
     ellipsis: true,
   },
   {
@@ -62,10 +63,7 @@ const COLUMNS: PrimaryTableCol[] = [
   },
 ];
 
-const tableData = ref([
-  { id: 1, code: 'QDM001', link: 'https://example.com/qdm001' },
-  { id: 2, code: 'QDM002', link: 'https://example.com/qdm002' },
-]);
+const tableData = ref([]);
 
 const handleDelete = (row: TableRowData) => {
   const dialog = DialogPlugin.confirm({
@@ -74,9 +72,11 @@ const handleDelete = (row: TableRowData) => {
     body: '您确定要删除此条数据吗？',
     confirmBtn: '确认',
     cancelBtn: '取消',
-    onConfirm: () => {
+    onConfirm: async () => {
       // 执行删除操作
       console.log('删除分类:', row);
+      const { data:res} = await delCommment({commentId: row.commentId})
+      console.log("🚀 ~ handleDelete ~ data:", res)
       dialog.destroy();
     },
     onCancel: () => {
@@ -86,9 +86,19 @@ const handleDelete = (row: TableRowData) => {
 };
 const open = (row: any) => {
   console.log('🚀 ~ row:', row);
+  id.value = row.id;
+  dataStatistics({ id: row.id }).then(({data:res}) => {
+    console.log('🚀 ~ open ~ res:', res);
+    nums.totalCommentCount = res.data.totalCommentCount;
+    nums.totalLikeCount = res.data.totalLikeCount;
+    tableData.value = res.data.comments;
+  });
   visible.value = true;
 };
 
+const onConfirm: DialogProps['onConfirm'] = () => {
+  visible.value = false;
+};
 const onCancel: DialogProps['onCancel'] = () => {
   visible.value = false;
 };
