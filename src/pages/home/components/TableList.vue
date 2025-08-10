@@ -11,6 +11,8 @@ import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 import { SALE_TEND_LIST } from '../constants';
 
+import { getDataList } from '@/api/home';
+
 const TABLE_COLUMNS: TdBaseTableProps['columns'] = [
   { colKey: 'date', title: '日期', fixed: 'left' },
   { colKey: 'type', title: '类型', ellipsis: true },
@@ -40,9 +42,11 @@ const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PA
 const tableData = ref<TdBaseTableProps['data']>([]);
 
 // 请求数据
-const initData = () => {
+const initData = async () => {
   console.log('初始化数据');
-  tableData.value = SALE_TEND_LIST;
+  const res = await getDataList()
+  console.log("🚀 ~ initData ~ res:", res)
+  // tableData.value = SALE_TEND_LIST;
 };
 
 // 父级切换 刷新数据

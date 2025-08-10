@@ -5,24 +5,13 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="输入ID" name="id">
-                <t-input
-                  v-model="formData.id"
-                  type="search"
-                  placeholder="输入博主ID"
-                  :style="{ minWidth: '134px' }"
-                />
+              <t-form-item label="博主ID" name="id">
+                <t-input v-model="formData.id" type="search" placeholder="输入博主ID" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
               <t-form-item label="选择状态" name="status">
-                <t-select
-                  v-model="formData.status"
-                  :options="statusOptions"
-                  placeholder="选择状态"
-                  clearable
-                  :style="{ minWidth: '134px' }"
-                />
+                <t-select v-model="formData.status" :options="statusOptions" placeholder="选择状态" clearable />
               </t-form-item>
             </t-col>
           </t-row>
@@ -39,7 +28,13 @@
     </t-row>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
+        <template #avatar="{ row }">
+           <t-avatar :image="row.avatar" />
+        </template>
+        <template #counts="{ row }">
+          <span>{{ row.followingCount }}/{{ row.followerCount }}</span>
+        </template>
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">审核</t-link>
@@ -54,8 +49,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import { ref, reactive, onMounted } from 'vue';
+
+import { getBlogList } from '@/api/blogger';
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 import EditDialog from './Dialog.vue';
 
@@ -80,89 +78,68 @@ const statusOptions = [
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: 'UID',
-    colKey: 'uid',
-    align: 'center',
-    width: 80,
+    colKey: 'bloggerUid',
   },
   {
     title: '昵称',
-    colKey: 'nickname',
-    align: 'left',
+    colKey: 'bloggerNickname',
     ellipsis: true,
   },
   {
     title: '头像',
     colKey: 'avatar',
-    align: 'center',
-    width: 60,
   },
   {
     title: '作品数',
     colKey: 'worksCount',
-    align: 'center',
-    width: 80,
   },
   {
     title: '作品比例',
     colKey: 'worksRatio',
-    align: 'center',
-    width: 100,
   },
   {
     title: '手机号',
-    colKey: 'mobile',
-    align: 'left',
+    colKey: 'phone',
     ellipsis: true,
-    width: 120,
   },
   {
     title: '更新时间',
+    ellipsis: true,
     colKey: 'updateTime',
-    align: 'center',
-    width: 140,
   },
   {
     title: '标签',
     colKey: 'tags',
-    align: 'left',
     ellipsis: true,
   },
   {
     title: '签名',
-    colKey: 'signature',
-    align: 'left',
+    colKey: 'bloggerSignature',
     ellipsis: true,
   },
   {
     title: '关注/粉丝',
-    colKey: 'followFans',
-    align: 'center',
-    width: 120,
+    colKey: 'counts',
+    ellipsis: true,
   },
   {
     title: '账户',
-    colKey: 'account',
-    align: 'left',
+    colKey: 'homepageUrl',
     ellipsis: true,
   },
   {
     title: '类型',
     colKey: 'type',
-    align: 'center',
-    width: 80,
   },
   {
     title: '操作',
     colKey: 'operation',
-    align: 'center',
     width: 180,
   },
 ];
 
-const tableData = ref<TableRowData[]>([
-  { id: '10001', homepage: 'https://blogger.com/10001', status: 1 },
-  { id: '10002', homepage: 'https://blogger.com/10002', status: 0 },
-]);
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const tableData = ref<TableRowData[]>([]);
 
 const handleCreate = () => {
   editDialogRef.value.open();
@@ -176,6 +153,22 @@ const handleEdit = (row: TableRowData) => {
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
+
+const fetchDataList = async (page: number= pagination.defaultCurrent) => {
+  const params = {
+    ...formData.value,
+    page,
+    pageSize: pagination.pageSize,
+  };
+  const res = await getBlogList(params);
+  console.log('🚀 ~ fetchDataList ~ data:', res);
+  tableData.value = res.data.data.data;
+  pagination.total = res.data.data.total;
+};
+
+onMounted(() => {
+  fetchDataList();
+});
 </script>
 <style lang="less" scoped>
 .blogger-crawler-list-container {

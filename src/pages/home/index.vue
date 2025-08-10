@@ -1,6 +1,6 @@
 <template>
   <div>
-    <t-card :bordered="false" style="margin-bottom: 16px">
+    <!-- <t-card :bordered="false" style="margin-bottom: 16px">
       <t-form v-model="formData" label-align="left" label-width="80px">
         <t-row>
           <t-col :span="10">
@@ -21,7 +21,7 @@
           </t-col>
         </t-row>
       </t-form>
-    </t-card>
+    </t-card> -->
     <!-- 列表排名 -->
     <table-list ref="tabListRef" class="row-container" />
     <!-- 图表  -->

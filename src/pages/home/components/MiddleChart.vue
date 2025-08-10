@@ -18,6 +18,9 @@ import { computed, nextTick, onDeactivated, onMounted, ref, watch } from 'vue';
 import { useSettingStore } from '@/store';
 import { changeChartsTheme } from '@/utils/color';
 
+import { getChartData } from '@/api/home';
+
+
 import { getLineChartDataSet } from '../index';
 
 echarts.use([TooltipComponent, LegendComponent, GridComponent, LineChart, CanvasRenderer]);

@@ -6,19 +6,19 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="内容类型" name="contentType">
-                <t-select v-model="formData.contentType">
+                <t-select v-model="formData.contentType" placeholder="选择内容类型">
                   <t-option v-for="val in TYPES" :key="val" :value="val" :label="val" />
                 </t-select>
               </t-form-item>
             </t-col>
             <t-col :span="4">
               <t-form-item label="标题/名称" name="title">
-                <t-input v-model="formData.title" type="search" placeholder="请输入标题/名称" />
+                <t-input v-model="formData.title" type="search" placeholder="输入标题/名称" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
               <t-form-item label="发布人ID" name="authorId">
-                <t-input v-model="formData.authorId" type="search" placeholder="请输入发布人ID" />
+                <t-input v-model="formData.authorId" type="search" placeholder="输入发布人ID" />
               </t-form-item>
             </t-col>
           </t-row>
@@ -44,9 +44,9 @@
         </template>
         <template #operation="{ row }">
           <t-space>
-            <t-link theme="primary" @click="handleAudit(row)" v-if="row.status === 'DRAFT'">审核</t-link>
+            <t-link theme="primary" @click="handleAudit(row)" v-if="row.reviewStatus === 'PENDING'">审核</t-link>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="primary" @click="handleViewData(row)" v-if="row.status === 'PUBLISHED'">数据</t-link>
+            <t-link theme="primary" @click="handleViewData(row)" v-if="row.reviewStatus === 'APPROVED'">数据</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
           </t-space>
         </template>
@@ -156,7 +156,7 @@ const COLUMNS: PrimaryTableCol[] = [
   // },
   {
     title: '状态',
-    colKey: 'status',
+    colKey: 'reviewStatus',
     ellipsis: true,
   },
   {

@@ -1,7 +1,7 @@
 <template>
   <t-dialog
     v-model:visible="visible"
-    header="编辑任务"
+    :header="title"
     :confirm-btn="confirmBtn"
     :cancel-btn="cancelBtn"
     width="400px"
@@ -20,6 +20,8 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
+
+const title = ref('创建任务');
 
 const visible = ref(false);
 

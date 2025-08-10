@@ -6,7 +6,7 @@
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
               <t-form-item label="输入ID" name="id">
-                <t-input v-model="formData.id" type="search" placeholder="'输入博主ID'" />
+                <t-input v-model="formData.id" type="search" placeholder="输入博主ID" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
@@ -40,8 +40,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import { ref, reactive, onMounted } from 'vue';
+
+import { getBlogList } from '@/api/blogger';
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 import EditDialog from './Dialog.vue';
 
@@ -58,48 +61,39 @@ const formData = ref<FormData>({
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 
 const statusOptions = [
-  { label: '全部', value: '' },
-  { label: '正常', value: 1 },
-  { label: '禁用', value: 0 },
+  { label: '未更新', value: 1 },
+  { label: '已更新', value: 0 },
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '序号',
-    colKey: 'index',
-    align: 'center',
+    colKey: 'serial-number',
     width: 80,
   },
   {
     title: '博主ID',
-    colKey: 'id',
-    align: 'left',
+    colKey: 'bloggerUid',
     ellipsis: true,
   },
   {
     title: '主页地址',
-    colKey: 'homepage',
-    align: 'left',
+    colKey: 'homepageUrl',
     ellipsis: true,
   },
   {
     title: '状态',
     colKey: 'status',
-    align: 'center',
-    width: 100,
   },
   {
     title: '操作',
     colKey: 'operation',
-    align: 'center',
     width: 120,
   },
 ];
 
-const tableData = ref<TableRowData[]>([
-  { id: '10001', homepage: 'https://blogger.com/10001', status: 1 },
-  { id: '10002', homepage: 'https://blogger.com/10002', status: 0 },
-]);
+const tableData = ref<TableRowData[]>([]);
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
 const handleCreate = () => {
   // 新建逻辑
@@ -114,6 +108,22 @@ const handleEdit = (row: TableRowData) => {
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
+
+const fetchDataList = async (page: number= pagination.defaultCurrent) => {
+  const params = {
+    ...formData.value,
+    page,
+    pageSize: pagination.pageSize,
+  };
+  const res = await getBlogList(params);
+  console.log('🚀 ~ fetchDataList ~ data:', res);
+  tableData.value = res.data.data.data;
+  pagination.total = res.data.data.total;
+};
+
+onMounted(() => {
+  fetchDataList();
+});
 </script>
 <style lang="less" scoped>
 .blogger-crawler-list-container {
