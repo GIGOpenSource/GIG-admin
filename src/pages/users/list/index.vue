@@ -10,7 +10,7 @@
                   v-model="formData.username"
                   class="form-item-content"
                   type="search"
-                  placeholder="请输入用户名"
+                  placeholder="输入用户名"
                 />
               </t-form-item>
             </t-col>
@@ -26,12 +26,12 @@
             </t-col> -->
             <t-col :span="4">
               <t-form-item label="用户ID" name="id">
-                <t-input v-model="formData.id" class="form-item-content" placeholder="请输入用户ID" />
+                <t-input v-model="formData.id" class="form-item-content" placeholder="输入用户ID" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
               <t-form-item label="手机号" name="phone">
-                <t-input v-model="formData.phone" class="form-item-content" placeholder="请输入手机号" />
+                <t-input v-model="formData.phone" class="form-item-content" placeholder="输入手机号" />
               </t-form-item>
             </t-col>
             <!-- <t-col :span="4">
@@ -63,7 +63,7 @@
             </t-col> -->
             <t-col :span="4">
               <t-form-item label="账号状态" name="status">
-                <t-select v-model="formData.status" placeholder="请选择账号状态">
+                <t-select v-model="formData.status" placeholder="选择账号状态">
                   <t-option v-for="op in USER_STATUS" :key="op.text" :label="op.text" :value="op.value"></t-option>
                 </t-select>
               </t-form-item>

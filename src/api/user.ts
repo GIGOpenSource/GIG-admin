@@ -3,6 +3,7 @@ import { request } from '@/utils/request';
 
 const Api = {
   Login: '/login',
+  Info: '/info',
   CreateUser: '/user-management/create',
   UserList: '/user-management/list',
   UserInfo: '/user-management/detail/',
@@ -18,11 +19,19 @@ export function login(data: LoginForm) {
   });
 }
 
+// 获取用户信息
+export function getInfo(params: { username: string }) {
+  return request.get({
+    url: Api.Info,
+    params,
+  });
+}
+
 // 创建用户
 export function createUser(data: any) {
   return request.post({
     url: Api.CreateUser,
-    data
+    data,
   });
 }
 

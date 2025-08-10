@@ -33,6 +33,7 @@ export type ModeType = 'dark' | 'light';
 
 export interface UserInfo {
   name: string;
+  username: string;
   roles: string[];
 }
 
