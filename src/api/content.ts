@@ -11,7 +11,11 @@ const Api = {
 
   ContentCategory: '/content-chapter/category/list',
   CteateCatrgory: '/content-chapter/category/create',
-  UpdateCatrgory: '/content-chapter/category/update'
+  UpdateCatrgory: '/content-chapter/category/update',
+  CatrgoryDetail: '/content-chapter/category/detail/',
+  DelCatrgory: '/content-chapter/category/delete',
+  CatrgoryTree: '/content-chapter/category/tree',
+
 };
 
 // 创建内容
@@ -88,10 +92,33 @@ export function createCategory(data: any) {
   })
 }
 
+// 分类树
+export function categoryTree() {
+  return request.get({
+    url: Api.CatrgoryTree,
+  })
+}
+
+// 分类详情
+export function categoryDetail(id: number | string) {
+  console.log("🚀 ~ categoryDetail ~ d:", id)
+  return request.get({
+    url: `${Api.CatrgoryDetail}${id}`,
+  })
+}
+
 // 更新分类
 export function updateCategory(data: any) {
   return request.put({
     url: Api.UpdateCatrgory,
+    data,
+  })
+}
+
+// 删除分类
+export function delCategory(data: any) {
+  return request.delete({
+    url: Api.DelCatrgory,
     data,
   })
 }
