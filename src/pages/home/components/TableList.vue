@@ -9,16 +9,14 @@ import { ref, reactive, onMounted } from 'vue';
 
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
-import { SALE_TEND_LIST } from '../constants';
-
 import { getDataList } from '@/api/home';
 
 const TABLE_COLUMNS: TdBaseTableProps['columns'] = [
-  { colKey: 'date', title: '日期', fixed: 'left' },
+  { colKey: 'date', title: '日期', fixed: 'left', width: 120 },
   { colKey: 'type', title: '类型', ellipsis: true },
   { colKey: 'dailyActive', title: '日活' },
-  { colKey: 'onlineCount', title: '当前在线' },
-  { colKey: 'newCount', title: '新增数量' },
+  { colKey: 'currentOnline', title: '当前在线' },
+  { colKey: 'newUserCount', title: '新增数量' },
   { colKey: 'rechargeUserCount', title: '充值人数' },
   { colKey: 'newUserRechargeAmount', title: '新用户充值金额' },
   { colKey: 'rechargeAmount', title: '充值金额' },
@@ -46,7 +44,8 @@ const initData = async () => {
   console.log('初始化数据');
   const res = await getDataList()
   console.log("🚀 ~ initData ~ res:", res)
-  // tableData.value = SALE_TEND_LIST;
+  tableData.value = res.data.data.data;
+  pagination.total = res.data.data.total;
 };
 
 // 父级切换 刷新数据

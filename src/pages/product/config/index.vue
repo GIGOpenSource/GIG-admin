@@ -1,6 +1,6 @@
 <template>
   <div class="product-config-list-container">
-    <t-form :data="formData" :label-width="80">
+    <!-- <t-form :data="formData" :label-width="80">
       <t-row>
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
@@ -22,14 +22,14 @@
           <t-button theme="default"> 重置 </t-button>
         </t-col>
       </t-row>
-    </t-form>
+    </t-form> -->
 
     <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
       <t-button theme="primary" @click="handleCreate"> 新建 </t-button>
     </t-row>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
@@ -38,14 +38,19 @@
         </template>
       </t-table>
     </div>
+
+    
     <config-dialog ref="dialogRef" />
   </div>
 </template>
 <script lang="ts" setup>
-import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import { ref, reactive ,onMounted } from 'vue';
+
+import { getVipList } from '@/api/goods'
 
 import ConfigDialog from './Dialog.vue';
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 interface FormData {
   package: string;
@@ -74,41 +79,17 @@ const sceneOptions = [
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
-  { title: '序号', colKey: 'index', align: 'center', width: 80 },
-  { title: '特权文案', colKey: 'strategyName', align: 'left', ellipsis: true },
-  { title: '附件', colKey: 'scene', align: 'left', ellipsis: true },
-  { title: '所属VIP类型', colKey: 'userTags', align: 'left', ellipsis: true },
-  { title: '备注(后台展示)', colKey: 'promotionCopy', align: 'left', ellipsis: true },
-  { title: '优先级', colKey: 'price', align: 'center', width: 100 },
-  { title: '操作', colKey: 'operation', align: 'center', width: 120 },
+  { title: '序号', colKey: 'serial-number', width: 80 },
+  { title: '特权文案', colKey: 'powerName', ellipsis: true },
+  { title: '附件', colKey: 'attachment', ellipsis: true },
+  { title: '所属VIP类型', colKey: 'vipName', ellipsis: true },
+  { title: '备注(后台展示)', colKey: 'remark', ellipsis: true },
+  { title: '优先级', colKey: 'priority' },
+  { title: '操作', colKey: 'operation',  width: 120 },
 ];
 
-const tableData = ref<TableRowData[]>([
-  {
-    id: 1,
-    strategyName: '策略A',
-    scene: '场景1',
-    userTags: '标签1,标签2',
-    promotionCopy: '买一送一',
-    price: 99,
-    productName: '商品A',
-    package: 'A',
-    priority: 1,
-    status: 1,
-  },
-  {
-    id: 2,
-    strategyName: '策略B',
-    scene: '场景2',
-    userTags: '标签3',
-    promotionCopy: '限时折扣',
-    price: 199,
-    productName: '商品B',
-    package: 'B',
-    priority: 2,
-    status: 0,
-  },
-]);
+const tableData = ref<TableRowData[]>([]);
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
 
@@ -121,6 +102,24 @@ const handleEdit = (row: TableRowData) => {
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
+
+const featchDataList = async (page: number = pagination.defaultCurrent) => {
+  const param = {
+    ...formData.value,
+    page,
+    pageSize: pagination.defaultPageSize,
+  }
+  const res = await getVipList(param);
+  console.log("🚀 ~ featchDataList ~ res:", res)
+  tableData.value = res.data.data.data;
+  pagination.total = res.data.total;
+};
+
+onMounted(() => {
+  featchDataList();
+})
+
+
 </script>
 <style lang="less" scoped>
 .product-config-list-container {

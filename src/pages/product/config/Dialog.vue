@@ -9,20 +9,23 @@
     @close="handleClose"
   >
     <t-form :data="formData" :label-width="100" label-align="left">
-      <t-form-item label="特权文案" name="strategyName">
-        <t-input v-model="formData.strategyName" placeholder="输入策略名称" />
+      <t-form-item label="特权文案" name="powerName">
+        <t-input v-model="formData.powerName" placeholder="输入特权文案" />
       </t-form-item>
       <t-form-item label="附件" name="scene">
-        <t-input v-model="formData.scene" placeholder="输入场景" />
+        <t-input v-model="formData.scene" placeholder="上传附件" />
       </t-form-item>
-      <t-form-item label="所属VIP类型" name="userTags">
-        <t-input v-model="formData.userTags" placeholder="输入用户浏览标签" />
+      <t-form-item label="VIP类型" name="userTags">
+        <t-select placeholder="选择VIP类型" v-model="formData.userTags">
+          <t-option value="1" label="VIP类型1"></t-option>
+          <t-option value="2" label="VIP类型2"></t-option>
+        </t-select>
       </t-form-item>
-      <t-form-item label="备注(后台展示)" name="promotionCopy">
-        <t-input v-model="formData.promotionCopy" placeholder="输入促销文案" />
+      <t-form-item label="备注" name="promotionCopy">
+        <t-input v-model="formData.promotionCopy" placeholder="输入备注" />
       </t-form-item>
       <t-form-item label="优先级" name="price">
-        <t-input v-model="formData.price" placeholder="输入价格" />
+        <t-input v-model="formData.price" placeholder="输入优先级" />
       </t-form-item>
     </t-form>
   </t-dialog>
@@ -33,7 +36,7 @@ import { ref } from 'vue';
 const visible = ref(false);
 
 const formData = ref({
-  strategyName: '',
+  powerName: '',
   scene: '',
   userTags: '',
   promotionCopy: '',

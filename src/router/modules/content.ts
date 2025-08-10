@@ -20,12 +20,12 @@ export default [
         component: () => import('@/pages/content/classify/index.vue'),
         meta: { title: '内容分类' },
       },
-      {
-        path: 'topic',
-        name: 'ContentTopic',
-        component: () => import('@/pages/content/topic/index.vue'),
-        meta: { title: '内容话题' },
-      },
+      // {
+      //   path: 'topic',
+      //   name: 'ContentTopic',
+      //   component: () => import('@/pages/content/topic/index.vue'),
+      //   meta: { title: '内容话题' },
+      // },
     ],
   },
 ];

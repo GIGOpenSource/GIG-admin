@@ -11,7 +11,7 @@
                   :options="packageOptions"
                   placeholder="选择包"
                   clearable
-                  :style="{ minWidth: '134px' }"
+                  
                 />
               </t-form-item>
             </t-col>
@@ -22,7 +22,7 @@
                   :options="statusOptions"
                   placeholder="选择状态"
                   clearable
-                  :style="{ minWidth: '134px' }"
+                  
                 />
               </t-form-item>
             </t-col>
@@ -33,7 +33,7 @@
                   :options="sceneOptions"
                   placeholder="选择场景"
                   clearable
-                  :style="{ minWidth: '134px' }"
+                  
                 />
               </t-form-item>
             </t-col>
@@ -51,7 +51,7 @@
     </t-row>
     
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="success" @click="handleOnline(row)">上线/下线</t-link>
@@ -65,8 +65,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+import { ref, reactive, onMounted } from 'vue';
+
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
+
+import { getGoodsList } from '@/api/goods';
 
 import ConfigDialog from './Dialog.vue';
 
@@ -97,45 +101,21 @@ const sceneOptions = [
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
-  { title: '序号', colKey: 'index', align: 'center', width: 80 },
-  { title: '策略名称', colKey: 'strategyName', align: 'left', ellipsis: true },
+  { title: '序号', colKey: 'serial-number', width: 80 },
+  { title: '策略名称', colKey: 'name', ellipsis: true },
   { title: '场景', colKey: 'scene', align: 'left', ellipsis: true },
   { title: '用户浏览标签', colKey: 'userTags', align: 'left', ellipsis: true },
   { title: '促销文案', colKey: 'promotionCopy', align: 'left', ellipsis: true },
-  { title: '价格', colKey: 'price', align: 'center', width: 100 },
-  { title: '商品名称', colKey: 'productName', align: 'left', ellipsis: true },
-  { title: '包名', colKey: 'package', align: 'left', ellipsis: true },
-  { title: '优先级', colKey: 'priority', align: 'center', width: 80 },
-  { title: '状态', colKey: 'status', align: 'center', width: 80 },
-  { title: '操作', colKey: 'operation', align: 'center', width: 180 },
+  { title: '价格', colKey: 'price' },
+  { title: '商品名称', colKey: 'name', ellipsis: true },
+  { title: '包名', colKey: 'packageName', ellipsis: true },
+  { title: '优先级', colKey: 'priority'},
+  { title: '状态', colKey: 'status' },
+  { title: '操作', colKey: 'operation', width: 180 },
 ];
 
-const tableData = ref<TableRowData[]>([
-  {
-    id: 1,
-    strategyName: '策略A',
-    scene: '场景1',
-    userTags: '标签1,标签2',
-    promotionCopy: '买一送一',
-    price: 99,
-    productName: '商品A',
-    package: 'A',
-    priority: 1,
-    status: 1,
-  },
-  {
-    id: 2,
-    strategyName: '策略B',
-    scene: '场景2',
-    userTags: '标签3',
-    promotionCopy: '限时折扣',
-    price: 199,
-    productName: '商品B',
-    package: 'B',
-    priority: 2,
-    status: 0,
-  },
-]);
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const tableData = ref([])
 
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
 
@@ -151,6 +131,22 @@ const handleOnline = (row: TableRowData) => {
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
 };
+
+const featchDataList = async (page: number = pagination.defaultCurrent) => {
+  const param = {
+    ...formData.value,
+    page,
+    pageSize: pagination.defaultPageSize,
+  }
+  const res = await getGoodsList(param);
+  console.log("🚀 ~ featchDataList ~ res:", res)
+  tableData.value = res.data.data.data;
+  pagination.total = res.data.total;
+};
+
+onMounted(() => {
+  featchDataList();
+})
 </script>
 <style lang="less" scoped>
 .product-config-list-container {

@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import type { EChartsOption } from 'echarts';
 
 import type { TChartColor } from '@/config/color';
-import { t } from '@/locales/index';
 import { getRandomArray } from '@/utils/charts';
 import { getChartListColor } from '@/utils/color';
 
@@ -15,15 +14,12 @@ import { getChartListColor } from '@/utils/color';
  */
 export function getLineChartDataSet({
   dateTime = [],
+  data = {},
   placeholderColor,
   borderColor,
-}: { dateTime?: Array<string> } & TChartColor) {
-  const divideNum = 10;
+}: { dateTime?: Array<string>, data: Object } & TChartColor) {
+  const divideNum = 7;
   const timeArray = [];
-  const inArray = [];
-  const outArray = [];
-  const waterArray = [];
-  const lineArray = [];
   for (let i = 0; i < divideNum; i++) {
     if (dateTime.length > 0) {
       const dateAbsTime: number = (new Date(dateTime[1]).getTime() - new Date(dateTime[0]).getTime()) / divideNum;
@@ -37,11 +33,6 @@ export function getLineChartDataSet({
           .format('MM-DD'),
       );
     }
-
-    inArray.push(getRandomArray().toString());
-    outArray.push(getRandomArray().toString());
-    waterArray.push(getRandomArray().toString());
-    lineArray.push(getRandomArray().toString());
   }
 
   const dataSet = {
@@ -60,7 +51,7 @@ export function getLineChartDataSet({
       left: 'center',
       bottom: '0',
       orient: 'horizontal', // legend 横向布局。
-      data: ['付费率', '日活', '注册', '流水'],
+      data: ['付费率', '日活', '注册'],
       textStyle: {
         fontSize: 12,
         color: placeholderColor,
@@ -93,7 +84,7 @@ export function getLineChartDataSet({
     series: [
       {
         name: '付费率',
-        data: outArray,
+        data: data.revenue,
         type: 'line',
         smooth: false,
         showSymbol: true,
@@ -109,7 +100,7 @@ export function getLineChartDataSet({
       },
       {
         name: '日活',
-        data: inArray,
+        data: data.payRate,
         type: 'line',
         smooth: false,
         showSymbol: true,
@@ -125,23 +116,7 @@ export function getLineChartDataSet({
       },
       {
         name: '注册',
-        data: waterArray,
-        type: 'line',
-        smooth: false,
-        showSymbol: true,
-        symbol: 'circle',
-        symbolSize: 8,
-        itemStyle: {
-          borderColor,
-          borderWidth: 1,
-        },
-        areaStyle: {
-          opacity: 0.1,
-        },
-      },
-      {
-        name: '流水',
-        data: lineArray,
+        data: data.newUsers,
         type: 'line',
         smooth: false,
         showSymbol: true,

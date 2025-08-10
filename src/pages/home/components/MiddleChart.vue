@@ -30,6 +30,8 @@ const resizeTime = ref(1);
 
 const chartColors = computed(() => store.chartColors);
 
+const chartData = ref({})
+
 // monitorChart
 let monitorContainer: HTMLElement;
 let monitorChart: echarts.ECharts;
@@ -38,7 +40,7 @@ const renderMonitorChart = () => {
     monitorContainer = document.getElementById('monitorContainer');
   }
   monitorChart = echarts.init(monitorContainer);
-  monitorChart.setOption(getLineChartDataSet({ ...chartColors.value }));
+  monitorChart.setOption(getLineChartDataSet({ data: chartData.value, ...chartColors.value }));
 };
 
 const renderCharts = () => {
@@ -61,11 +63,17 @@ const updateContainer = () => {
   });
 };
 
-onMounted(() => {
+const featchChartData = async ()=>{
+  const res = await getChartData()
+  chartData.value = res.data.data
   renderCharts();
   nextTick(() => {
     updateContainer();
   });
+}
+
+onMounted(() => {
+  featchChartData()
 });
 
 const { width, height } = useWindowSize();
