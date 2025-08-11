@@ -83,6 +83,7 @@ import AuditDialog from './components/AuditDialog.vue';
 import DataViews from './components/DataViews.vue';
 import EditDeafultDialog from './components/EditDefaultDialog.vue';
 import EditDialog from './components/EditDialog.vue';
+import { log } from 'node:console';
 
 interface FormData {
   title: string;
@@ -123,6 +124,7 @@ const COLUMNS: PrimaryTableCol[] = [
     title: '内容类型',
     colKey: 'contentType',
     ellipsis: true,
+     cell: (h, { row }) => row.contentType == 'NOVEL' ? '小说' : '文章'
   },
   {
     title: '分集',
@@ -156,8 +158,9 @@ const COLUMNS: PrimaryTableCol[] = [
   // },
   {
     title: '状态',
-    colKey: 'reviewStatus',
+    colKey: 'status',
     ellipsis: true,
+     cell: (h, { row }) => row.status == 'DRAFT' ? '草稿':row.status == 'PUBLISHED' ? '已发布':'审核中'
   },
   {
     title: '操作',
@@ -186,6 +189,8 @@ const handleViewData = (row: TableRowData) => {
 };
 // 创建
 const handleCreate = () => {
+console.log('zoiulerma ');
+
   // editDialogRef.value.open();
 };
 // 编辑
@@ -205,6 +210,7 @@ const handleDelete = (row: TableRowData) => {
       const res = await delContent({id: row.id});
       console.log("🚀 ~ handleDelete ~ res:", res)
       MessagePlugin.success(res.message);
+       initData();
       confirmDia.hide();
     },
     onClose: ({ e, trigger }) => {
@@ -215,11 +221,25 @@ const handleDelete = (row: TableRowData) => {
 
 // 查询
 const handleQuery = () => {
-  console.log(formData.value);
+  fetchDataList()
+};
+// 请求数据
+const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
+  let params = { ...formData.value }
+  params.contentType =  params.contentType === '小说'?'NOVEL' :'ARTICLE'
+  const { data } = await  getContentList({
+    ...params,
+    page,
+    size: pagination.value.defaultPageSize,
+  });
+  tableData.value = data.data.records;
+  pagination.value.total = data.data.total;
+  pagination.value.current = page;
 };
 // 重置
 const handleReset = () => {
   formData.value = { ...searchForm };
+  initData()
 };
 
 // 初始化数据

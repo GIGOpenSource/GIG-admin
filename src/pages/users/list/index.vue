@@ -134,7 +134,7 @@
     </t-dialog>
 
     <!-- <create-dialog ref="createDialogRef" /> -->
-    <detail-dialog ref="detailDialogRef" />
+    <detail-dialog ref="detailDialogRef"  @confirm="onDialogConfirm"/>
   </div>
 </template>
 <script lang="tsx" setup>
@@ -185,10 +185,8 @@ const searchForm = {
   // app: '',
 };
 const formData = ref<FormData>({ ...searchForm });
-
 // 更新操作 id
 const editId = ref(0);
-
 // 表格
 const COLUMNS: PrimaryTableCol[] = [
   {
@@ -212,24 +210,29 @@ const COLUMNS: PrimaryTableCol[] = [
   //   ellipsis: true,
   //   colKey: 'channelCode',
   // },
-  {
-    title: '账号状态',
-    ellipsis: true,
-    colKey: 'status',
-    cell: (h, { row }) => {
-      let statusKey = 0 as keyof typeof USER_STATUS;
-      if (row.status == 1) {
-        if (row.bannedStatus == 1) statusKey = 1;
-        if (row.freezeStatus == 1) statusKey = 2;
-      }
-      // const statusKey = row.status as keyof typeof USER_STATUS;
-      return (
-        <t-tag shape="round" theme={USER_STATUS[statusKey].theme} variant="light-outline">
-          {USER_STATUS[statusKey].text}
-        </t-tag>
-      );
-    },
-  },
+ {
+  title: '账号状态',
+  ellipsis: true,
+  colKey: 'status',
+cell: (h, { row }) => {
+  // 先算出真正要用的 key
+  let key: keyof typeof USER_STATUS = row.status;
+  if (row.status === 1) {
+    if (row.status === 1)       key = 1;
+    else if (row.status === 1)  key = 2;
+  }
+
+  return (
+    <t-tag
+      shape="round"
+      theme={USER_STATUS[key].theme}
+      variant="light-outline"
+    >
+      {USER_STATUS[key].text}
+    </t-tag>
+  );
+}
+},
   {
     title: '注册时间',
     ellipsis: true,
@@ -298,6 +301,9 @@ const onCancel = () => {
   editId.value = 0;
   Object.assign(operations, defaultOperation);
 };
+const onDialogConfirm = () => {
+   fetchDataList();
+}
 
 // 切换APP
 // const handleChangeApp: SelectProps['onChange'] = (ctx) => {

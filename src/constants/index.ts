@@ -51,7 +51,8 @@ export const DEFAULT_PAGE_PARAMS = {
 // 性别
 export const GENDER = {
   male:'男',
-  female: '女'
+  female: '女',
+  unknown:'未知'
 }
 
 // 用户状态

@@ -34,6 +34,7 @@
             <t-radio-group v-model="data.userProfile.gender" default-value="male">
               <t-radio value="male">{{ GENDER['male'] }}</t-radio>
               <t-radio value="female">{{ GENDER['female'] }}</t-radio>
+              <t-radio value="female">{{ GENDER['unknown'] }}</t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="推广码" name="inviteCode">
@@ -114,7 +115,7 @@ import { GENDER, USER_STATUS } from '@/constants';
 import { useFormatDate } from '@/hooks';
 
 const { formatDate } = useFormatDate();
-
+const emit = defineEmits(['confirm'])   // 声明要触发的事件名
 const id = ref(0);
 
 const defaultData = {
@@ -149,23 +150,23 @@ const open = (i: number) => {
 };
 
 const initData = async (id: number) => {
+  console.log(id,)
   const res = await getUserInfo(id);
-
-  console.log('🚀 ~ res:', res);
   // 格式化时间字段
   if (res.data && res.data.userStatus) {
     res.data.userStatus.createTime = formatDate(res.data.userStatus.createTime);
     res.data.userStatus.lastLoginTime = formatDate(res.data.userStatus.lastLoginTime);
   }
 
-  Object.assign(data, res.data);
+   Object.assign(data, res.data.data);
+     console.log(data,'datatatat ')
   visible.value = true;
 };
 
 const onConfirm = async () => {
   const res = await editUserInfo({ ...data.userAccount,...data.userProfile, ...data.userStatus, id: id.value });
-  console.log('🚀 ~ res:', res);
   visible.value = false;
+   emit('confirm')
 };
 const onCancel = () => {
   visible.value = false;

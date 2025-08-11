@@ -22,7 +22,7 @@ const TABLE_COLUMNS: TdBaseTableProps['columns'] = [
   { colKey: 'rechargeAmount', title: '充值金额' },
   { colKey: 'coinOrderCount', title: '金币订单数' },
   { colKey: 'vipOrderCount', title: 'VIP订单数' },
-  { colKey: 'userConsumeCoin', title: '用户消费金币' },
+  { colKey: 'userSpentCoins', title: '用户消费金币' },
   { colKey: 'channelRechargeCoin', title: '渠道充值金币' },
   { colKey: 'newUserCount', title: '新用户数' },
   { colKey: 'platformStats', title: '所属端统计', ellipsis: true },
