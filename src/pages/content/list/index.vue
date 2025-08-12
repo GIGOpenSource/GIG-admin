@@ -54,11 +54,11 @@
     </div>
 
     <!-- 小说/动漫/漫画新建编辑 -->
-    <edit-dialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" @confirm="initData"/>
     <!-- 常规编辑 -->
     <edit-deafult-dialog ref="editDefaultDialogRef" />
     <!-- 审核 -->
-    <audit-dialog ref="auditDialogRef" />
+    <audit-dialog ref="auditDialogRef" @confirm="initData"/>
     <!-- 数据 -->
     <data-views ref="dataViewsRef" />
   </div>

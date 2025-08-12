@@ -115,7 +115,7 @@ import { GENDER, USER_STATUS } from '@/constants';
 import { useFormatDate } from '@/hooks';
 
 const { formatDate } = useFormatDate();
-const emit = defineEmits(['confirm'])   // 声明要触发的事件名
+const emit = defineEmits(['confirm']) 
 const id = ref(0);
 
 const defaultData = {
@@ -159,7 +159,6 @@ const initData = async (id: number) => {
   }
 
    Object.assign(data, res.data.data);
-     console.log(data,'datatatat ')
   visible.value = true;
 };
 

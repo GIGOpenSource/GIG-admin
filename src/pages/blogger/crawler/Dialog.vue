@@ -9,44 +9,50 @@
     @close="handleClose"
   >
     <t-form :data="formData" :label-width="80">
-      <t-form-item label="博主UID" name="uid">
-        <t-input v-model="formData.uid" placeholder="输入博主UID" />
+      <t-form-item label="博主UID" name="bloggerUid">
+        <t-input v-model="formData.bloggerUid" placeholder="输入博主UID" />
       </t-form-item>
-      <t-form-item label="主页地址" name="homepage">
-        <t-input v-model="formData.homepage" placeholder="输入主页地址" />
+      <t-form-item label="主页地址" name="homepageUrl">
+        <t-input v-model="formData.homepageUrl" placeholder="输入主页地址" />
       </t-form-item>
     </t-form>
   </t-dialog>
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-
+import { MessagePlugin, type DialogProps } from 'tdesign-vue-next';
+import {createBlogCrawler,updateBlogCrawler} from '@/api/blogger';
+const emit = defineEmits(['confirm'])
 const title = ref('创建任务');
 
 const visible = ref(false);
 
 const formData = ref({
-  uid: '',
-  homepage: '',
+  bloggerUid: '',
+  homepageUrl: '',
 });
 
 const confirmBtn = '确认';
 const cancelBtn = '取消';
 
 const open = (data?: any) => {
+  title.value = data?.id ? '编辑任务' : '新建任务';
   if (data) {
-    formData.value.uid = data.uid ?? '';
-    formData.value.homepage = data.homepage ?? '';
+     formData.value = data
   } else {
-    formData.value.uid = '';
-    formData.value.homepage = '';
+   formData.value.bloggerUid  = '';
+    formData.value.homepageUrl = '';
   }
   visible.value = true;
 };
 
-const handleConfirm = () => {
+const handleConfirm = async () => {
   // 提交逻辑
+  const fn = title.value == '编辑任务' ? updateBlogCrawler : createBlogCrawler
+  const res = await fn(formData.value)
+  MessagePlugin.success(res.message)
   visible.value = false;
+  emit('confirm')
 };
 
 const handleClose = () => {

@@ -16,7 +16,7 @@ import type { DialogProps } from 'tdesign-vue-next';
 import { ref } from 'vue';
 
 import { auditContent } from '@/api/content';
-
+const emit = defineEmits(['confirm']) 
 interface FormData {
   id: string;
   status: string;
@@ -42,6 +42,7 @@ const onConfirm: DialogProps['onConfirm'] = async () => {
   const res = await auditContent(data.value);
   console.log("🚀 ~ onConfirm ~ res:", res)
   visible.value = false;
+   emit('confirm')
 };
 const onCancel: DialogProps['onCancel'] = async () => {
   data.value.status = 'REJECTED'

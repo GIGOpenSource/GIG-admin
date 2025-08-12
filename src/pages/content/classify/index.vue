@@ -51,7 +51,7 @@
       </t-table>
     </div>
 
-    <edit-dialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" @confirm="fetchDataList"/>
   </div>
 </template>
 <script lang="ts" setup>
