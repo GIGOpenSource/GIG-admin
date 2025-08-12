@@ -49,7 +49,7 @@ export function changeGoodsStatus(id: number, status: string) {
   return request.put({
     url: Api.ChangeGoodStatus + id,
     data: {
-      key: status,
+      isOnline: status,
     },
   });
 }

@@ -77,6 +77,11 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'bloggerUid',
     ellipsis: true,
   },
+   {
+    title: '博主昵称',
+    colKey: 'bloggerNickname',
+    ellipsis: true,
+  },
   {
     title: '主页地址',
     colKey: 'homepageUrl',
@@ -85,6 +90,7 @@ const COLUMNS: PrimaryTableCol[] = [
   {
     title: '状态',
     colKey: 'status',
+    cell: (h, { row }) => row.status == 'success' ? '更新成功' : row.status == 'failed' ? '更新失败' : row.status == 'updating' ? '已更新':'未更新'
   },
   {
     title: '操作',
