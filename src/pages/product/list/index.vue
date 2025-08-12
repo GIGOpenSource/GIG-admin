@@ -167,7 +167,7 @@ const featchDataList = async (page: number = pagination.defaultCurrent) => {
   }
   const res = await getGoodsList(param);
   console.log("🚀 ~ featchDataList ~ res:", res)
-  tableData.value = res.data.data.data;
+  tableData.value = res.data.data.records;
   pagination.total = res.data.total;
 };
 

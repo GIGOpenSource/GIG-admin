@@ -7,10 +7,10 @@ const Api = {
   DeleteGood: '/goods/delete/',
   ChangeGoodStatus: '/goods/status/',
 
-  VipList: '/goods/vip-power/query',
-  VipCreate: '/goods/vip-power/create',
-  VipUpdate: '/goods/vip-power/update',
-  VipDelete: '/goods/vip-power/delete/',
+  VipList: '/vip-power/query',
+  VipCreate: '/vip-power/create',
+  VipUpdate: '/vip-power/update',
+  VipDelete: '/vip-power/delete/',
 };
 
 // 商品列表

@@ -40,14 +40,14 @@
     </div>
 
     
-    <config-dialog ref="dialogRef" />
+    <config-dialog ref="dialogRef" @confirm="featchDataList"/>
   </div>
 </template>
 <script lang="ts" setup>
 import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { ref, reactive ,onMounted } from 'vue';
-
-import { getVipList } from '@/api/goods'
+import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
+import { getVipList ,deleteVip} from '@/api/goods'
 
 import ConfigDialog from './Dialog.vue';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
@@ -93,14 +93,32 @@ const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PA
 
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
 
-const handleCreate = () => {
-  dialogRef.value?.open();
+const handleCreate = (row: TableRowData) => {
+  dialogRef.value?.open(row);
 };
 const handleEdit = (row: TableRowData) => {
   dialogRef.value?.open(row);
 };
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
+   const dialog = DialogPlugin.confirm({
+    theme: 'danger',
+    header: '确认删除',
+    body: `您确定要删除吗？`,
+    confirmBtn: '确认',
+    cancelBtn: '取消',
+    onConfirm: async () => {
+      // 执行删除操作
+      console.log('删除分类:', row);
+      const res = await deleteVip(row.id);
+      MessagePlugin.success(res.message);
+      featchDataList()
+      dialog.destroy();
+    },
+    onCancel: () => {
+      dialog.hide();
+    },
+  });
 };
 
 const featchDataList = async (page: number = pagination.defaultCurrent) => {

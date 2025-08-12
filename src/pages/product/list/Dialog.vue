@@ -31,7 +31,7 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { MessagePlugin, type DialogProps } from 'tdesign-vue-next';
+import { MessagePlugin } from 'tdesign-vue-next';
 
 import { createGoods, updateGoods } from '@/api/goods';
 const emit = defineEmits(['confirm'])
