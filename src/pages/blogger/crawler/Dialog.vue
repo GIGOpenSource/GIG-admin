@@ -2,12 +2,12 @@
   <t-dialog v-model:visible="visible" :header="title" :confirm-btn="confirmBtn" :cancel-btn="cancelBtn" width="400px"
     @confirm="handleConfirm" @close="handleClose">
     <t-form :data="formData" :label-width="80">
-      <t-form-item label="博主UID" name="bloggerUid">
+      <!-- <t-form-item label="博主UID" name="bloggerUid">
         <t-input v-model="formData.bloggerUid" placeholder="输入博主UID" />
-      </t-form-item>
+      </t-form-item> -->
 
-      <t-form-item label="博主昵称" name="bloggerNickname">
-        <t-input v-model="formData.bloggerNickname" placeholder="输入博主昵称" />
+      <t-form-item label="选择博主" name="bloggerNickname"> <t-select v-model="formData.bloggerUid" :options="bloggerList"
+          :keys="{ label: 'nickname', value: 'id' }" placeholder="请选择博主" filterable />
       </t-form-item>
       <t-form-item label="主页地址" name="homepageUrl">
         <t-input v-model="formData.homepageUrl" placeholder="输入主页地址" />
@@ -21,7 +21,6 @@ import { MessagePlugin, type DialogProps } from 'tdesign-vue-next';
 import { createBlogCrawler, updateBlogCrawler } from '@/api/blogger';
 const emit = defineEmits(['confirm'])
 const title = ref('创建任务');
-
 const visible = ref(false);
 
 const formData = ref({
@@ -29,6 +28,11 @@ const formData = ref({
   homepageUrl: '',
   bloggerNickname: ''
 });
+const bloggerList = [  
+  { id: 1, nickname: '博主A' },
+  { id: 2, nickname: '博主B' },
+  { id: 3, nickname: '博主C' },
+]
 
 const confirmBtn = '确认';
 const cancelBtn = '取消';
@@ -46,6 +50,11 @@ const open = (data?: any) => {
 };
 
 const handleConfirm = async () => {
+
+console.log(formData.value.bloggerUid,'formData.value.bloggerUidformData.value.bloggerUid');
+
+
+  return
   if (!formData.value.bloggerUid) return MessagePlugin.error('请输入博主uid')
   if (!formData.value.bloggerNickname) return MessagePlugin.error('请输入博主名称')
   if (!formData.value.homepageUrl) return MessagePlugin.error('请输入主页地址')

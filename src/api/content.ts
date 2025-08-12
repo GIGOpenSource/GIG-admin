@@ -1,7 +1,7 @@
 import { request } from '@/utils/request';
 
 const Api = {
-  CreateContent: '/content-chapter/create',
+  CreateContent: '/content-chapter/unified',
   ContentList: '/content-chapter/content/list',
   AuditContent: '/content-chapter/review/',
   DelContent: '/content-chapter/content/delete',

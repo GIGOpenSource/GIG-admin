@@ -101,8 +101,8 @@ const formData = ref<FormData>({
 });
 
 const createDropdownOptions = ref([
-  { content: '小说/动漫/漫画', value: 1, onClick: () => editDialogRef.value.open() },
-  { content: '常规内容', value: 2, onClick: () => editDefaultDialogRef.value.open() },
+  { content: '小说/动漫/漫画', value: 1, onClick: (row: TableRowData) => editDialogRef.value.open(row) },
+  { content: '常规内容', value: 2, onClick: (row: TableRowData) => editDefaultDialogRef.value.open(row) },
 ]);
 
 // 小说动漫漫画编辑
@@ -195,7 +195,12 @@ console.log('zoiulerma ');
 };
 // 编辑
 const handleEdit = (row: TableRowData) => {
-  editDialogRef.value.open(row);
+  if(row.contentType == 'NOVEL'){
+      editDialogRef.value.open(row);
+  }else{
+       editDefaultDialogRef.value.open(row);
+  }
+
 };
 
 // 删除

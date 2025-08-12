@@ -19,7 +19,7 @@
           </t-form-item>
         </t-col>
       </t-row>
-       <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+      <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
         <t-col :span="12">
           <t-form-item label="简介" name="description">
             <t-input v-model="data.description" class="form-item-content" placeholder="请输入简介" />
@@ -27,7 +27,7 @@
         </t-col>
 
       </t-row>
-     <!-- 标签列表 -->
+      <!-- 标签列表 -->
       <div class="diversity-list">
         <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" v-for="(item, index) in data.tags" :key="index"
           align="middle" :gutter="16">
@@ -41,8 +41,8 @@
           </t-col>
         </t-row>
       </div>
-        <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" @click="addtages">添加标签</t-button>
-     
+      <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" @click="addtages">添加标签</t-button>
+
       <!-- 分集列表 -->
       <div class="diversity-list">
         <t-row v-for="(diversity, index) in diversitys" :key="index" align="middle" :gutter="16"
@@ -67,10 +67,10 @@
   </t-dialog>
 </template>
 <script setup lang="ts">
-import  {type DialogProps,MessagePlugin} from 'tdesign-vue-next';
+import { type DialogProps, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 import { createContent } from '@/api/content';
-const emit = defineEmits(['confirm']) 
+const emit = defineEmits(['confirm'])
 interface FormData {
   coverUrl: string,
   title: string,
@@ -100,6 +100,19 @@ const data = ref<FormData>({
 const open = (row?: any) => {
   console.log('🚀 ~ row:', row);
   title.value = row?.id ? '小说/动漫/漫画编辑' : '小说/动漫/漫画新建';
+
+  if (row.id) {
+    data.value = row
+  } else {
+    data.value = {
+      coverUrl: '',
+      title: '',
+      description: '',
+      authorNicknamel: '',
+      tags: [],
+    }
+
+  }
   visible.value = true;
 };
 
@@ -116,18 +129,22 @@ const onConfirm: DialogProps['onConfirm'] = async () => {
     }
   })
   let params = {
-    ...data.value,
+    operationType: "CREATE_ARTICLE",
+    contentData:{
+      ...data.value,
     chapters: arr,
     contentType: "NOVEL",
+    }
+   
   }
 
   const res = await createContent(params)
 
-    visible.value = false;
+  visible.value = false;
   diversitys.value = []; // 清空分集列表
   data.value.tags = []
   MessagePlugin.success(res.message);
-   emit('confirm')
+  emit('confirm')
 
 };
 
@@ -145,7 +162,7 @@ const addDiversity = () => {
 };
 // 删除分集
 const handleDeleDiversitys = (key: number) => {
-  diversitys.value.splice(key,1)
+  diversitys.value.splice(key, 1)
 };
 
 // 添加标签
@@ -154,7 +171,7 @@ const addtages = () => {
 };
 // 删除标签
 const handleDeletTages = (key: number) => {
-    data.value.tags.splice(key,1)
+  data.value.tags.splice(key, 1)
 };
 defineExpose({
   open,

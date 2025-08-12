@@ -12,7 +12,7 @@
         <t-input v-model="formData.browserTag" placeholder="输入用户浏览标签" />
       </t-form-item>
       <t-form-item label="商品描述" name="promotionCopy">
-        <t-input type="number" v-model="formData.promotionCopy" placeholder="输入促销文案" />
+        <t-input type="number" v-model="formData.description" placeholder="输入促销文案" />
       </t-form-item>
       <t-form-item label="价格" name="price">
         <t-input v-model="formData.price" placeholder="输入价格" />
@@ -42,12 +42,13 @@ const formData = ref({
   strategyScene: '',
   // scene: '',
   browserTag: '',
-  promotionCopy: '',
+  description: '',
   price: '',
   name: '',
   packageName: '',
   sortOrder: '',
-   goodsType:''
+   goodsType:'',
+   status:"N"
 });
 const packageOptions = [
   { label: '金币', value: 'coin' },
@@ -68,12 +69,13 @@ const open = (data?: any) => {
       strategyScene: '',
       // scene: '',
       browserTag: '',
-      promotionCopy: '',
+      description: '',
       price: '',
       name: '',
       packageName: '',
       sortOrder: '',
-      goodsType:''
+      goodsType:'',
+      status:"N"
     }
 
   }
@@ -84,7 +86,7 @@ const handleConfirm = async () => {
 if (!formData.value.goodsType) return MessagePlugin.error('请选择商品类型')
 if (!formData.value.strategyScene) return MessagePlugin.error('请输入策略名称场景')
 if (!formData.value.browserTag) return MessagePlugin.error('请输入用户浏览标签')
-if (!formData.value.promotionCopy) return MessagePlugin.error('请输入商品描述')
+if (!formData.value.description) return MessagePlugin.error('请输入商品描述')
 if (!formData.value.name) return MessagePlugin.error('请输入商品名称')
 if (!formData.value.price) return MessagePlugin.error('请输入商品价格')
 if (!formData.value.packageName) return MessagePlugin.error('请输入包名')
