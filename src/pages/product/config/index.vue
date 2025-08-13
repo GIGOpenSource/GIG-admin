@@ -94,7 +94,7 @@ const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PA
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
 
 const handleCreate = (row: TableRowData) => {
-  dialogRef.value?.open(row);
+  dialogRef.value?.open({});
 };
 const handleEdit = (row: TableRowData) => {
   dialogRef.value?.open(row);

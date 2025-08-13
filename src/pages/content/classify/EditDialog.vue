@@ -76,7 +76,7 @@ const open = (row: any) => {
 };
 
 const onConfirm: DialogProps['onConfirm'] = async () => {
-  if (!data.value.sortOrder) return MessagePlugin.error('请输入分类排序')
+  // if (!data.value.sortOrder) return MessagePlugin.error('请输入分类排序')
   if (!data.value.name) return MessagePlugin.error('请输入分类名称')
   if (!data.value.iconUrl) return MessagePlugin.error('请输入分类icon')
   const fn = id.value > 0 ? updateCategory : createCategory

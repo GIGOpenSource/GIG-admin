@@ -104,7 +104,7 @@ const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PA
 
 const handleCreate = (row: TableRowData) => {
   // 新建逻辑
-   editDialogRef.value.open(row);
+   editDialogRef.value.open({});
 };
 
 const handleEdit = (row: TableRowData) => {

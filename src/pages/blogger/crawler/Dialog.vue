@@ -1,24 +1,26 @@
 <template>
   <t-dialog v-model:visible="visible" :header="title" :confirm-btn="confirmBtn" :cancel-btn="cancelBtn" width="400px"
     @confirm="handleConfirm" @close="handleClose">
-    <t-form :data="formData" :label-width="80">
+    <t-form :data="formData" :label-width="80" >
       <!-- <t-form-item label="博主UID" name="bloggerUid">
         <t-input v-model="formData.bloggerUid" placeholder="输入博主UID" />
       </t-form-item> -->
 
-      <t-form-item label="选择博主" name="bloggerNickname"> <t-select v-model="formData.bloggerUid" :options="bloggerList"
-          :keys="{ label: 'nickname', value: 'id' }" placeholder="请选择博主" filterable />
+      <t-form-item label="选择博主" name="bloggerNickname">
+         <t-select v-model="formData.bloggerUid" :options="bloggerList"
+         placeholder="选择博主"  clearable @change="(value, label) => handleChange(value,label)"/>
       </t-form-item>
       <t-form-item label="主页地址" name="homepageUrl">
-        <t-input v-model="formData.homepageUrl" placeholder="输入主页地址" />
+        <t-input type="text" v-model="formData.homepageUrl" placeholder="输入主页地址" />
       </t-form-item>
     </t-form>
   </t-dialog>
+  
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { MessagePlugin, type DialogProps } from 'tdesign-vue-next';
-import { createBlogCrawler, updateBlogCrawler } from '@/api/blogger';
+import { ref, reactive } from 'vue';
+import { MessagePlugin, type DialogProps} from 'tdesign-vue-next';
+import { createBlogCrawler, updateBlogCrawler,getBlogAll} from '@/api/blogger';
 const emit = defineEmits(['confirm'])
 const title = ref('创建任务');
 const visible = ref(false);
@@ -28,35 +30,44 @@ const formData = ref({
   homepageUrl: '',
   bloggerNickname: ''
 });
-const bloggerList = [  
-  { id: 1, nickname: '博主A' },
-  { id: 2, nickname: '博主B' },
-  { id: 3, nickname: '博主C' },
-]
+const bloggerList = ref([])
 
 const confirmBtn = '确认';
 const cancelBtn = '取消';
 
 const open = (data?: any) => {
+  console.log('3333');
+  
+  fetchDataList()
   title.value = data?.id ? '编辑任务' : '新建任务';
   if (data) {
     formData.value = data
   } else {
-    formData.value.bloggerUid = '';
-    formData.value.homepageUrl = '';
-    formData.value.bloggerNickname = '';
+    formData.value = {
+  bloggerUid: '',
+  homepageUrl: '',
+  bloggerNickname: ''
+}
   }
   visible.value = true;
 };
 
+const fetchDataList = async () => {
+  const res = await getBlogAll({});
+  bloggerList.value = res.data.data.map((item:any) => {
+    return {
+      label:item.bloggerNickname,
+      value:item.id
+    }
+  })
+  
+};
+
+
 const handleConfirm = async () => {
 
-console.log(formData.value.bloggerUid,'formData.value.bloggerUidformData.value.bloggerUid');
 
-
-  return
-  if (!formData.value.bloggerUid) return MessagePlugin.error('请输入博主uid')
-  if (!formData.value.bloggerNickname) return MessagePlugin.error('请输入博主名称')
+  if (!formData.value.bloggerUid) return MessagePlugin.error('请选择博主')
   if (!formData.value.homepageUrl) return MessagePlugin.error('请输入主页地址')
   // 提交逻辑
   const fn = title.value == '编辑任务' ? updateBlogCrawler : createBlogCrawler
@@ -70,6 +81,10 @@ const handleClose = () => {
   visible.value = false;
 };
 
+const handleChange = (e:any,value:any) => {
+  formData.value.bloggerUid = value.option.value
+  formData.value.bloggerNickname =   value.option.label
+};
 defineExpose({
   open,
 });

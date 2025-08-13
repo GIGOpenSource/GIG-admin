@@ -52,7 +52,7 @@
             <t-input v-model="diversity.title" class="form-item-content" placeholder="分集名称" />
           </t-col>
           <t-col :span="4">
-            <t-input v-model="diversity.file_url" class="form-item-content" placeholder="上传文件" />
+            <t-input v-model="diversity.fileUrl" class="form-item-content" placeholder="上传文件" />
           </t-col>
           <t-col :span="1">
             <t-link theme="danger" @click="handleDeleDiversitys(index)">删除</t-link>
@@ -81,7 +81,7 @@ interface FormData {
 // 分集类型
 interface Diversity {
   title: string;
-  file_url: string;
+  fileUrl: string;
   status: "DRAFT";
   chapterNum: Number
 }
@@ -122,6 +122,12 @@ const onCancel: DialogProps['onCancel'] = () => {
 };
 
 const onConfirm: DialogProps['onConfirm'] = async () => {
+    if (!data.value.coverUrl) return MessagePlugin.error('请上传封面')
+  if (!data.value.title) return MessagePlugin.error('请输入名称')
+  if (!data.value.authorNicknamel) return MessagePlugin.error('请输入作者')
+  if (!data.value.description) return MessagePlugin.error('请输入简介')
+  if (!data.value.tags.length) return MessagePlugin.error('标签不能为空')
+  if (!diversitys.value.length) return MessagePlugin.error('分集不能为空')
   let arr = diversitys.value.map((item, index) => {
     return {
       ...item,
@@ -129,12 +135,13 @@ const onConfirm: DialogProps['onConfirm'] = async () => {
     }
   })
   let params = {
-    operationType: "CREATE_ARTICLE",
+    operationType: "CREATE_STORY",
     contentData:{
       ...data.value,
-    chapters: arr,
+   
     contentType: "NOVEL",
-    }
+    },
+     chapterDataList: arr,
    
   }
 
@@ -155,7 +162,7 @@ const diversitys = ref<Diversity[]>([]);
 const addDiversity = () => {
   diversitys.value.push({
     title: '',
-    file_url: '',
+    fileUrl: '',
     status: "DRAFT",
     chapterNum: 0
   });

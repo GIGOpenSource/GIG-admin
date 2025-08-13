@@ -33,7 +33,7 @@
 import { MessagePlugin, type DialogProps } from 'tdesign-vue-next';
 const emit = defineEmits(['confirm'])
 import { ref } from 'vue';
-import {createBlog, updateBlog} from '@/api/blogger';
+import { getBlogList, createBlog, updateBlog, delBlog } from '@/api/blogger';
 const visible = ref(false);
 const formData = ref({
   bloggerUid: '',

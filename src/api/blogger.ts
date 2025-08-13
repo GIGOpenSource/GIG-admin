@@ -6,13 +6,20 @@ const Api = {
   UpdateBlog: '/blo/update',
   DelBlog: '/blo/',
 
-  
-  BloCrawler: '/blo/crawler/query',
-  BloCrawlerCreate: '/blo/crawler/create',
-  BloCrawlerUpdate: '/blo/crawler/update',
-  BloCrawleDel: '/blo/crawler/',
+  BloAll:'/blo/query-all',
+  BloCrawler: '/blo-python/query',
+  BloCrawlerCreate: '/blo-python/create',
+  BloCrawlerUpdate: '/blo-python/update',
+  BloCrawleDel: '/blo-python/delete/',
 };
 
+// 查询所有博主
+export function getBlogAll(data: any) {
+ return request.post({
+     url: Api.BloAll,
+     data,
+   });
+}
 
 // 博主列表
 export function getBlogList(data: any) {

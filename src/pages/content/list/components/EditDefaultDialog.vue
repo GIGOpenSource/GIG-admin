@@ -10,7 +10,7 @@
         <t-input v-model="data.content" placeholder="输入正文" />
       </t-form-item>
       <t-form-item label="上传文件" name="email">
-        <t-input v-model="data.mediaFiles" placeholder="输入邮箱" />
+        <t-input v-model="data.mediaFiles" placeholder="上传文件" />
       </t-form-item>
       <!-- 标签列表 -->
       <div class="diversity-list">
@@ -62,6 +62,10 @@ const open = (row?: any) => {
 };
 
 const onConfirm: DialogProps['onConfirm'] = async () => {
+  if (!data.value.title) return MessagePlugin.error('请输入主标题')
+  if (!data.value.content) return MessagePlugin.error('请输入正文')
+  if (!data.value.mediaFiles.length) return MessagePlugin.error('请上传文件')
+  if (!data.value.tags.length) return MessagePlugin.error('标签不能为空')
   let params = {
     operationType: "CREATE_ARTICLE",
     contentData: {
