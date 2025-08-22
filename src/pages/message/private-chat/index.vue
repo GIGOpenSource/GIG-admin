@@ -26,14 +26,14 @@
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary"> 查询 </t-button>
-          <t-button theme="default" > 重置 </t-button>
+          <t-button theme="primary" @click="handleQuery"> 查询 </t-button>
+          <t-button theme="default" @click="handleReset" > 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId"  :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleView(row)">查看对话</t-link>
@@ -46,7 +46,13 @@
 </template>
 <script setup lang="ts">
 import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import {
+  type TdBaseTableProps,
+} from 'tdesign-vue-next';
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
+import { getMessageList } from '@/api/message';
+
+import { ref ,onMounted} from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -55,10 +61,12 @@ interface FormData {
   id: string;
   status: string | number;
 }
-
-const formData = ref<FormData>({
+const searchForm = {
   id: '',
   status: '',
+};
+const formData = ref<FormData>({
+   ...searchForm,
 });
 
 const statusOptions = [
@@ -68,40 +76,65 @@ const statusOptions = [
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
-  { title: '对话ID', colKey: 'dialogId', align: 'center', width: 120 },
-  { title: '发起对话用户ID', colKey: 'fromUserId', align: 'center', width: 120 },
-  { title: '对话对方用户ID', colKey: 'toUserId', align: 'center', width: 120 },
+  { title: '对话ID', colKey: 'id', align: 'center', width: 120 },
+  { title: '发起对话用户ID', colKey: 'userId', align: 'center', width: 120 },
+  { title: '对话对方用户ID', colKey: 'otherUserId', align: 'center', width: 120 },
   { title: '对话消息数量', colKey: 'messageCount', align: 'center', width: 120 },
-  { title: '最近更新时间', colKey: 'updateTime', align: 'center', width: 160 },
-  { title: '所属APP', colKey: 'app', align: 'center', width: 120 },
+  { title: '最近更新时间', colKey: 'lastMessageTime', align: 'center', width: 160 },
+  { title: '所属APP', colKey: 'appName', align: 'center', width: 120 },
   { title: '操作', colKey: 'operation', align: 'center', width: 120 },
 ];
 
 const tableData = ref<TableRowData[]>([
-  {
-    dialogId: 'D10001',
-    fromUserId: 'U001',
-    toUserId: 'U002',
-    messageCount: 35,
-    updateTime: '2025-07-30 10:00:00',
-    app: 'APP-A',
-  },
-  {
-    dialogId: 'D10002',
-    fromUserId: 'U003',
-    toUserId: 'U004',
-    messageCount: 12,
-    updateTime: '2025-07-29 15:20:00',
-    app: 'APP-B',
-  },
+
 ]);
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
 const handleView = (row: TableRowData) => {
   console.log('🚀 ~ row:', row);
 
   // 查看对话逻辑
-  router.push({ path: '/message/chat/detail' });
+  router.push({ path: '/message/chat/detail',query: { id: row.id } });
 };
+// 查询
+const handleQuery = () => {
+  fetchDataList()
+};
+// 请求数据
+const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
+  let params = { ...formData.value }
+  const { data } = await  getMessageList({
+    ...params,
+    page,
+    size: pagination.value.defaultPageSize,
+  });
+  tableData.value = data.data;
+  pagination.value.total = data.total;
+  pagination.value.current = page;
+};
+// 重置
+const handleReset = () => {
+  formData.value = { ...searchForm };
+  initData()
+};
+
+// 初始化数据
+const initData = async (page: number = pagination.value.defaultCurrent) => {
+  const params = {
+    ...formData.value,
+    page,
+    size: pagination.value.defaultPageSize,
+  };
+  const res = await getMessageList(params);
+  console.log('🚀 ~ initData ~ res:', res);
+
+  tableData.value = res.data.data;
+  pagination.value.total = res.data.total;
+};
+
+onMounted(() => {
+  initData();
+});
 </script>
 <style lang="less" scoped>
 .private-chat-list-container {

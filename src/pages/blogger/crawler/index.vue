@@ -62,8 +62,10 @@ const formData = ref<FormData>({
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 
 const statusOptions = [
-  { label: '未更新', value: 1 },
-  { label: '已更新', value: 0 },
+  { label: '未更新', value: "not_updated" },
+  { label: '已更新', value: "updated" },
+  // { label: '未更新', value: "1" },
+  // { label: '已更新', value: 0 },
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
@@ -154,8 +156,8 @@ const fetchDataList = async (page: number= pagination.defaultCurrent) => {
   };
   const res = await getBlogCrawlerList(params);
   console.log('🚀 ~ fetchDataList ~ data:', res);
-  tableData.value = res.data.data.data;
-  pagination.total = res.data.data.total;
+  tableData.value = res.data.data;
+  pagination.total = res.data.total;
 };
 
 onMounted(() => {

@@ -129,7 +129,7 @@ const featchDataList = async (page: number = pagination.defaultCurrent) => {
   }
   const res = await getVipList(param);
   console.log("🚀 ~ featchDataList ~ res:", res)
-  tableData.value = res.data.data.data;
+  tableData.value = res.data.data;
   pagination.total = res.data.total;
 };
 

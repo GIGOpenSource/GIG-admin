@@ -54,7 +54,7 @@ const open = (data?: any) => {
 
 const fetchDataList = async () => {
   const res = await getBlogAll({});
-  bloggerList.value = res.data.data.map((item:any) => {
+  bloggerList.value = res.data.map((item:any) => {
     return {
       label:item.bloggerNickname,
       value:item.id

@@ -15,7 +15,9 @@
             </t-col>
             <t-col :span="4">
               <t-form-item label="父级名称" name="parentId">
-                <t-input v-model="formData.parentId" type="search" placeholder="输入父级名称" />
+                <!-- <t-input v-model="formData.parentId" type="search" placeholder="输入父级名称" /> -->
+                <t-cascader v-model="formData.parentId" :options="options" :keys="{ value: 'id', label: 'name' }" check-strictly
+          placeholder="选择父级" clearable />
               </t-form-item>
             </t-col>
             <t-col :span="4">
@@ -61,7 +63,7 @@ import { ref, onMounted } from 'vue';
 
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
-import { contentCategory, delCategory } from '@/api/content';
+import { contentCategory, delCategory,categoryTree} from '@/api/content';
 
 import EditDialog from './EditDialog.vue';
 
@@ -80,7 +82,7 @@ const searchForm = {
 const formData = ref<FormData>({
 ...searchForm
 });
-
+const options = ref()
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 
 // 表格字段
@@ -171,12 +173,15 @@ const fetchDataList = async (page: number = pagination.value.defaultCurrent) => 
   const res = await contentCategory(params);
   console.log('🚀 ~ fetchDataList ~ res:', res);
 
-  tableData.value = res.data.data.records;
-  pagination.value.total = res.data.data.total;
+  tableData.value = res.data.records;
+  pagination.value.total = res.data.total;
 };
 
 onMounted(() => {
   fetchDataList();
+  categoryTree().then(res => {
+    options.value = res.data
+  })
 });
 </script>
 <style lang="less" scoped>

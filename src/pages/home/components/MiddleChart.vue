@@ -65,7 +65,7 @@ const updateContainer = () => {
 
 const featchChartData = async ()=>{
   const res = await getChartData()
-  chartData.value = res.data.data
+  chartData.value = res.data
   renderCharts();
   nextTick(() => {
     updateContainer();

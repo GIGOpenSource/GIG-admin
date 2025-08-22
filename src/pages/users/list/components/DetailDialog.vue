@@ -158,7 +158,7 @@ const initData = async (id: number) => {
     res.data.userStatus.lastLoginTime = formatDate(res.data.userStatus.lastLoginTime);
   }
 
-   Object.assign(data, res.data.data);
+   Object.assign(data, res.data);
   visible.value = true;
 };
 

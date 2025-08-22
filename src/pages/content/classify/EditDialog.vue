@@ -65,11 +65,11 @@ const open = (row: any) => {
     }
   }
   categoryTree().then(res => {
-    options.value = res.data.data
+    options.value = res.data
   })
   if (row?.id) {
     categoryDetail(row.id).then(res => {
-      data.value = res.data.data
+      data.value = res.data
     })
   }
   visible.value = true;

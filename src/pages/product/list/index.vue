@@ -11,8 +11,8 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="选择状态" name="status">
-                <t-select v-model="formData.status" :options="statusOptions" placeholder="选择状态" clearable />
+              <t-form-item label="选择状态" name="isOnline">
+                <t-select v-model="formData.isOnline" :options="statusOptions" placeholder="选择状态" clearable />
               </t-form-item>
             </t-col>
             <t-col :span="4">
@@ -37,7 +37,9 @@
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
-            <t-link theme="success" @click="handleOnline(row)">上线/下线</t-link>
+            <t-link theme="success" @click="handleOnline(row)">
+              {{ row.isOnline === 'Y' ? '下线' : '上线' }}
+            </t-link>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
           </t-space>
@@ -60,13 +62,13 @@ import ConfigDialog from './Dialog.vue';
 
 interface FormData {
   packageName: string;
-  status: string | number;
+  isOnline: string | number;
   strategyScene: string;
 }
 
 const formData = ref<FormData>({
   packageName: '',
-  status: '',
+  isOnline: '',
   strategyScene: '',
 });
 
@@ -117,8 +119,12 @@ const handleCreate = (row: TableRowData) => {
 const handleEdit = (row: TableRowData) => {
   dialogRef.value?.open(row);
 };
+
 const handleOnline = async (row: TableRowData) => {
-  let status = row.status == 'Y' ? 'N' : 'Y'
+  console.log("🚀 ~ handleOnline ~ row:", row.status)
+  // let status = row.status == 'active' ? 'N' : 'active'
+   let status = row.isOnline == 'Y' ? 'N' : 'Y'
+  console.log("🚀status", status)
   // 上线/下线逻辑
   const res = await changeGoodsStatus(row.id, status);
   MessagePlugin.success(res.message);
@@ -167,8 +173,8 @@ const featchDataList = async (page: number = pagination.defaultCurrent) => {
   }
   const res = await getGoodsList(param);
   console.log("🚀 ~ featchDataList ~ res:", res)
-  tableData.value = res.data.data.records;
-  pagination.total = res.data.total;
+  tableData.value = res.data.records;
+  pagination.total = res.total;
 };
 
 onMounted(() => {

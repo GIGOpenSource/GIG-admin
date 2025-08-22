@@ -5,30 +5,27 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="标签名" name="code">
+              <t-form-item label="标签名" name="name">
                 <t-input
-                  v-model="formData.code"
+                  v-model="formData.name"
                   type="search"
-                  placeholder="输入渠道码编码"
+                  placeholder="输入标签名"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="标签类型" name="code">
-                <t-input
-                  v-model="formData.code"
-                  type="search"
-                  placeholder="输入渠道码编码"
-                  :style="{ minWidth: '134px' }"
-                />
+              <t-form-item label="标签类型" name="tagType">
+                 <t-select v-model="formData.tagType" placeholder="选择标签类型" clearable>
+                  <t-option v-for="val in tagTypeOptions" :key="val.value" :value="val.value" :label="val.label" />
+                </t-select>
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary"> 查询 </t-button>
-          <t-button theme="default" > 重置 </t-button>
+          <t-button theme="primary"  @click="handleQuery"> 查询 </t-button>
+          <t-button theme="default" @click="handleReset"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
@@ -43,56 +40,77 @@
       </t-table>
     </div>
 
-    <edit-dialog ref="editDialogRef" />
+    <edit-dialog ref="editDialogRef" @confirm="fetchDataList()" />
   </div>
 </template>
 <script lang="ts" setup>
 import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { ref , onMounted } from 'vue';
+import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 import EditDialog from './EditDialog.vue';
+import { getTagList } from '@/api/recommend';
+import { h } from 'vue';
 
 interface FormData {
-  code: string;
-  link: string;
+  name: string;
+  tagType: string;
 }
 
+const tagTypeOptions = [
+  { label: '内容', value: 'content' },
+  { label: '兴趣', value: 'interest' },
+  { label: '系统', value: 'system' },
+];
+const searchForm = {
+  name: '',
+  tagType: '',
+};
 const formData = ref<FormData>({
-  code: '',
-  link: '',
+   ...searchForm,
 });
 
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
+  function getLabel(options: { label: string; value: string }[], value: string) {
+  const found = options.find(opt => opt.value === value);
+  return found ? found.label : value;
+}
 
 // 表格字段
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '序号',
-    colKey: 'index',
+    colKey: 'serial-number',
     align: 'center',
     width: 80,
   },
   {
     title: '标签名',
-    colKey: 'link',
+    colKey: 'name',
     align: 'left',
     ellipsis: true,
   },
   {
     title: '标签类型',
-    colKey: 'code',
+    colKey: 'tagType',
     align: 'left',
     ellipsis: true,
-  },
+    cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
+    return tagTypeOptions.find(opt => opt.value === row.tagType)?.label || '';
+}
+   },
   {
     title: '标签等级',
-    colKey: 'materialName',
+    colKey: 'tagType',
     align: 'left',
     ellipsis: true,
+    cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
+    return tagTypeOptions.find(opt => opt.value === row.tagType)?.label || '';
+}
   },
   {
     title: '标签说明',
-    colKey: 'materialImage',
+    colKey: 'description',
     align: 'center',
   },
   {
@@ -104,20 +122,61 @@ const COLUMNS: PrimaryTableCol[] = [
 ];
 
 const tableData = ref([
-  { id: 1, code: 'QDM001', link: 'https://example.com/qdm001' },
-  { id: 2, code: 'QDM002', link: 'https://example.com/qdm002' },
 ]);
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
 
-const pagination = ref<TdBaseTableProps['pagination']>({
-  defaultCurrent: 1,
-  defaultPageSize: 10,
-  total: 999,
-  showFirstAndLastPageBtn: true,
-  totalContent: false,
-});
 const handleEdit = (row: TableRowData) => {
   editDialogRef.value.open(row);
 };
+
+// 弹窗保存后刷新列表
+// if (editDialogRef.value) {
+//   editDialogRef.value.$on && editDialogRef.value.$on('confirm', () => {
+//     fetchDataList();
+//   });
+// }
+// 请求列表数据
+const fetchDataList = async (page: number= pagination.value.defaultCurrent) => {
+  const params = {
+    ...formData.value,
+  };
+  const res = await getTagList({ ...params,
+    page,
+    size: pagination.value.defaultPageSize});
+  console.log('111111111111', res.data.records);
+  tableData.value = res.data.records
+  pagination.value.total = res.data.total;
+  pagination.value.current = page;
+};
+// 查询
+const handleQuery = () => {
+
+  fetchDataList()
+};
+
+// 重置
+const handleReset = () => {
+  formData.value = { ...searchForm };
+  initData()
+};
+// 初始化数据
+const initData = async (page: number =pagination.value.defaultCurrent) => {
+  const params = {
+    ...formData.value,
+    page,
+    size: pagination.value.defaultPageSize,
+  };
+   console.log('🚀 ~ fetchDataList ~ params:', pagination.value);
+  const res = await getTagList(params);
+  console.log('🚀 ~ initData ~ res:', res);
+
+  tableData.value = res.data.records;
+  pagination.value.total = res.data.total;
+};
+
+onMounted(() => {
+  initData();
+});
 </script>
 <style lang="less" scoped>
 .channel-code-list-container {

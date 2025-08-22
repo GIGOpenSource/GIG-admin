@@ -12,7 +12,7 @@
         <t-input v-model="formData.browserTag" placeholder="输入用户浏览标签" />
       </t-form-item>
       <t-form-item label="商品描述" name="promotionCopy">
-        <t-input type="number" v-model="formData.description" placeholder="输入促销文案" />
+        <t-input  v-model="formData.description" placeholder="输入促销文案" />
       </t-form-item>
       <t-form-item label="价格" name="price">
         <t-input v-model="formData.price" placeholder="输入价格" />

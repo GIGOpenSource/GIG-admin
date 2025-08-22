@@ -31,6 +31,7 @@ const data = ref<FormData>({
 
 const open = (row: any) => {
   console.log('🚀 ~ row:', row);
+  data.value.reason=""
   data.value.id = row.id
   visible.value = true;
 };

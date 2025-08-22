@@ -4,7 +4,7 @@ import { usePermissionStore } from '@/store';
 import type { UserInfo } from '@/types/interface';
 
 import type { LoginForm } from '@/api/model/userModel';
-import { login , getInfo} from '@/api/user';
+import { login, getInfo } from '@/api/user';
 
 const InitUserInfo: UserInfo = {
   username: '', // 用户名，用于展示在页面右上角头像处
@@ -25,12 +25,16 @@ export const useUserStore = defineStore('user', {
   actions: {
     // 登录
     async login(userInfo: LoginForm) {
+      console.log("🚀 ~ login ~ userInfo:", userInfo)
       const res = await login(userInfo);
       console.log("🚀 ~ res:", res)
+      console.log("🚀 ~ res:", res.data.token, res.code)
+
       // if (res.code === 200) {
-      if (res.code === 0 && res.data.data.token) {
-        this.token = res.data.data.token;
-        this.userInfo = res.data.data
+      if (res.code === 0 && res.data.token) {
+        this.token = res.data.token;
+        this.userInfo = res.data;
+        console.log("🚀 ~ this.userInfo:", this.userInfo)
         return res;
       } else {
         throw res;
@@ -50,11 +54,11 @@ export const useUserStore = defineStore('user', {
       //   };
       // };
       // const res = await mockRemoteUserInfo(this.token);
-     const res =  await getInfo({username: this.userInfo.username})
+      const res = await getInfo({ username: this.userInfo?.username || '' })
+      console.log("🚀 ~ resuserInfo:", res)
+      this.userInfo = res.data;
 
-      this.userInfo = res.data.data;
-
-      return res.data.data;
+      return res.data;
     },
     async setUserInfo(userInfo: UserInfo) {
       console.log("🚀 ~ setUserInfo ~ userInfo:", userInfo)
@@ -71,6 +75,6 @@ export const useUserStore = defineStore('user', {
       permissionStore.initRoutes();
     },
     key: 'user',
-    paths: ['token','userInfo'],
+    paths: ['token', 'userInfo'],
   },
 });

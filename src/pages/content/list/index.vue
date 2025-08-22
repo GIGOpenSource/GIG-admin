@@ -37,7 +37,7 @@
     </t-row>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" @page-change="handlePageChange">
         <template #diversity="{ row }">
           <t-link theme="primary" v-if="['NOVEL', 'COMIC', 'ANIME'].includes(row.contentType)" @click="handleReviewDiversity(row)"> 查看</t-link>
           <span v-else>-</span>
@@ -228,10 +228,11 @@ const handleDelete = (row: TableRowData) => {
 const handleQuery = () => {
   fetchDataList()
 };
+
 // 请求数据
 const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
   let params = { ...formData.value }
-  params.contentType =  params.contentType === '小说'?'NOVEL' :'ARTICLE'
+  // params.contentType =  params.contentType === '小说'?'NOVEL' :'ARTICLE'
   const { data } = await  getContentList({
     ...params,
     page,

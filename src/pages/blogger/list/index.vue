@@ -72,8 +72,8 @@ const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 
 const statusOptions = [
   { label: '全部', value: '' },
-  { label: '正常', value: 1 },
-  { label: '禁用', value: 0 },
+  { label: '正常', value: 'success' },
+  { label: '禁用', value: 'not_updated' },
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
@@ -182,8 +182,8 @@ const fetchDataList = async (page: number= pagination.defaultCurrent) => {
   };
   const res = await getBlogList(params);
   console.log('🚀 ~ fetchDataList ~ data:', res);
-  tableData.value = res.data.data.data;
-  pagination.total = res.data.data.total;
+  tableData.value = res.data.data;
+  pagination.total = res.data.total;
 };
 // 查询
 const handleQuery = () => {

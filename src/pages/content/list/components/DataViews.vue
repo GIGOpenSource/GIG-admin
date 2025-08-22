@@ -5,7 +5,6 @@
       <p>评论：{{ nums.totalCommentCount}}</p>
       <p>点赞：{{ nums.totalLikeCount}}</p>
     </t-space>
-
     <div class="table-container">
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
         <template #operation="{ row }">
@@ -27,7 +26,7 @@ import { dataStatistics, delCommment } from '@/api/content';
 const visible = ref(false);
 
 const id = ref(0);
-
+const contentId = ref(0);
 // 点赞评论数
 const nums = reactive({
   totalCommentCount: 0,
@@ -65,7 +64,8 @@ const COLUMNS: PrimaryTableCol[] = [
 
 const tableData = ref([]);
 
-const handleDelete = (row: TableRowData) => {
+const handleDelete = async (row: TableRowData) => {
+  console.log('🚀 ~ handleDelete ~ row:', row);
   const dialog = DialogPlugin.confirm({
     theme: 'danger',
     header: '确认删除',
@@ -78,21 +78,39 @@ const handleDelete = (row: TableRowData) => {
       const { data:res} = await delCommment({commentId: row.commentId})
       console.log("🚀 ~ handleDelete ~ data:", res)
       dialog.destroy();
+       // 删除后刷新评论列表，使用 contentId
+      if (contentId.value) {
+        initData(contentId.value);
+      }
     },
     onCancel: () => {
       dialog.hide();
     },
   });
 };
-const open = (row: any) => {
-  console.log('🚀 ~ row:', row);
-  id.value = row.id;
-  dataStatistics({ id: row.id }).then(({data:res}) => {
-    console.log('🚀 ~ open ~ res:', res);
+//评论列表
+const initData = async (id: number) => {
+  console.log(id);
+  const res = await dataStatistics({ id });
+  console.log('🚀 ~ initData ~ res:', res);
+  if (res.data) {
     nums.totalCommentCount = res.data.totalCommentCount;
     nums.totalLikeCount = res.data.totalLikeCount;
     tableData.value = res.data.comments;
-  });
+  }
+};
+
+const open = (row: any) => {
+  console.log('🚀 ~ row:', row);
+  contentId.value = row.id;
+  // id.value = row.id;
+  // dataStatistics({ id: row.id }).then(({data:res}) => {
+  //   console.log('🚀 ~ open ~ res11111:', res);
+  //   nums.totalCommentCount = res.totalCommentCount;
+  //   nums.totalLikeCount = res.totalLikeCount;
+  //   tableData.value = res.comments;
+  // });
+  initData(row.id);
   visible.value = true;
 };
 
