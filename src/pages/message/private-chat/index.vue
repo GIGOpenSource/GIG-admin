@@ -70,17 +70,18 @@ const formData = ref<FormData>({
 });
 
 const statusOptions = [
-  { label: '全部', value: '' },
-  { label: '正常', value: 1 },
-  { label: '禁用', value: 0 },
+  { label: '已发送', value: 'sent' },
+  { label: '已交付', value: 'delivered' },
+  { label: '已读', value: 'read' },
+  { label: '已删除', value: 'deleted' },
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
   { title: '对话ID', colKey: 'id', align: 'center', width: 120 },
-  { title: '发起对话用户ID', colKey: 'userId', align: 'center', width: 120 },
-  { title: '对话对方用户ID', colKey: 'otherUserId', align: 'center', width: 120 },
-  { title: '对话消息数量', colKey: 'messageCount', align: 'center', width: 120 },
-  { title: '最近更新时间', colKey: 'lastMessageTime', align: 'center', width: 160 },
+  { title: '发起对话用户ID', colKey: 'senderId', align: 'center', width: 120 },
+  { title: '对话对方用户ID', colKey: 'receiverId', align: 'center', width: 120 },
+  { title: '对话消息数量', colKey: 'contentCount', align: 'center', width: 120 },
+  { title: '最近更新时间', colKey: 'updateTime', align: 'center', width: 160 },
   { title: '所属APP', colKey: 'appName', align: 'center', width: 120 },
   { title: '操作', colKey: 'operation', align: 'center', width: 120 },
 ];
@@ -88,7 +89,11 @@ const COLUMNS: PrimaryTableCol[] = [
 const tableData = ref<TableRowData[]>([
 
 ]);
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+   onChange: (pageInfo: { current: number; pageSize: number }) => {
+    fetchDataList(pageInfo.current);
+  },
+ });
 
 const handleView = (row: TableRowData) => {
   console.log('🚀 ~ row:', row);
@@ -108,7 +113,7 @@ const fetchDataList = async (page: number = pagination.value.defaultCurrent) => 
     page,
     size: pagination.value.defaultPageSize,
   });
-  tableData.value = data.data;
+  tableData.value = data.records;
   pagination.value.total = data.total;
   pagination.value.current = page;
 };
@@ -128,7 +133,7 @@ const initData = async (page: number = pagination.value.defaultCurrent) => {
   const res = await getMessageList(params);
   console.log('🚀 ~ initData ~ res:', res);
 
-  tableData.value = res.data.data;
+  tableData.value = res.data.records;
   pagination.value.total = res.data.total;
 };
 

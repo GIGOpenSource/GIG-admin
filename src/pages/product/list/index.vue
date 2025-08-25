@@ -107,7 +107,11 @@ const COLUMNS: PrimaryTableCol[] = [
   { title: '操作', colKey: 'operation', width: 180 },
 ];
 
-const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+   onChange: (pageInfo: { current: number; pageSize: number }) => {
+    featchDataList(pageInfo.current);
+  },
+ });
 const tableData = ref([])
 
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
@@ -169,12 +173,12 @@ const featchDataList = async (page: number = pagination.defaultCurrent) => {
   const param = {
     ...formData.value,
     page,
-    pageSize: pagination.defaultPageSize,
+    size: pagination.defaultPageSize,
   }
   const res = await getGoodsList(param);
   console.log("🚀 ~ featchDataList ~ res:", res)
   tableData.value = res.data.records;
-  pagination.total = res.total;
+  pagination.total = res.data.total;
 };
 
 onMounted(() => {

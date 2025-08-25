@@ -144,7 +144,11 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'name',
   },
 ];
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+   onChange: (pageInfo: { current: number; pageSize: number }) => {
+    // fetchDataList(pageInfo.current);
+  },
+ });
 
 const tableData = ref<TableRowData[]>([
   {

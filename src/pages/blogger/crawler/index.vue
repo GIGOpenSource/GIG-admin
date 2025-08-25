@@ -27,7 +27,7 @@
       <t-button theme="primary" type="submit" @click="handleCreate"> 新建 </t-button>
     </t-row>
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id"  :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
@@ -102,7 +102,11 @@ const COLUMNS: PrimaryTableCol[] = [
 ];
 
 const tableData = ref<TableRowData[]>([]);
-const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS ,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    
+    fetchDataList(pageInfo.current);
+  },});
 
 const handleCreate = (row: TableRowData) => {
   // 新建逻辑
@@ -152,12 +156,13 @@ const fetchDataList = async (page: number= pagination.defaultCurrent) => {
   const params = {
     ...formData.value,
     page,
-    pageSize: pagination.pageSize,
+    size: pagination.defaultPageSize,
   };
   const res = await getBlogCrawlerList(params);
   console.log('🚀 ~ fetchDataList ~ data:', res);
   tableData.value = res.data.data;
   pagination.total = res.data.total;
+   pagination.current = page;
 };
 
 onMounted(() => {

@@ -84,7 +84,11 @@ const COLUMNS: PrimaryTableCol[] = [
 const tableData = ref<TableRowData[]>([
 
 ]);
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+   onChange: (pageInfo: { current: number; pageSize: number }) => {
+    fetchDataList(pageInfo.current);
+  },
+ });
 
   // 新建逻辑
 const handleCreate = (row: TableRowData) => {

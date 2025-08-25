@@ -214,24 +214,24 @@ const COLUMNS: PrimaryTableCol[] = [
   title: '账号状态',
   ellipsis: true,
   colKey: 'status',
-cell: (h, { row }) => {
-  // 先算出真正要用的 key
-  let key: keyof typeof USER_STATUS = row.status;
-  if (row.status === 1) {
-    if (row.status === 1)       key = 1;
-    else if (row.status === 1)  key = 2;
+  cell: (h, { row }) => {
+    let key: keyof typeof USER_STATUS = row.status;
+    const statusObj = USER_STATUS[key];
+    if (!statusObj) {
+      return (
+        <t-tag shape="round" theme="default" variant="light-outline">未知</t-tag>
+      );
+    }
+    return (
+      <t-tag
+        shape="round"
+        theme={statusObj.theme}
+        variant="light-outline"
+      >
+        {statusObj.text}
+      </t-tag>
+    );
   }
-
-  return (
-    <t-tag
-      shape="round"
-      theme={USER_STATUS[key].theme}
-      variant="light-outline"
-    >
-      {USER_STATUS[key].text}
-    </t-tag>
-  );
-}
 },
   {
     title: '注册时间',
@@ -255,7 +255,11 @@ cell: (h, { row }) => {
     colKey: 'operation',
   },
 ];
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS, 
+    onChange: (pageInfo: { current: number; pageSize: number }) => {
+    fetchDataList(pageInfo.current);
+  },
+});
 
 const tableData = ref<TableRowData[]>([]);
 

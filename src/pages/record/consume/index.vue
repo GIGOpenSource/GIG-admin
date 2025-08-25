@@ -130,7 +130,11 @@ const COLUMNS: PrimaryTableCol[] = [
     width: 120,
   },
 ];
-const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    fetchDataList(pageInfo.current);
+  },
+ });
 
 const tableData = ref<TableRowData[]>([
 ]);

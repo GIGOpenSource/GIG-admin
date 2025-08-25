@@ -34,7 +34,13 @@
     </t-form>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination"> </t-table>
+      <t-table
+        hover
+        :data="tableData"
+        :columns="COLUMNS"
+        row-key="id"
+        :pagination="pagination"
+      />
     </div>
   </div>
 </template>
@@ -132,11 +138,17 @@ const COLUMNS: PrimaryTableCol[] = [
     width: 120,
   },
 ];
-const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = reactive<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    fetchDataList(pageInfo.current);
+  },
+});
 
 const tableData = ref<TableRowData[]>([
 ]);
 const fetchDataList = async (page: number = pagination.defaultCurrent) => {
+// ...existing code...
   const params = {
     ...formData.value,
     page,
@@ -146,7 +158,7 @@ const fetchDataList = async (page: number = pagination.defaultCurrent) => {
   console.log('🚀 ~ fetchDataList ~ data:', res);
   tableData.value = res.data.data;
   pagination.total = res.data.total;
-  pagination.current = page;
+  // pagination.current = page;
 };
 // 查询
 const handleQuery = () => {

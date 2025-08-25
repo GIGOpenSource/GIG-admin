@@ -1,7 +1,8 @@
 import { request } from '@/utils/request';
 
 const Api = {
-    MessageList: '/message/sessions',
+    // MessageList: '/message/sessions',
+    MessageList: '/message/simple/list',
     MessageDetails: '/message/details/',
     MessageDetailsByTime: '/message/session/details',
     InformsList: '/message/informs',
@@ -18,13 +19,6 @@ export function getMessageList(data: any) {
     });
 }
 
-//根据会话id查询详情 暂时没用
-// export function getMessageDetails(sessionId: any, data: any) {
-//     const query = new URLSearchParams(data).toString()
-//     return request.get({
-//         url: `${Api.MessageDetails}${sessionId}?${query}`,
-//     })
-// }
 //根据会话id和时间范围查询详情
 export function getMessageDetailsByTime(data: any) {
     // const query = new URLSearchParams(data).toString()

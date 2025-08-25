@@ -12,26 +12,37 @@
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary" type="submit"  @click="handleQuery" :style="{ marginLeft: 'var(--td-comp-margin-s)' }"> 查询 </t-button>
-          <t-button theme="default" @click="handleReset" > 重置 </t-button>
+          <t-button
+            theme="primary"
+            type="submit"
+            @click="handleQuery"
+            :style="{ marginLeft: 'var(--td-comp-margin-s)' }"
+          >
+            查询
+          </t-button>
+          <t-button theme="default" @click="handleReset"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId" :pagination="pagination"> </t-table>
+      <t-table
+        hover
+        :data="tableData"
+        :columns="COLUMNS"
+        row-key="dialogId"
+        :pagination="pagination"
+      >
+      </t-table>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import type { DateRangePickerProps, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import { ref,onBeforeMount, onMounted } from 'vue';
-import {
- 
-  type TdBaseTableProps,
-} from 'tdesign-vue-next';
+import { ref, onBeforeMount, onMounted } from 'vue';
+import { type TdBaseTableProps } from 'tdesign-vue-next';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
-import { getMessageDetails ,getMessageDetailsByTime} from '@/api/message';
+import { getMessageDetails, getMessageDetailsByTime } from '@/api/message';
 
 import { useRoute } from 'vue-router';
 const $route = useRoute();
@@ -44,9 +55,8 @@ interface FormData {
 
 const formData = ref<FormData>({
   sessionId: $route.query.id ? Number($route.query.id) : null,
-   startTime: "",
-  endTime:  ""
-
+  startTime: '',
+  endTime: '',
 });
 onBeforeMount(() => {
   // formData.value.sessionId = $route.query.id ? Number($route.query.id) : null;
@@ -57,52 +67,60 @@ const COLUMNS: PrimaryTableCol[] = [
   { title: '发送用户UID', colKey: 'senderId', align: 'center', width: 120 },
   { title: '消息类型', colKey: 'messageType', align: 'center', width: 120 },
   { title: '内容', colKey: 'content', align: 'center', width: 120 },
-  { title: '发送时间', colKey: 'readTime', align: 'center', width: 160 },
+  { title: '发送时间', colKey: 'createTime', align: 'center', width: 160 },
 ];
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = ref<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    initData(pageInfo.current);
+  },
+});
 
-const tableData = ref<TableRowData[]>([
-]);
+const tableData = ref<TableRowData[]>([]);
 
-const onPick: DateRangePickerProps['onPick'] = (value, context) => console.log('onPick:', value, context);
+const onPick: DateRangePickerProps['onPick'] = (value, context) =>
+  console.log('onPick:', value, context);
 const onChange: DateRangePickerProps['onChange'] = (value, context) => {
   console.log('onChange:', value, context);
-  formData.value.startTime = context.dayjsValue[0].format('YYYY-MM-DD HH:mm:ss');
-  formData.value.endTime = context.dayjsValue[1].format('YYYY-MM-DD HH:mm:ss');
+  formData.value.startTime = context.dayjsValue?.[0]?.format
+    ? context.dayjsValue[0].format('YYYY-MM-DD HH:mm:ss')
+    : '';
+  formData.value.endTime = context.dayjsValue?.[1]?.format
+    ? context.dayjsValue[1].format('YYYY-MM-DD HH:mm:ss')
+    : '';
   console.log(
     'timestamp:',
-    context.dayjsValue.map((d) => d.valueOf()),
+    Array.isArray(context.dayjsValue) ? context.dayjsValue.map(d => d?.valueOf?.()) : []
   );
   console.log(
     'YYYYMMDD:',
-    context.dayjsValue.map((d) => d.format('YYYYMMDD')),
+    Array.isArray(context.dayjsValue) ? context.dayjsValue.map(d => d?.format?.('YYYYMMDD')) : []
   );
-
 };
 // 初始化数据
 const initData = async (page: number = pagination.value.defaultCurrent) => {
   // const sessionId =  $route.query.id ? Number($route.query.id) : null;
-  const res = await getMessageDetailsByTime( {
+  const res = await getMessageDetailsByTime({
     ...formData.value,
     page,
     size: pagination.value.defaultPageSize,
   });
-  console.log('🚀 ~ initData ~ res:jijiji', res,page,pagination.value.defaultPageSize);
+  console.log('🚀 ~ initData ~ res:jijiji', res, page, pagination.value.defaultPageSize);
 
-  tableData.value = res.data.data;
+  tableData.value = res.data.records;
   pagination.value.total = res.data.total;
-    pagination.value.current = page;
+  pagination.value.current = page;
 };
 // 查询
 const handleQuery = () => {
-  initData()
+  initData();
 };
 // 重置
 const handleReset = () => {
   formData.value.startTime = '';
   formData.value.endTime = '';
   // formData.value = { ...formData.value };
-  initData()
+  initData();
 };
 onMounted(() => {
   initData();

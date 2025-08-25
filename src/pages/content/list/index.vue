@@ -118,7 +118,7 @@ const dataViewsRef = ref<InstanceType<typeof DataViews>>();
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '序号',
-    colKey: 'serial-number',
+    colKey: 'id',
   },
   {
     title: '内容类型',
@@ -173,7 +173,11 @@ const COLUMNS: PrimaryTableCol[] = [
 // 表格数据
 const tableData = ref([]);
 
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    fetchDataList(pageInfo.current);
+  },
+ });
 
 // 审核
 const handleAudit = (row: TableRowData) => {

@@ -89,7 +89,11 @@ const COLUMNS: PrimaryTableCol[] = [
 ];
 
 const tableData = ref<TableRowData[]>([]);
-const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS });
+const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+    onChange: (pageInfo: { current: number; pageSize: number }) => {
+    featchDataList(pageInfo.current);
+  },
+ });
 
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
 
