@@ -5,9 +5,9 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="用户名" name="username">
+              <t-form-item label="用户名" name="user_nickname">
                 <t-input
-                  v-model="formData.username"
+                  v-model="formData.user_nickname"
                   class="form-item-content"
                   type="search"
                   placeholder="输入用户名"
@@ -111,10 +111,10 @@
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="danger" @click="handleOperation('stop', 1, row)" v-if="row.bannedStatus == 0">禁言</t-link>
-            <t-link theme="warning" @click="handleOperation('stop', 0, row)" v-else>解禁</t-link>
-            <t-link theme="danger" @click="handleOperation('freeze', 1, row)" v-if="row.freezeStatus == 0">冻结</t-link>
-            <t-link theme="warning" @click="handleOperation('freeze', 0, row)" v-else>解冻</t-link>
+            <t-link theme="danger" @click="handleOperation('stop', 1, row)" v-if="row.status == 0">禁言</t-link>
+            <t-link theme="warning" @click="handleOperation('stop', 0, row)" v-if="row.status == 1">解禁</t-link>
+            <t-link theme="danger" @click="handleOperation('freeze', 2, row)" v-if="row.status == 0">冻结</t-link>
+            <t-link theme="warning" @click="handleOperation('freeze', 0, row)" v-if="row.status == 2">解冻</t-link>
           </t-space>
         </template>
       </t-table>
@@ -134,7 +134,7 @@
     </t-dialog>
 
     <!-- <create-dialog ref="createDialogRef" /> -->
-    <detail-dialog ref="detailDialogRef"  @confirm="onDialogConfirm"/>
+    <detail-dialog ref="detailDialogRef" @confirm="onDialogConfirm" />
   </div>
 </template>
 <script lang="tsx" setup>
@@ -157,7 +157,7 @@ import DetailDialog from './components/DetailDialog.vue';
 
 interface FormData {
   id: string;
-  username: string;
+  user_nickname: string;
   phone: string;
   // account: string;
   // deviceType: string;
@@ -172,7 +172,7 @@ interface FormData {
 
 const searchForm = {
   id: '',
-  username: '',
+  user_nickname: '',
   phone: '',
   // account: '',
   // deviceType: '',
@@ -198,7 +198,7 @@ const COLUMNS: PrimaryTableCol[] = [
   {
     title: '用户名',
     ellipsis: true,
-    colKey: 'username',
+    colKey: 'user_nickname',
   },
   {
     title: '手机号',
@@ -210,34 +210,32 @@ const COLUMNS: PrimaryTableCol[] = [
   //   ellipsis: true,
   //   colKey: 'channelCode',
   // },
- {
-  title: '账号状态',
-  ellipsis: true,
-  colKey: 'status',
-  cell: (h, { row }) => {
-    let key: keyof typeof USER_STATUS = row.status;
-    const statusObj = USER_STATUS[key];
-    if (!statusObj) {
+  {
+    title: '账号状态',
+    ellipsis: true,
+    colKey: 'status',
+    cell: (h, { row }) => {
+      let key: keyof typeof USER_STATUS = row.status;
+      const statusObj = USER_STATUS[key];
+      if (!statusObj) {
+        return (
+          <t-tag shape="round" theme="default" variant="light-outline">
+            未知
+          </t-tag>
+        );
+      }
       return (
-        <t-tag shape="round" theme="default" variant="light-outline">未知</t-tag>
+        <t-tag shape="round" theme={statusObj.theme} variant="light-outline">
+          {statusObj.text}
+        </t-tag>
       );
-    }
-    return (
-      <t-tag
-        shape="round"
-        theme={statusObj.theme}
-        variant="light-outline"
-      >
-        {statusObj.text}
-      </t-tag>
-    );
-  }
-},
+    },
+  },
   {
     title: '注册时间',
     ellipsis: true,
-    colKey: 'createTime',
-    cell: (h, { row }) => useFormatDate().formatDate(row.createTime),
+    colKey: 'date_joined',
+    cell: (h, { row }) => useFormatDate().formatDate(row.date_joined),
   },
   // {
   //   title: 'VIP状态',
@@ -255,8 +253,10 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'operation',
   },
 ];
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS, 
-    onChange: (pageInfo: { current: number; pageSize: number }) => {
+const pagination = ref<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  current: 1,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
     fetchDataList(pageInfo.current);
   },
 });
@@ -275,6 +275,7 @@ const defaultOperation = {
   content: '',
   bannedStatus: 0,
   freezeStatus: 0,
+  status: 0,
 };
 // 弹窗名称
 const operations = reactive({
@@ -284,20 +285,14 @@ const operations = reactive({
 // 确认操作
 const onConfirmOperation = async () => {
   const res = await editUserStatus({
-    userId: editId.value,
-    freezeStatus: operations.freezeStatus,
-    bannedStatus: operations.bannedStatus,
+    id: editId.value,
+    status: operations.status,
   });
 
-  if (res.code !== 0) {
-    return MessagePlugin.error({
-      content: res.message,
-    });
-  }
   MessagePlugin.success({
     content: res.message,
   });
-  fetchDataList();
+  fetchDataList(pagination.value.current || pagination.value.defaultCurrent);
   confirmVisible.value = false;
 };
 
@@ -306,8 +301,8 @@ const onCancel = () => {
   Object.assign(operations, defaultOperation);
 };
 const onDialogConfirm = () => {
-   fetchDataList();
-}
+  fetchDataList(pagination.value.current || pagination.value.defaultCurrent);
+};
 
 // 切换APP
 // const handleChangeApp: SelectProps['onChange'] = (ctx) => {
@@ -316,12 +311,13 @@ const onDialogConfirm = () => {
 
 // 查询
 const handleQuery = () => {
-  fetchDataList();
+  fetchDataList(pagination.value.current || pagination.value.defaultCurrent);
 };
 // 重置
 const handleReset = () => {
   formData.value = { ...searchForm };
-  fetchDataList();
+  // 重置后跳转到第1页
+  fetchDataList(1);
 };
 
 // 创建用户
@@ -336,13 +332,13 @@ const handleEdit = (row: TableRowData) => {
 // 禁言/冻结
 const handleOperation = (type: string = 'stop', status: number = 1, row: TableRowData) => {
   editId.value = row.id;
+  operations.status = status;
   if (type === 'stop') {
-    operations.bannedStatus = status;
-    operations.freezeStatus = row.freezeStatus;
+    operations.freezeStatus = row.status;
     operations.content = status === 1 ? '是否要禁言该账号？用户侧展示为封号状态' : '是否要解除禁言该账号？';
   } else {
     operations.freezeStatus = status;
-    operations.bannedStatus = row.bannedStatus;
+    operations.bannedStatus = row.status;
     operations.content = status === 1 ? '是否要冻结该账号？用户侧展示为封号状态' : '是否要解除冻结该账号？';
   }
   confirmVisible.value = true;
@@ -358,11 +354,11 @@ const onPageChange: TableProps['onChange'] = async (changeParams, triggerAndData
 const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
   const { data } = await getUserList({
     ...formData.value,
-    page,
-    size: pagination.value.defaultPageSize,
+    currentPage: page,
+    pageSize: pagination.value.defaultPageSize,
   });
-  tableData.value = data.data;
-  pagination.value.total = data.total;
+  tableData.value = data.results;
+  pagination.value.total = data.pagination.total;
   pagination.value.current = page;
 };
 

@@ -5,18 +5,8 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="选择包" name="packageName">
-                <t-select
-                  v-model="formData.packageName"
-                  :options="packageOptions"
-                  placeholder="选择包"
-                  clearable
-                />
-              </t-form-item>
-            </t-col>
-            <t-col :span="4">
               <t-form-item label="订单类型" name="orderType">
-                 <t-select
+                <t-select
                   v-model="formData.orderType"
                   :options="orderTypeOptions"
                   placeholder="选择订单类型"
@@ -27,39 +17,31 @@
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
-          <t-button theme="primary" @click="handleQuery" > 查询 </t-button>
-          <t-button theme="default"  @click="handleReset"> 重置 </t-button>
+          <t-button theme="primary" @click="handleQuery"> 查询 </t-button>
+          <t-button theme="default" @click="handleReset"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
 
     <div class="table-container">
-      <t-table
-        hover
-        :data="tableData"
-        :columns="COLUMNS"
-        row-key="id"
-        :pagination="pagination"
-      />
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
-import { ref, onMounted,reactive } from 'vue';
-import { getRechargeList} from '@/api/record';
+import { ref, onMounted, reactive } from 'vue';
+import { getRechargeList } from '@/api/record';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 interface FormData {
-  packageName: string | number;
   orderType: string | number;
 }
 
 const formData = ref<FormData>({
-  packageName: '',
   orderType: '',
 });
-//包名选择 
+//包名选择
 const packageOptions = [
   { label: '全部', value: '' },
   { label: '正常', value: 1 },
@@ -96,9 +78,9 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'orderType',
     align: 'center',
     width: 100,
-        cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
-    return orderTypeOptions.find(opt => opt.value === row.orderType)?.label || '';}
-
+    cell(h: (arg0: string, arg1: { style: string }, arg2: string) => any, { row }: any) {
+      return orderTypeOptions.find((opt) => opt.value === row.orderType)?.label || '';
+    },
   },
   {
     title: '充值名称',
@@ -145,10 +127,9 @@ const pagination = reactive<TdBaseTableProps['pagination']>({
   },
 });
 
-const tableData = ref<TableRowData[]>([
-]);
+const tableData = ref<TableRowData[]>([]);
 const fetchDataList = async (page: number = pagination.defaultCurrent) => {
-// ...existing code...
+  // ...existing code...
   const params = {
     ...formData.value,
     page,
@@ -162,16 +143,15 @@ const fetchDataList = async (page: number = pagination.defaultCurrent) => {
 };
 // 查询
 const handleQuery = () => {
-
-  fetchDataList()
+  fetchDataList();
 };
 // 重置
 const handleReset = () => {
   formData.value = {
-  packageName: '',
-  orderType: '',
-}
-  fetchDataList()
+    packageName: '',
+    orderType: '',
+  };
+  fetchDataList();
 };
 onMounted(() => {
   fetchDataList();

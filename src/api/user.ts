@@ -5,10 +5,10 @@ const Api = {
   Login: '/auth/login/',
   Info: '/auth/users',
   CreateUser: '/user-management/create',
-  UserList: '/user-management/list',
-  UserInfo: '/user-management/detail/',
-  EditInfo: '/user-management/update',
-  EditStatus: '/user-management/update-status',
+  UserList: '/auth/users/',
+  UserInfo: '/auth/users/',
+  EditInfo: '/auth/users/',
+  EditStatus: '/auth/users/',
 };
 
 // 登录
@@ -36,10 +36,10 @@ export function createUser(data: any) {
 }
 
 // 用户列表
-export function getUserList(data: any) {
-  return request.post({
+export function getUserList(params: any) {
+  return request.get({
     url: Api.UserList,
-    data,
+    params,
   });
 }
 
@@ -53,15 +53,15 @@ export function getUserInfo(id: number) {
 // 编辑用户信息
 export function editUserInfo(data: any) {
   return request.put({
-    url: Api.EditInfo,
+    url: Api.EditInfo + data.id + '/',
     data,
   });
 }
 
 // 编辑用户状态
 export function editUserStatus(data: any) {
-  return request.post({
-    url: Api.EditStatus,
+  return request.put({
+    url: Api.EditInfo + data.id + '/',
     data,
   });
 }

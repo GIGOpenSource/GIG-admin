@@ -4,20 +4,19 @@
       <t-row>
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
-            <t-col :span="4">
+            <!-- <t-col :span="4">
               <t-form-item label="选择包" name="package">
-                <!-- <t-select v-model="formData.packageName" :options="packageOptions" placeholder="包" clearable /> -->
                   <t-input v-model="formData.packageName" type="search" placeholder="输入包名" />
               </t-form-item>
-            </t-col>
+            </t-col> -->
             <t-col :span="4">
-              <t-form-item label="选择状态" name="isOnline">
-                <t-select v-model="formData.isOnline" :options="statusOptions" placeholder="选择状态" clearable />
+              <t-form-item label="选择状态" name="is_active">
+                <t-select v-model="formData.is_active" :options="statusOptions" placeholder="选择状态" clearable />
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="策略名称" name="scene">
-               <t-input v-model="formData.strategyScene" type="search" placeholder="输入策略名称" />
+              <t-form-item label="策略名称" name="strategyScene">
+                <t-input v-model="formData.strategy_scene" type="search" placeholder="输入策略名称" />
               </t-form-item>
             </t-col>
           </t-row>
@@ -38,7 +37,7 @@
         <template #operation="{ row }">
           <t-space>
             <t-link theme="success" @click="handleOnline(row)">
-              {{ row.isOnline === 'Y' ? '下线' : '上线' }}
+              {{ row.is_active ? '下线' : '上线' }}
             </t-link>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
@@ -61,15 +60,15 @@ import { getGoodsList, deleteGoods, changeGoodsStatus } from '@/api/goods';
 import ConfigDialog from './Dialog.vue';
 
 interface FormData {
-  packageName: string;
-  isOnline: string | number;
-  strategyScene: string;
+  pay_channel: string;
+  is_active: string | number;
+  strategy_scene: string;
 }
 
 const formData = ref<FormData>({
-  packageName: '',
-  isOnline: '',
-  strategyScene: '',
+  pay_channel: '',
+  is_active: '',
+  strategy_scene: '',
 });
 
 const packageOptions = [
@@ -78,9 +77,8 @@ const packageOptions = [
 ];
 const statusOptions = [
   { label: '全部', value: '' },
-  { label: '上线', value: 'Y' },
-  { label: '下线', value: 'N'
-   },
+  { label: '上线', value: true },
+  { label: '下线', value: false },
 ];
 const sceneOptions = [
   { label: '场景1', value: 'scene1' },
@@ -89,30 +87,40 @@ const sceneOptions = [
 
 const COLUMNS: PrimaryTableCol[] = [
   { title: '序号', colKey: 'serial-number', width: 80 },
-  { title: '策略名称场景', colKey: 'strategyScene', ellipsis: true },
-  { title: '商品描述', colKey: 'description', align: 'left', ellipsis: true },
-  { title: '价格', colKey: 'price' },
-    { title: '商品类型', colKey: 'goodsType', ellipsis: true,
+  { title: '策略名称场景', colKey: 'strategy_scene', ellipsis: true },
+  { title: '商品描述', colKey: 'promotion_text', align: 'left', ellipsis: true },
+  { title: '价格', colKey: 'pay_price' },
+  {
+    title: '商品类型',
+    colKey: 'pay_channel',
+    ellipsis: true,
 
-      cell: (h, { row }) => row.goodsType == 'coin' ? '金币' : row.goodsType == 'goods' ? '商品' : row.goodsType == 'subscription' ? '订阅':'内容'
-     },
-  { title: '商品名称', colKey: 'name', ellipsis: true },
-  { title: '包名', colKey: 'packageName', ellipsis: true },
-  { title: '优先级', colKey: 'sortOrder' },
-{
-    title: "状态",
-    colKey: "isOnline",
-  cell: (h, { row }) => row.isOnline == 'Y' ? '上线' : '下线'
-},
+    cell: (h, { row }) =>
+      row.pay_channel == 'gold'
+        ? '金币'
+        : row.pay_channel == 'goods'
+          ? '商品'
+          : row.pay_channel == 'vip'
+            ? 'VIP'
+            : '内容',
+  },
+  { title: '商品名称', colKey: 'pay_name', ellipsis: true },
+  {
+    title: '状态',
+    colKey: 'is_active',
+    cell: (h, { row }) => (row.is_active ? '上线' : '下线'),
+  },
   { title: '操作', colKey: 'operation', width: 180 },
 ];
 
-const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
-   onChange: (pageInfo: { current: number; pageSize: number }) => {
+const pagination = reactive<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  current: 1,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
     featchDataList(pageInfo.current);
   },
- });
-const tableData = ref([])
+});
+const tableData = ref([]);
 
 const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
 //新增
@@ -125,20 +133,20 @@ const handleEdit = (row: TableRowData) => {
 };
 
 const handleOnline = async (row: TableRowData) => {
-  console.log("🚀 ~ handleOnline ~ row:", row.status)
+  console.log('🚀 ~ handleOnline ~ row:', row.status);
   // let status = row.status == 'active' ? 'N' : 'active'
-   let status = row.isOnline == 'Y' ? 'N' : 'Y'
-  console.log("🚀status", status)
+  let status = row.is_active == true ? false : true;
+  console.log('🚀status', status);
   // 上线/下线逻辑
-  const res = await changeGoodsStatus(row.id, status);
+  const res = await changeGoodsStatus(row.id, status.toString());
   MessagePlugin.success(res.message);
-  featchDataList()
+  featchDataList();
 };
 const handleDelete = (row: TableRowData) => {
   const dialog = DialogPlugin.confirm({
     theme: 'danger',
     header: '确认删除',
-    body: `您确定要删除 ${row.name} 分类吗？`,
+    body: `您确定要删除吗？`,
     confirmBtn: '确认',
     cancelBtn: '取消',
     onConfirm: async () => {
@@ -146,7 +154,8 @@ const handleDelete = (row: TableRowData) => {
       console.log('删除分类:', row);
       const res = await deleteGoods(row.id);
       MessagePlugin.success(res.message);
-      featchDataList()
+      // 删除后保持当前页面
+      featchDataList(pagination.current || pagination.defaultCurrent);
       dialog.destroy();
     },
     onCancel: () => {
@@ -157,33 +166,34 @@ const handleDelete = (row: TableRowData) => {
 
 // 查询
 const handleQuery = () => {
-
-  featchDataList()
+  featchDataList(pagination.current || pagination.defaultCurrent);
 };
 // 重置
 const handleReset = () => {
   formData.value = {
-    packageName: '',
-    status: '',
-    strategyScene: '',
-  }
-  featchDataList()
+    pay_channel: '',
+    is_active: '',
+    strategy_scene: '',
+  };
+  // 重置后跳转到第1页
+  featchDataList(1);
 };
 const featchDataList = async (page: number = pagination.defaultCurrent) => {
   const param = {
     ...formData.value,
-    page,
-    size: pagination.defaultPageSize,
-  }
+    currentPage: page,
+    pageSize: pagination.defaultPageSize,
+  };
   const res = await getGoodsList(param);
-  console.log("🚀 ~ featchDataList ~ res:", res)
-  tableData.value = res.data.records;
-  pagination.total = res.data.total;
+  console.log('🚀 ~ featchDataList ~ res:', res);
+  tableData.value = res.data.results;
+  pagination.total = res.data.pagination.total;
+  pagination.current = page;
 };
 
 onMounted(() => {
   featchDataList();
-})
+});
 </script>
 <style lang="less" scoped>
 .product-config-list-container {

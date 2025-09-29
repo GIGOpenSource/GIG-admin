@@ -5,6 +5,7 @@ import merge from 'lodash/merge';
 
 import { ContentTypeEnum } from '@/constants';
 import { useUserStore } from '@/store';
+import { MessagePlugin } from 'tdesign-vue-next';
 
 import { VAxios } from './Axios';
 import type { AxiosTransform, CreateAxiosOptions } from './AxiosTransform';
@@ -75,13 +76,19 @@ const transform: AxiosTransform = {
       formatRequestDate(data);
     }
     if (config.method?.toUpperCase() === 'GET') {
-      if (!isString(params)) {
+      // GET 请求支持 params 和 data 参数
+      const getParams = { ...params, ...data };
+      
+      if (!isString(getParams)) {
         // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
-        config.params = Object.assign(params || {}, joinTimestamp(joinTime, false));
+        config.params = Object.assign(getParams || {}, joinTimestamp(joinTime, false));
+        // 清空 data，GET 请求应该使用 params
+        config.data = undefined;
       } else {
         // 兼容restful风格
-        config.url = `${config.url + params}${joinTimestamp(joinTime, true)}`;
+        config.url = `${config.url + getParams}${joinTimestamp(joinTime, true)}`;
         config.params = undefined;
+        config.data = undefined;
       }
     } else if (!isString(params)) {
       if (formatDate) {
@@ -132,6 +139,28 @@ const transform: AxiosTransform = {
 
   // 响应错误处理
   responseInterceptorsCatch: (error: any, instance: AxiosInstance) => {
+    const { response } = error;
+    
+    // 处理 403 权限错误
+    if (response && response.status === 403) {
+      const errorMessage = response.data?.detail || '';
+      MessagePlugin.error(errorMessage);
+      return Promise.reject(error);
+    }
+    
+    // 处理其他 HTTP 错误
+    if (response) {
+      const errorMessage = response.data?.message || response.data?.detail || `请求失败 (${response.status})`;
+      MessagePlugin.error(errorMessage);
+      return Promise.reject(error);
+    }
+    
+    // 处理网络错误
+    if (error.code === 'NETWORK_ERROR' || !error.response) {
+      MessagePlugin.error('网络连接失败，请检查网络设置');
+      return Promise.reject(error);
+    }
+
     const { config } = error;
     if (!config || !config.requestOptions.retry) return Promise.reject(error);
 

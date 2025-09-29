@@ -78,3 +78,10 @@ export const USER_STATUS = {
     value: '3'
   },
 };
+
+// 用户角色
+export const MEMBER_LEVEL = [
+  { text: '普通', value: 'normal' },
+  { text: 'VIP', value: 'vip' },
+  { text: 'SVIP', value: 'svip' },
+];

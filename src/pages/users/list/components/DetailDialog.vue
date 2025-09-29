@@ -21,16 +21,16 @@
           <t-form-item label="昵称" name="nickname">
             <t-input v-model="data.userProfile.nickname" class="form-item-content" placeholder="输入昵称" />
           </t-form-item>
-          <t-form-item label="简介" name="bio">
+          <!-- <t-form-item label="简介" name="bio">
             <t-input v-model="data.userProfile.bio" class="form-item-content" placeholder="输入简介" />
-          </t-form-item>
+          </t-form-item> -->
           <t-form-item label="粉丝量" name="followerCount">
             <t-input v-model="data.userProfile.followerCount" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item>
           <t-form-item label="关注" name="followingCount">
             <t-input v-model="data.userProfile.followingCount" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item>
-          <t-form-item label="性别" name="gender">
+          <!-- <t-form-item label="性别" name="gender">
             <t-radio-group v-model="data.userProfile.gender" default-value="male">
               <t-radio value="male">{{ GENDER['male'] }}</t-radio>
               <t-radio value="female">{{ GENDER['female'] }}</t-radio>
@@ -39,10 +39,10 @@
           </t-form-item>
           <t-form-item label="推广码" name="inviteCode">
             <t-input v-model="data.userProfile.inviteCode" class="form-item-content" placeholder="输入邮箱" />
-          </t-form-item>
-          <t-form-item label="头像" name="avatar">
+          </t-form-item> -->
+          <!-- <t-form-item label="头像" name="avatar">
             <t-avatar shape="round" size="large" :image="data.userProfile.avatar" />
-          </t-form-item>
+          </t-form-item> -->
         </t-form>
       </t-tab-panel>
       <t-tab-panel :value="2" label="用户状态">
@@ -61,18 +61,23 @@
               <t-option v-for="op in USER_STATUS" :key="op.text" :label="op.text" :value="op.value"></t-option>
             </t-select>
           </t-form-item>
+          <t-form-item label="用户角色" name="member_level">
+            <t-select v-model:value="data.userStatus.member_level" placeholder="选择用户角色">
+              <t-option v-for="op in MEMBER_LEVEL" :key="op.value" :label="op.text" :value="op.value"></t-option>
+            </t-select>
+          </t-form-item>
           <!-- <t-form-item label="设备" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item>
           <t-form-item label="IP" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item> -->
-          <t-form-item label="注册时间" name="createTime">
+          <!-- <t-form-item label="注册时间" name="createTime">
             <t-input v-model="data.userStatus.createTime" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item>
           <t-form-item label="最后活跃时间" name="lastLoginTime">
             <t-input v-model="data.userStatus.lastLoginTime" class="form-item-content" placeholder="输入邮箱" />
-          </t-form-item>
+          </t-form-item> -->
           <!-- <t-form-item label="被邀请码" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item> -->
@@ -86,7 +91,7 @@
           :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
         >
           <t-form-item label="手机号" name="phone">
-            <t-input v-model="data.userAccount.phone" class="form-item-content" placeholder="输入用户名" />
+            <t-input v-model="data.userAccount.phone" class="form-item-content" placeholder="输入手机号" />
           </t-form-item>
           <!-- <t-form-item label="渠道码" name="username">
             <t-input v-model="data.name" class="form-item-content" placeholder="输入用户名" />
@@ -111,11 +116,11 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 import { getUserInfo, editUserInfo } from '@/api/user';
-import { GENDER, USER_STATUS } from '@/constants';
+import { GENDER, USER_STATUS, MEMBER_LEVEL } from '@/constants';
 import { useFormatDate } from '@/hooks';
 
 const { formatDate } = useFormatDate();
-const emit = defineEmits(['confirm']) 
+const emit = defineEmits(['confirm']);
 const id = ref(0);
 
 const defaultData = {
@@ -135,8 +140,9 @@ const defaultData = {
   },
   userStatus: {
     status: '',
-    lastLoginTime: '',
-    createTime: '',
+    member_level: '',
+    // lastLoginTime: '',
+    // createTime: '',
   },
 };
 
@@ -150,22 +156,46 @@ const open = (i: number) => {
 };
 
 const initData = async (id: number) => {
-  console.log(id,)
+  console.log(id);
   const res = await getUserInfo(id);
+  console.log('🚀 ~ initData ~ res:', res);
+
   // 格式化时间字段
-  if (res.data && res.data.userStatus) {
-    res.data.userStatus.createTime = formatDate(res.data.userStatus.createTime);
-    res.data.userStatus.lastLoginTime = formatDate(res.data.userStatus.lastLoginTime);
+  if (res.data.date_joined) {
+    res.data.date_joined = formatDate(res.data.date_joined);
   }
 
-   Object.assign(data, res.data);
+  // 将 API 返回的数据映射到 data 对象
+  Object.assign(data, {
+    userAccount: {
+      phone: res.data.phone || '',
+      email: res.data.email || '',
+    },
+    userProfile: {
+      username: res.data.username || '',
+      nickname: res.data.user_nickname || '',
+      // gender: '', // API 中没有性别字段
+      // inviteCode: '', // API 中没有推广码字段
+      avatar: res.data.avatar || '',
+      bio: res.data.user_bio || '',
+      followerCount: res.data.followers_count || 0,
+      followingCount: res.data.following_count || 0,
+    },
+    userStatus: {
+      status: res.data.status !== undefined ? String(res.data.status) : '',
+      member_level: res.data.member_level || '',
+      createTime: res.data.date_joined || '',
+      // lastLoginTime: '', // API 中没有最后登录时间
+    },
+  });
+
   visible.value = true;
 };
 
 const onConfirm = async () => {
-  const res = await editUserInfo({ ...data.userAccount,...data.userProfile, ...data.userStatus, id: id.value });
+  const res = await editUserInfo({ ...data.userAccount, ...data.userProfile, ...data.userStatus, id: id.value });
   visible.value = false;
-   emit('confirm')
+  emit('confirm');
 };
 const onCancel = () => {
   visible.value = false;

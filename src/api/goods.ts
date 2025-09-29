@@ -1,11 +1,11 @@
 import { request } from '@/utils/request';
 
 const Api = {
-  GoodsList: '/goods/query',
-  CreateGood: '/goods/create',
-  UpdateGood: '/goods/update',
-  DeleteGood: '/goods/delete/',
-  ChangeGoodStatus: '/goods/status/',
+  GoodsList: '/payments/pay/',
+  CreateGood: '/payments/pay/',
+  UpdateGood: '/payments/pay/',
+  DeleteGood: '/payments/pay/',
+  ChangeGoodStatus: '/payments/pay/',
 
   VipList: '/vip-power/query',
   VipCreate: '/vip-power/create',
@@ -15,7 +15,7 @@ const Api = {
 
 // 商品列表
 export function getGoodsList(data: any) {
-  return request.post({
+  return request.get({
     url: Api.GoodsList,
     data,
   });
@@ -31,8 +31,8 @@ export function createGoods(data: any) {
 
 // 更新商品
 export function updateGoods(data: any) {
-  return request.post({
-    url: Api.UpdateGood,
+  return request.put({
+    url: Api.UpdateGood + data.id + '/',
     data,
   });
 }
@@ -40,16 +40,16 @@ export function updateGoods(data: any) {
 // 删除商品
 export function deleteGoods(id: number) {
   return request.delete({
-    url: Api.DeleteGood + id,
+    url: Api.DeleteGood + id + '/',
   });
 }
 
 // 修改商品状态
 export function changeGoodsStatus(id: number, status: string) {
   return request.put({
-    url: Api.ChangeGoodStatus + id,
+    url: Api.ChangeGoodStatus + id + '/',
     data: {
-      isOnline: status,
+      is_active: status,
     },
   });
 }
