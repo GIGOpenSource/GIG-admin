@@ -1,13 +1,13 @@
 import { request } from '@/utils/request';
 
 const Api = {
-  TagtList: '/tag/list',
- UpdateTag: '/tag/update',
+  TagtList: '/tags/',
+  UpdateTag: '/tag/update',
 };
 
 // 列表
 export function getTagList(data: any) {
-  return request.post({
+  return request.get({
     url: Api.TagtList,
     data,
   });
