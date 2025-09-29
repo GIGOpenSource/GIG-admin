@@ -14,10 +14,11 @@
                 />
               </t-form-item>
             </t-col>
-            <t-col :span="4">
-              <t-form-item label="标签类型" name="tagType">
-                 <t-select v-model="formData.tagType" placeholder="选择标签类型" clearable>
-                  <t-option v-for="val in tagTypeOptions" :key="val.value" :value="val.value" :label="val.label" />
+           <t-col :span="4">
+              <t-form-item label="标签状态" name="status">
+                <t-select v-model="formData.status" placeholder="选择标签状态" clearable>
+                  <t-option key="activate" value="activate" label="激活" />
+                  <t-option key="deactivate" value="deactivate" label="未激活" />
                 </t-select>
               </t-form-item>
             </t-col>
@@ -54,7 +55,7 @@ import { h } from 'vue';
 
 interface FormData {
   name: string;
-  tagType: string;
+  status: string;
 }
 
 const tagTypeOptions = [
@@ -64,7 +65,7 @@ const tagTypeOptions = [
 ];
 const searchForm = {
   name: '',
-  tagType: '',
+  status: '',
 };
 const formData = ref<FormData>({
    ...searchForm,
@@ -90,26 +91,32 @@ const COLUMNS: PrimaryTableCol[] = [
     align: 'left',
     ellipsis: true,
   },
+//   {
+//     title: '标签使用人数',
+//     colKey: 'usage_count',
+//     align: 'left',
+//     ellipsis: true,
+//     cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
+//     return tagTypeOptions.find(opt => opt.value === row.tagType)?.label || '';
+// }
+//   },
   {
-    title: '标签类型',
-    colKey: 'tagType',
+    title: '标签使用人数',
+    colKey: 'usage_count',
     align: 'left',
     ellipsis: true,
-    cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
-    return tagTypeOptions.find(opt => opt.value === row.tagType)?.label || '';
-}
-   },
-  {
-    title: '标签等级',
-    colKey: 'tagType',
-    align: 'left',
-    ellipsis: true,
-    cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
-    return tagTypeOptions.find(opt => opt.value === row.tagType)?.label || '';
-}
   },
   {
-    title: '标签说明',
+    title: '标签状态',
+    colKey: 'status',
+    align: 'center',
+    cell: (h, { row }) => {
+      return row.status === 'activate' ? '激活' :
+             row.status === 'deactivate' ? '未激活' : row.status;
+    }
+  },
+   {
+    title: '标签描述',
     colKey: 'description',
     align: 'center',
   },
@@ -140,21 +147,20 @@ const handleEdit = (row: TableRowData) => {
 //   });
 // }
 // 请求列表数据
-const fetchDataList = async (page: number= pagination.value.defaultCurrent) => {
-  const params = {
-    ...formData.value,
-  };
-  const res = await getTagList({ ...params,
-    page,
-    size: pagination.value.defaultPageSize});
-  console.log('111111111111', res.data.records);
-  tableData.value = res.data.records
+  const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
+     const params = {
+       ...formData.value,
+       page,
+       size: pagination.value.defaultPageSize
+     };
+ const res = await getTagList(params);
+  console.log('111111111111', res.data.results);
+  tableData.value = res.data.results
   pagination.value.total = res.data.total;
   pagination.value.current = page;
 };
 // 查询
 const handleQuery = () => {
-
   fetchDataList()
 };
 
@@ -170,12 +176,12 @@ const initData = async (page: number =pagination.value.defaultCurrent) => {
     page,
     size: pagination.value.defaultPageSize,
   };
-   console.log('🚀 ~ fetchDataList ~ params:', pagination.value);
+  console.log('🚀 ~ initData ~ params:', params);
+  console.log('🚀 ~ fetchDataList ~ params:', pagination.value);
   const res = await getTagList(params);
   console.log('🚀 ~ initData ~ res:', res);
-
-  tableData.value = res.data.records;
-  pagination.value.total = res.data.total;
+  tableData.value = res.data.results;
+  pagination.value.total = res.data.pagination.total;
 };
 
 onMounted(() => {
