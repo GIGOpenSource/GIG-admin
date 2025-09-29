@@ -47,7 +47,7 @@ const transform: AxiosTransform = {
     const { code } = data;
 
     // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && code === 0;
+    const hasSuccess = data && code === 200;
     if (hasSuccess) {
       return data.data;
     }
@@ -119,8 +119,8 @@ const transform: AxiosTransform = {
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       // jwt token
       (config as Recordable).headers.Authorization = options.authenticationScheme
-        ? `${options.authenticationScheme} ${token}`
-        : token;
+        ? `${options.authenticationScheme} token ${token}`
+        : `token ${token}`;
     }
     return config;
   },

@@ -2,8 +2,8 @@ import type { LoginForm } from '@/api/model/userModel';
 import { request } from '@/utils/request';
 
 const Api = {
-  Login: '/login',
-  Info: '/info',
+  Login: '/auth/login/',
+  Info: '/auth/users',
   CreateUser: '/user-management/create',
   UserList: '/user-management/list',
   UserInfo: '/user-management/detail/',

@@ -30,8 +30,8 @@ export const useUserStore = defineStore('user', {
       console.log("🚀 ~ res:", res)
       console.log("🚀 ~ res:", res.data.token, res.code)
 
-      // if (res.code === 200) {
-      if (res.code === 0 && res.data.token) {
+      if (res.code === 200) {
+      // if (res.code === 0 && res.data.token) {
         this.token = res.data.token;
         this.userInfo = res.data;
         console.log("🚀 ~ this.userInfo:", this.userInfo)

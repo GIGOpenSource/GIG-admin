@@ -42,7 +42,6 @@
     <t-form-item v-if="type !== 'qrcode'" class="btn-container">
       <t-button block size="large" type="submit"> {{ t('pages.login.signIn') }} </t-button>
     </t-form-item>
-
   </t-form>
 </template>
 <script setup lang="ts">
@@ -76,6 +75,7 @@ const router = useRouter();
 const route = useRoute();
 
 const onSubmit = async (ctx: SubmitContext) => {
+  console.log('🚀 ~ onSubmit ~ ctx:', ctx);
   if (ctx.validateResult === true) {
     try {
       await userStore.login(formData.value);
@@ -83,6 +83,7 @@ const onSubmit = async (ctx: SubmitContext) => {
       MessagePlugin.success('登录成功');
       const redirect = route.query.redirect as string;
       const redirectUrl = redirect ? decodeURIComponent(redirect) : '/home';
+      console.log('🚀 ~ onSubmit ~ redirectUrl:', redirectUrl);
       router.push(redirectUrl);
     } catch (e) {
       console.log(e);
