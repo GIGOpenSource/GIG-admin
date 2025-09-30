@@ -1,10 +1,11 @@
 import { request } from '@/utils/request';
 
 const Api = {
-  CreateContent: '/content-chapter/unified',
-  ContentList: '/content-chapter/content/list',
+  CreateContent: '/contents/',
+  UpdateContent: '/contents/',
+  ContentList: '/contents/',
   AuditContent: '/content-chapter/review/',
-  DelContent: '/content-chapter/content/delete',
+  DelContent: '/contents/',
   DataStatistics: '/content-chapter/statistics/',
   DelCommment: '/content-chapter/comment/delete',
   ContentChapters: '/content-chapter/chapters',
@@ -26,9 +27,17 @@ export function createContent(data: any) {
   });
 }
 
+// 更新内容
+export function updateContent(data: any) {
+  return request.put({
+    url: Api.UpdateContent + data.id + '/',
+    data,
+  });
+}
+
 // 内容列表
 export function getContentList(data: any) {
-  return request.post({
+  return request.get({
     url: Api.ContentList,
     data,
   });
@@ -55,7 +64,7 @@ export function auditContent(data: any) {
 // 删除内容
 export function delContent(data: any) {
   return request.delete({
-    url: Api.DelContent,
+    url: Api.DelContent + data.id + '/',
     data,
   });
 }

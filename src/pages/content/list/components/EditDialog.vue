@@ -1,7 +1,14 @@
 <template>
   <!-- 小说动漫漫画编辑 -->
-  <t-dialog v-model:visible="visible" :width="600" :header="title" confirm-btn="保存" style="width: 100%"
-    @cancel="onCancel" @confirm="onConfirm">
+  <t-dialog
+    v-model:visible="visible"
+    :width="600"
+    :header="title"
+    confirm-btn="保存"
+    style="width: 100%"
+    @cancel="onCancel"
+    @confirm="onConfirm"
+  >
     <t-form ref="formRef" :model="data" label-width="60px" label-align="right">
       <t-row>
         <t-col :span="4">
@@ -25,12 +32,16 @@
             <t-input v-model="data.description" class="form-item-content" placeholder="请输入简介" />
           </t-form-item>
         </t-col>
-
       </t-row>
       <!-- 标签列表 -->
       <div class="diversity-list">
-        <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" v-for="(item, index) in data.tags" :key="index"
-          align="middle" :gutter="16">
+        <t-row
+          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
+          v-for="(item, index) in data.tags"
+          :key="index"
+          align="middle"
+          :gutter="16"
+        >
           <t-col :span="9">
             <t-form-item label="标签" name="description">
               <t-input v-model="data.tags[index]" class="form-item-content" placeholder="请输入标签" />
@@ -41,12 +52,19 @@
           </t-col>
         </t-row>
       </div>
-      <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" @click="addtages">添加标签</t-button>
+      <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" @click="addtages"
+        >添加标签</t-button
+      >
 
       <!-- 分集列表 -->
       <div class="diversity-list">
-        <t-row v-for="(diversity, index) in diversitys" :key="index" align="middle" :gutter="16"
-          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
+        <t-row
+          v-for="(diversity, index) in diversitys"
+          :key="index"
+          align="middle"
+          :gutter="16"
+          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
+        >
           <t-col :span="1" style="text-align: right">{{ index + 1 }}</t-col>
           <t-col :span="4">
             <t-input v-model="diversity.title" class="form-item-content" placeholder="分集名称" />
@@ -61,8 +79,9 @@
       </div>
 
       <!-- 添加分集 -->
-      <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
-        @click="addDiversity">添加分集</t-button>
+      <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" @click="addDiversity"
+        >添加分集</t-button
+      >
     </t-form>
   </t-dialog>
 </template>
@@ -70,20 +89,20 @@
 import { type DialogProps, MessagePlugin } from 'tdesign-vue-next';
 import { ref } from 'vue';
 import { createContent } from '@/api/content';
-const emit = defineEmits(['confirm'])
+const emit = defineEmits(['confirm']);
 interface FormData {
-  coverUrl: string,
-  title: string,
-  description: string,
-  authorNicknamel: string,
-  tags: Array<string | number>,
+  coverUrl: string;
+  title: string;
+  description: string;
+  authorNicknamel: string;
+  tags: Array<string | number>;
 }
 // 分集类型
 interface Diversity {
   title: string;
   fileUrl: string;
-  status: "DRAFT";
-  chapterNum: Number
+  status: 'DRAFT';
+  chapterNum: Number;
 }
 const visible = ref(false);
 
@@ -102,7 +121,7 @@ const open = (row?: any) => {
   title.value = row?.id ? '小说/动漫/漫画编辑' : '小说/动漫/漫画新建';
 
   if (row.id) {
-    data.value = row
+    data.value = row;
   } else {
     data.value = {
       coverUrl: '',
@@ -110,8 +129,7 @@ const open = (row?: any) => {
       description: '',
       authorNicknamel: '',
       tags: [],
-    }
-
+    };
   }
   visible.value = true;
 };
@@ -122,39 +140,36 @@ const onCancel: DialogProps['onCancel'] = () => {
 };
 
 const onConfirm: DialogProps['onConfirm'] = async () => {
-    if (!data.value.coverUrl) return MessagePlugin.error('请上传封面')
-  if (!data.value.title) return MessagePlugin.error('请输入名称')
-  if (!data.value.authorNicknamel) return MessagePlugin.error('请输入作者')
-  if (!data.value.description) return MessagePlugin.error('请输入简介')
-  if (!data.value.tags.length) return MessagePlugin.error('标签不能为空')
-  if (!diversitys.value.length) return MessagePlugin.error('分集不能为空')
+  if (!data.value.coverUrl) return MessagePlugin.error('请上传封面');
+  if (!data.value.title) return MessagePlugin.error('请输入名称');
+  if (!data.value.authorNicknamel) return MessagePlugin.error('请输入作者');
+  if (!data.value.description) return MessagePlugin.error('请输入简介');
+  if (!data.value.tags.length) return MessagePlugin.error('标签不能为空');
+  if (!diversitys.value.length) return MessagePlugin.error('分集不能为空');
   let arr = diversitys.value.map((item, index) => {
     return {
       ...item,
-      chapterNum: index + 1
-    }
-  })
+      chapterNum: index + 1,
+    };
+  });
   let params = {
-    operationType: "CREATE_STORY",
-    contentData:{
+    operationType: 'CREATE_STORY',
+    contentData: {
       ...data.value,
-   
-    contentType: "NOVEL",
-    },
-     chapterDataList: arr,
-   
-  }
 
-  const res = await createContent(params)
+      contentType: 'NOVEL',
+    },
+    chapterDataList: arr,
+  };
+
+  const res = await createContent(params);
 
   visible.value = false;
   diversitys.value = []; // 清空分集列表
-  data.value.tags = []
+  data.value.tags = [];
   MessagePlugin.success(res.message);
-  emit('confirm')
-
+  emit('confirm');
 };
-
 
 // 动态表单
 const diversitys = ref<Diversity[]>([]);
@@ -163,13 +178,13 @@ const addDiversity = () => {
   diversitys.value.push({
     title: '',
     fileUrl: '',
-    status: "DRAFT",
-    chapterNum: 0
+    status: 'DRAFT',
+    chapterNum: 0,
   });
 };
 // 删除分集
 const handleDeleDiversitys = (key: number) => {
-  diversitys.value.splice(key, 1)
+  diversitys.value.splice(key, 1);
 };
 
 // 添加标签
@@ -178,7 +193,7 @@ const addtages = () => {
 };
 // 删除标签
 const handleDeletTages = (key: number) => {
-  data.value.tags.splice(key, 1)
+  data.value.tags.splice(key, 1);
 };
 defineExpose({
   open,

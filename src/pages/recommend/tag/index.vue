@@ -218,7 +218,7 @@ const handleQuery = () => {
 const handleReset = () => {
   formData.value = { ...searchForm };
   pagination.value.current = 1;
-  initData(1);
+  fetchDataList(1);
 };
 // 初始化数据
 const initData = async (page: number = pagination.value.defaultCurrent) => {
@@ -232,7 +232,8 @@ const initData = async (page: number = pagination.value.defaultCurrent) => {
   const res = await getTagList(params);
   console.log('🚀 ~ initData ~ res:', res);
   tableData.value = res.data.results;
-  pagination.value.total = res.data.pagination.total;
+  pagination.value.total = res.data.total;
+  pagination.value.current = page;
 };
 
 onMounted(() => {

@@ -5,20 +5,21 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="内容类型" name="contentType">
-                <t-select v-model="formData.contentType" placeholder="选择内容类型">
-                  <t-option v-for="val in TYPES" :key="val" :value="val" :label="val" />
+              <t-form-item label="内容标题" name="search">
+                <t-input
+                  v-model="formData.search"
+                  type="search"
+                  placeholder="输入内容标题"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="是否VIP" name="is_vip">
+                <t-select v-model="formData.is_vip" placeholder="选择是否VIP" clearable>
+                  <t-option key="true" :value="true" label="是" />
+                  <t-option key="false" :value="false" label="否" />
                 </t-select>
-              </t-form-item>
-            </t-col>
-            <t-col :span="4">
-              <t-form-item label="标题/名称" name="title">
-                <t-input v-model="formData.title" type="search" placeholder="输入标题/名称" />
-              </t-form-item>
-            </t-col>
-            <t-col :span="4">
-              <t-form-item label="发布人ID" name="authorId">
-                <t-input v-model="formData.authorId" type="search" placeholder="输入发布人ID" />
               </t-form-item>
             </t-col>
           </t-row>
@@ -31,22 +32,26 @@
     </t-form>
 
     <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
-      <t-dropdown :options="createDropdownOptions" trigger="click" maxColumnWidth="120">
+      <!-- <t-dropdown :options="createDropdownOptions" trigger="click" maxColumnWidth="120">
         <t-button theme="primary" @click="handleCreate"> 新建内容 </t-button>
-      </t-dropdown>
+      </t-dropdown> -->
     </t-row>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" @page-change="handlePageChange">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" :key="paginationKey">
         <template #diversity="{ row }">
-          <t-link theme="primary" v-if="['NOVEL', 'COMIC', 'ANIME'].includes(row.contentType)" @click="handleReviewDiversity(row)"> 查看</t-link>
+          <t-link
+            theme="primary"
+            v-if="['NOVEL', 'COMIC', 'ANIME'].includes(row.contentType)"
+            @click="handleReviewDiversity(row)"
+          >
+            查看</t-link
+          >
           <span v-else>-</span>
         </template>
         <template #operation="{ row }">
           <t-space>
-            <t-link theme="primary" @click="handleAudit(row)" v-if="row.reviewStatus === 'PENDING'">审核</t-link>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="primary" @click="handleViewData(row)" v-if="row.reviewStatus === 'APPROVED'">数据</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
           </t-space>
         </template>
@@ -54,11 +59,11 @@
     </div>
 
     <!-- 小说/动漫/漫画新建编辑 -->
-    <edit-dialog ref="editDialogRef" @confirm="initData"/>
+    <edit-dialog ref="editDialogRef" @confirm="initData" />
     <!-- 常规编辑 -->
-    <edit-deafult-dialog ref="editDefaultDialogRef" @confirm="initData"/>
+    <edit-deafult-dialog ref="editDefaultDialogRef" @confirm="initData" />
     <!-- 审核 -->
-    <audit-dialog ref="auditDialogRef" @confirm="initData"/>
+    <audit-dialog ref="auditDialogRef" @confirm="initData" />
     <!-- 数据 -->
     <data-views ref="dataViewsRef" />
   </div>
@@ -86,15 +91,13 @@ import EditDialog from './components/EditDialog.vue';
 import { log } from 'node:console';
 
 interface FormData {
-  title: string;
-  authorId: string;
-  contentType: string;
+  search: string;
+  is_vip: boolean | null;
 }
 
 const searchForm = {
-  title: '',
-  contentType: '',
-  authorId: '',
+  search: '',
+  is_vip: null as boolean | null,
 };
 const formData = ref<FormData>({
   ...searchForm,
@@ -121,46 +124,56 @@ const COLUMNS: PrimaryTableCol[] = [
     colKey: 'id',
   },
   {
-    title: '内容类型',
-    colKey: 'contentType',
-    ellipsis: true,
-     cell: (h, { row }) => row.contentType == 'NOVEL' ? '小说' : '文章'
-  },
-  {
-    title: '分集',
-    colKey: 'diversity',
-    ellipsis: true,
-  },
-  {
-    title: '发布人ID',
-    colKey: 'authorId',
-    ellipsis: true,
-  },
-  {
-    title: '标签/名称',
+    title: '内容标题',
     colKey: 'title',
     ellipsis: true,
   },
   {
-    title: '副标题/简介',
+    title: '内容描述',
     colKey: 'description',
     ellipsis: true,
   },
-  // {
-  //   title: '内容标签',
-  //   colKey: 'materialImage',
-  //   align: 'center',
-  // },
-  // {
-  //   title: '图片',
-  //   colKey: 'materialImage',
-  //   align: 'center',
-  // },
   {
-    title: '状态',
-    colKey: 'status',
+    title: '内容类型',
+    colKey: 'contentType',
     ellipsis: true,
-     cell: (h, { row }) => row.status == 'DRAFT' ? '草稿':row.status == 'PUBLISHED' ? '已发布':'审核中'
+    cell: (h, { row }) => (row.type == 'long' ? '长视频' : row.type == 'short' ? '短视频' : ''),
+  },
+  {
+    title: '发布人ID',
+    colKey: 'author.id',
+    ellipsis: true,
+  },
+  {
+    title: '发布人名称',
+    colKey: 'author.user_nickname',
+    ellipsis: true,
+  },
+  {
+    title: '视频地址',
+    colKey: 'data',
+    ellipsis: true,
+  },
+  {
+    title: '封面地址',
+    colKey: 'cover_url',
+    align: 'center',
+  },
+  {
+    title: '点赞数',
+    colKey: 'like_count',
+    align: 'center',
+  },
+  {
+    title: '评论数',
+    colKey: 'comment_count',
+    align: 'center',
+  },
+  {
+    title: '是否VIP',
+    colKey: 'is_vip',
+    ellipsis: true,
+    cell: (h, { row }) => (row.is_vip == true ? '是' : '否'),
   },
   {
     title: '操作',
@@ -172,12 +185,18 @@ const COLUMNS: PrimaryTableCol[] = [
 
 // 表格数据
 const tableData = ref([]);
+// 分页器重新渲染的key
+const paginationKey = ref(0);
 
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
+const pagination = ref<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
   onChange: (pageInfo: { current: number; pageSize: number }) => {
+    console.log('分页器切换:', pageInfo);
+    pagination.value.current = pageInfo.current;
+    pagination.value.pageSize = pageInfo.pageSize;
     fetchDataList(pageInfo.current);
   },
- });
+});
 
 // 审核
 const handleAudit = (row: TableRowData) => {
@@ -193,18 +212,17 @@ const handleViewData = (row: TableRowData) => {
 };
 // 创建
 const handleCreate = () => {
-console.log('zoiulerma ');
+  console.log('zoiulerma ');
 
   // editDialogRef.value.open();
 };
 // 编辑
 const handleEdit = (row: TableRowData) => {
-  if(row.contentType == 'NOVEL'){
-      editDialogRef.value.open(row);
-  }else{
-       editDefaultDialogRef.value.open(row);
+  if (row.contentType == 'NOVEL') {
+    editDialogRef.value.open(row);
+  } else {
+    editDefaultDialogRef.value.open(row);
   }
-
 };
 
 // 删除
@@ -216,10 +234,10 @@ const handleDelete = (row: TableRowData) => {
     confirmBtn: '确定',
     cancelBtn: '取消',
     onConfirm: async ({ e }) => {
-      const res = await delContent({id: row.id});
-      console.log("🚀 ~ handleDelete ~ res:", res)
+      const res = await delContent({ id: row.id });
+      console.log('🚀 ~ handleDelete ~ res:', res);
       MessagePlugin.success(res.message);
-       initData();
+      initData();
       confirmDia.hide();
     },
     onClose: ({ e, trigger }) => {
@@ -230,40 +248,53 @@ const handleDelete = (row: TableRowData) => {
 
 // 查询
 const handleQuery = () => {
-  fetchDataList()
+  pagination.value.current = 1;
+  paginationKey.value++; // 强制重新渲染分页器
+  fetchDataList(1);
 };
 
 // 请求数据
 const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
-  let params = { ...formData.value }
-  // params.contentType =  params.contentType === '小说'?'NOVEL' :'ARTICLE'
-  const { data } = await  getContentList({
-    ...params,
-    page,
-    size: pagination.value.defaultPageSize,
+  let params: any = { ...formData.value };
+  // 过滤掉空值参数
+  Object.keys(params).forEach((key) => {
+    if (params[key] === '' || params[key] === null || params[key] === undefined) {
+      delete params[key];
+    }
   });
-  tableData.value = data.data.records;
-  pagination.value.total = data.data.total;
-  pagination.value.current = page;
+
+  const { data } = await getContentList({
+    ...params,
+    currentPage: page,
+    pageSize: pagination.value.defaultPageSize,
+  });
+  tableData.value = data.results;
+  pagination.value = {
+    ...pagination.value,
+    total: data.pagination.total,
+    current: page,
+  };
 };
 // 重置
 const handleReset = () => {
   formData.value = { ...searchForm };
-  initData()
+  pagination.value.current = 1;
+  paginationKey.value++; // 强制重新渲染分页器
+  fetchDataList(1);
 };
 
 // 初始化数据
 const initData = async (page: number = pagination.value.defaultCurrent) => {
   const params = {
     ...formData.value,
-    page,
-    size: pagination.value.defaultPageSize,
+    currentPage: page,
+    pageSize: pagination.value.defaultPageSize,
   };
   const res = await getContentList(params);
   console.log('🚀 ~ initData ~ res:', res);
 
-  tableData.value = res.data.data.records;
-  pagination.value.total = res.data.data.total;
+  tableData.value = res.data.results;
+  pagination.value.total = res.data.pagination.total;
 };
 
 onMounted(() => {

@@ -14,12 +14,12 @@ export default [
         component: () => import('@/pages/content/list/index.vue'),
         meta: { title: '内容列表' },
       },
-      {
-        path: 'classify',
-        name: 'ContentClassify',
-        component: () => import('@/pages/content/classify/index.vue'),
-        meta: { title: '内容分类' },
-      },
+      // {
+      //   path: 'classify',
+      //   name: 'ContentClassify',
+      //   component: () => import('@/pages/content/classify/index.vue'),
+      //   meta: { title: '内容分类' },
+      // },
       // {
       //   path: 'topic',
       //   name: 'ContentTopic',
