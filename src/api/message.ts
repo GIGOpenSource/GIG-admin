@@ -2,18 +2,18 @@ import { request } from '@/utils/request';
 
 const Api = {
     // MessageList: '/message/sessions',
-    MessageList: '/message/simple/list',
+    MessageList: '/chat/message',
     MessageDetails: '/message/details/',
     MessageDetailsByTime: '/message/session/details',
-    InformsList: '/message/informs',
-    DelInforms: '/message/inform/',
-    CteateInforms: '/message/inform/create',
-    UpdateInforms: '/message/update',
+    InformsList: '/notifications/',
+    DelInforms: '/notifications/',
+    CteateInforms: '/notifications/',
+    UpdateInforms: '/notifications/',
 };
 
 // 消息会话列表查询
 export function getMessageList(data: any) {
-    return request.post({
+    return request.get({
         url: Api.MessageList,
         data,
     });
@@ -33,7 +33,7 @@ export function getMessageDetailsByTime(data: any) {
 
 //消息通知列表
 export function getInformsList(data: any) {
-    return request.post({
+    return request.get({
         url: Api.InformsList,
         data,
     });
@@ -42,7 +42,7 @@ export function getInformsList(data: any) {
 //  根据ID删除消息通知 待测试
 export function delInforms(id: any) {
     return request.delete({
-        url: Api.DelInforms + id,
+        url: Api.DelInforms + id + '/',
     });
 }
 
@@ -56,7 +56,7 @@ export function createInforms(data: any) {
 // 更新分类
 export function updateInforms(data: any) {
     return request.put({
-        url: Api.UpdateInforms,
+        url: Api.UpdateInforms + data.id + '/',
         data,
     })
 }

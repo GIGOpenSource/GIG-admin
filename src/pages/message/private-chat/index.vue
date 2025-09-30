@@ -5,40 +5,31 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="输入ID" name="id">
-                <t-input
-                  v-model="formData.id"
-                  type="search"
-                  placeholder="输入对话ID"
-                />
+              <t-form-item label="输入内容" name="search">
+                <t-input v-model="formData.search" type="search" placeholder="输入内容" />
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="选择状态" name="status">
-                <t-select
-                  v-model="formData.status"
-                  :options="statusOptions"
-                  placeholder="选择状态"
-                  clearable
-                />
+              <t-form-item label="发起用户名" name="status">
+                <t-input v-model="formData.sender_nickname" type="search" placeholder="输入发起对话用户名" />
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
         <t-col :span="2" class="operation-container">
           <t-button theme="primary" @click="handleQuery"> 查询 </t-button>
-          <t-button theme="default" @click="handleReset" > 重置 </t-button>
+          <t-button theme="default" @click="handleReset"> 重置 </t-button>
         </t-col>
       </t-row>
     </t-form>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId"  :pagination="pagination">
-        <template #operation="{ row }">
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="dialogId" :pagination="pagination">
+        <!-- <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleView(row)">查看对话</t-link>
           </t-space>
-        </template>
+        </template> -->
       </t-table>
     </div>
   </div>
@@ -46,27 +37,25 @@
 </template>
 <script setup lang="ts">
 import type { PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
-import {
-  type TdBaseTableProps,
-} from 'tdesign-vue-next';
+import { type TdBaseTableProps } from 'tdesign-vue-next';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 import { getMessageList } from '@/api/message';
 
-import { ref ,onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 interface FormData {
-  id: string;
-  status: string | number;
+  search: string;
+  sender_nickname: string;
 }
 const searchForm = {
-  id: '',
-  status: '',
+  search: '',
+  sender_nickname: '',
 };
 const formData = ref<FormData>({
-   ...searchForm,
+  ...searchForm,
 });
 
 const statusOptions = [
@@ -78,62 +67,64 @@ const statusOptions = [
 
 const COLUMNS: PrimaryTableCol[] = [
   { title: '对话ID', colKey: 'id', align: 'center', width: 120 },
-  { title: '发起对话用户ID', colKey: 'senderId', align: 'center', width: 120 },
-  { title: '对话对方用户ID', colKey: 'receiverId', align: 'center', width: 120 },
-  { title: '对话消息数量', colKey: 'contentCount', align: 'center', width: 120 },
-  { title: '最近更新时间', colKey: 'updateTime', align: 'center', width: 160 },
-  { title: '所属APP', colKey: 'appName', align: 'center', width: 120 },
-  { title: '操作', colKey: 'operation', align: 'center', width: 120 },
+  { title: '发起对话用户ID', colKey: 'sender_id', align: 'center', width: 120 },
+  { title: '发起对话用户名', colKey: 'sender_nickname', align: 'center', width: 120 },
+  { title: '对话对方用户ID', colKey: 'receiver_id', align: 'center', width: 120 },
+  { title: '对话对方用户名', colKey: 'receiver_nickname', align: 'center', width: 120 },
+  // { title: '对话消息数量', colKey: 'send_count', align: 'center', width: 120 },
+  { title: '对话内容', colKey: 'content', align: 'center', width: 160 },
+  { title: '最近更新时间', colKey: 'update_time', align: 'center', width: 160 },
+  // { title: '操作', colKey: 'operation', align: 'center', width: 120 },
 ];
 
-const tableData = ref<TableRowData[]>([
-
-]);
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
-   onChange: (pageInfo: { current: number; pageSize: number }) => {
+const tableData = ref<TableRowData[]>([]);
+const pagination = ref<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
     fetchDataList(pageInfo.current);
   },
- });
+});
 
 const handleView = (row: TableRowData) => {
   console.log('🚀 ~ row:', row);
 
   // 查看对话逻辑
-  router.push({ path: '/message/chat/detail',query: { id: row.id } });
+  router.push({ path: '/message/chat/detail', query: { id: row.id } });
 };
 // 查询
 const handleQuery = () => {
-  fetchDataList()
+  fetchDataList();
 };
 // 请求数据
 const fetchDataList = async (page: number = pagination.value.defaultCurrent) => {
-  let params = { ...formData.value }
-  const { data } = await  getMessageList({
+  let params = { ...formData.value };
+  const { data } = await getMessageList({
     ...params,
-    page,
-    size: pagination.value.defaultPageSize,
+    currentPage: page,
+    pageSize: pagination.value.defaultPageSize,
   });
-  tableData.value = data.records;
+  tableData.value = data.results;
   pagination.value.total = data.total;
   pagination.value.current = page;
 };
 // 重置
 const handleReset = () => {
   formData.value = { ...searchForm };
-  initData()
+  pagination.value.current = 1;
+  initData(1);
 };
 
 // 初始化数据
 const initData = async (page: number = pagination.value.defaultCurrent) => {
   const params = {
     ...formData.value,
-    page,
-    size: pagination.value.defaultPageSize,
+    currentPage: page,
+    pageSize: pagination.value.defaultPageSize,
   };
   const res = await getMessageList(params);
   console.log('🚀 ~ initData ~ res:', res);
 
-  tableData.value = res.data.records;
+  tableData.value = res.data.results;
   pagination.value.total = res.data.total;
 };
 

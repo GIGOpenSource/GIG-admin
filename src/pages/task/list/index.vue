@@ -1,24 +1,33 @@
 <template>
-  <div class="channel-code-list-container">
+  <div class="task-list-container">
     <t-form :data="formData" :label-width="80">
       <t-row>
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="标签名" name="name">
+              <t-form-item label="任务名称" name="name">
                 <t-input
                   v-model="formData.name"
                   type="search"
-                  placeholder="输入标签名"
+                  placeholder="输入任务名称"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="标签状态" name="status">
-                <t-select v-model="formData.status" placeholder="选择标签状态" clearable>
-                  <t-option key="activate" value="activate" label="激活" />
-                  <t-option key="deactivate" value="deactivate" label="未激活" />
+              <t-form-item label="模板状态" name="is_active">
+                <t-select v-model="formData.is_active" placeholder="选择模板状态" clearable>
+                  <t-option key="true" :value="true" label="激活" />
+                  <t-option key="false" :value="false" label="未激活" />
+                </t-select>
+              </t-form-item>
+            </t-col>
+            <t-col :span="4">
+              <t-form-item label="模板类型" name="type">
+                <t-select v-model="formData.type" placeholder="选择模板类型" clearable>
+                  <t-option key="daily" value="daily" label="每日任务" />
+                  <t-option key="checkin" value="checkin" label="签到任务" />
+                  <t-option key="novice" value="novice" label="新手任务" />
                 </t-select>
               </t-form-item>
             </t-col>
@@ -49,39 +58,32 @@
     <edit-dialog ref="editDialogRef" @confirm="handleDialogConfirm" />
   </div>
 </template>
-<script lang="ts" setup>
-import type { DateRangePickerProps, PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
+
+<script setup lang="ts">
+import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { ref, onMounted } from 'vue';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
-
+import { getTaskList, deleteTask } from '@/api/task';
 import EditDialog from './EditDialog.vue';
-import { getTagList, deleteTag } from '@/api/recommend';
-import { h } from 'vue';
 
 interface FormData {
   name: string;
-  status: string;
+  is_active: boolean | null;
+  type: string;
 }
 
-const tagTypeOptions = [
-  { label: '内容', value: 'content' },
-  { label: '兴趣', value: 'interest' },
-  { label: '系统', value: 'system' },
-];
 const searchForm = {
   name: '',
-  status: '',
+  is_active: null as boolean | null,
+  type: '',
 };
+
 const formData = ref<FormData>({
   ...searchForm,
 });
 
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
-function getLabel(options: { label: string; value: string }[], value: string) {
-  const found = options.find((opt) => opt.value === value);
-  return found ? found.label : value;
-}
 
 // 表格字段
 const COLUMNS: PrimaryTableCol[] = [
@@ -92,44 +94,51 @@ const COLUMNS: PrimaryTableCol[] = [
     width: 80,
   },
   {
-    title: '标签名',
+    title: '任务名称',
     colKey: 'name',
     align: 'left',
     ellipsis: true,
   },
-  //   {
-  //     title: '标签使用人数',
-  //     colKey: 'usage_count',
-  //     align: 'left',
-  //     ellipsis: true,
-  //     cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
-  //     return tagTypeOptions.find(opt => opt.value === row.tagType)?.label || '';
-  // }
-  //   },
   {
-    title: '标签使用人数',
-    colKey: 'usage_count',
-    align: 'left',
-    ellipsis: true,
-  },
-  {
-    title: '标签状态',
-    colKey: 'status',
+    title: '模板状态',
+    colKey: 'is_active',
     align: 'center',
-    cell: (h, { row }) => {
-      return row.status === 'activate' ? '激活' : row.status === 'deactivate' ? '未激活' : row.status;
+    cell: (h, { row }: { row: any }) => {
+      return row.is_active ? '激活' : '未激活';
     },
   },
   {
-    title: '标签描述',
+    title: '模板类型',
+    colKey: 'type',
+    align: 'center',
+    cell: (h, { row }: { row: any }) => {
+      const typeMap: Record<string, string> = {
+        daily: '每日任务',
+        checkin: '签到任务',
+        novice: '新手任务',
+      };
+      return typeMap[row.type] || row.type;
+    },
+  },
+  {
+    title: '任务描述',
     colKey: 'description',
+    align: 'center',
+  },
+  {
+    title: '创建时间',
+    colKey: 'create_time',
+    align: 'center',
+  },
+  {
+    title: '更新时间',
+    colKey: 'update_time',
     align: 'center',
   },
   {
     title: '操作',
     colKey: 'operation',
     align: 'center',
-    width: 120,
   },
 ];
 
@@ -146,11 +155,19 @@ const pagination = ref<TdBaseTableProps['pagination']>({
 
 // 新增逻辑
 const handleCreate = () => {
-  editDialogRef.value.open();
+  editDialogRef.value?.open();
 };
 
+// 编辑逻辑
 const handleEdit = (row: TableRowData) => {
-  editDialogRef.value.open(row);
+  editDialogRef.value?.open(row);
+};
+
+// Dialog 确认回调
+const handleDialogConfirm = () => {
+  // 编辑/新建成功后停留在当前页
+  console.log('Dialog确认回调触发，当前页:', pagination.value.current);
+  fetchDataList(pagination.value.current);
 };
 
 // 删除逻辑
@@ -158,12 +175,12 @@ const handleDelete = (row: TableRowData) => {
   const dialog = DialogPlugin.confirm({
     theme: 'danger',
     header: '确认删除',
-    body: `您确定要删除标签"${row.name}"吗？`,
+    body: `您确定要删除任务"${row.name}"吗？`,
     confirmBtn: '确认',
     cancelBtn: '取消',
     onConfirm: async () => {
       try {
-        const res = await deleteTag(row.id);
+        const res = await deleteTask(row.id);
         MessagePlugin.success(res.message);
         // 删除后停留在当前页
         fetchDataList(pagination.value.current);
@@ -180,19 +197,6 @@ const handleDelete = (row: TableRowData) => {
   });
 };
 
-// Dialog 确认回调
-const handleDialogConfirm = () => {
-  // 编辑成功后停留在当前页
-  console.log('编辑确认回调触发，当前页:', pagination.value.current);
-  fetchDataList(pagination.value.current);
-};
-
-// 弹窗保存后刷新列表
-// if (editDialogRef.value) {
-//   editDialogRef.value.$on && editDialogRef.value.$on('confirm', () => {
-//     fetchDataList();
-//   });
-// }
 // 请求列表数据
 const fetchDataList = async (page: number = pagination.value.current || pagination.value.defaultCurrent) => {
   const params = {
@@ -201,13 +205,19 @@ const fetchDataList = async (page: number = pagination.value.current || paginati
     pageSize: pagination.value.defaultPageSize,
   };
   console.log('请求参数:', params);
-  const res = await getTagList(params);
-  console.log('接口返回数据:', res.data.results);
-  tableData.value = res.data.results;
-  pagination.value.total = res.data.total;
-  pagination.value.current = page;
-  console.log('分页状态更新:', { current: page, total: res.data.total });
+  try {
+    const res = await getTaskList(params);
+    console.log('接口返回数据:', res.data.data);
+    tableData.value = res.data.results;
+    pagination.value.total = res.data.pagination.total;
+    pagination.value.current = page;
+    console.log('分页状态更新:', { current: page, total: res.data.pagination.total });
+  } catch (error) {
+    console.error('获取任务列表失败:', error);
+    MessagePlugin.error('获取任务列表失败');
+  }
 };
+
 // 查询
 const handleQuery = () => {
   pagination.value.current = 1;
@@ -218,29 +228,16 @@ const handleQuery = () => {
 const handleReset = () => {
   formData.value = { ...searchForm };
   pagination.value.current = 1;
-  initData(1);
-};
-// 初始化数据
-const initData = async (page: number = pagination.value.defaultCurrent) => {
-  const params = {
-    ...formData.value,
-    currentPage: page,
-    pageSize: pagination.value.defaultPageSize,
-  };
-  console.log('🚀 ~ initData ~ params:', params);
-  console.log('🚀 ~ fetchDataList ~ params:', pagination.value);
-  const res = await getTagList(params);
-  console.log('🚀 ~ initData ~ res:', res);
-  tableData.value = res.data.results;
-  pagination.value.total = res.data.pagination.total;
+  fetchDataList(1);
 };
 
 onMounted(() => {
-  initData();
+  fetchDataList();
 });
 </script>
+
 <style lang="less" scoped>
-.channel-code-list-container {
+.task-list-container {
   background-color: var(--td-bg-color-container);
   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
   border-radius: var(--td-radius-medium);

@@ -8,25 +8,25 @@
       <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
         <template #operation="{ row }">
           <t-space>
-            <!-- <t-link theme="primary" @click="handleEdit(row)">编辑</t-link> -->
+            <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
           </t-space>
         </template>
       </t-table>
     </div>
 
-    <edit-dialog ref="editDialogRef" @confirm="fetchDataList" />
+    <edit-dialog ref="editDialogRef" @confirm="handleDialogConfirm" />
   </div>
 </template>
 <script setup lang="ts">
 import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
-import {DialogPlugin,MessagePlugin } from 'tdesign-vue-next';
+import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
 
 import { ref, reactive, onMounted } from 'vue';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
-import { getInformsList,delInforms } from '@/api/message';
+import { getInformsList, delInforms } from '@/api/message';
 
-import EditDialog from './Dialog.vue'; 
+import EditDialog from './Dialog.vue';
 
 interface FormData {
   // bloggerUid: string;
@@ -45,7 +45,7 @@ const appNameOptions = [
   { label: '游戏应用', value: 'game_app' },
   { label: '办公应用', value: 'office_app' },
   { label: '医疗应用', value: 'medical_app' },
-  { label: '新闻应用', value: 'news_app' }
+  { label: '新闻应用', value: 'news_app' },
 ];
 const typeRelationOptions = [
   { label: '订单更新', value: 'order_update' },
@@ -55,63 +55,81 @@ const typeRelationOptions = [
   { label: '活动通知', value: 'activity_notice' },
   { label: '会议', value: 'meeting_reminder' },
   { label: '日程提醒', value: 'appointment_reminder' },
-  { label: '信息推送', value: 'info_push' }
+  { label: '信息推送', value: 'info_push' },
 ];
 
 const userTypeOptions = [
-  { label: '买者', value: 'buyer' },
-  { label: '用户', value: 'user' },
-  { label: '成员', value: 'member' },
-  { label: '学生', value: 'student' },    
-  { label: '玩家', value: 'palyer' },
-  { label: '采访人员', value: 'emplyee' },
-  { label: '病人', value: 'patient' },
-  { label: '读者', value: 'reader' }
+  { label: 'VIP', value: true },
+  { label: '普通用户', value: false },
 ];
 const editDialogRef = ref<InstanceType<typeof EditDialog>>();
 
 const COLUMNS: PrimaryTableCol[] = [
   { title: '对话ID', colKey: 'id', align: 'center', width: 120 },
-  { title: '所属APP', colKey: 'appName', align: 'center', width: 120},
-  { title: '类型关系', colKey: 'typeRelation', align: 'center', width: 120 },
-  { title: '用户类型', colKey: 'userType', align: 'center', width: 120,cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
-    return userTypeOptions.find(opt => opt.value === row.userType)?.label || '';} },
-  { title: '通知内容', colKey: 'notificationContent', align: 'center', width: 120 },
-  { title: '发送时间', colKey: 'sendTime', align: 'center', width: 120 },
+  { title: '所属APP', colKey: 'app_name', align: 'center', width: 120 },
+  { title: '类型关系', colKey: 'type', align: 'center', width: 120 },
+  {
+    title: '用户昵称',
+    colKey: 'user_nickname',
+    align: 'center',
+    width: 120,
+    cell(h: (arg0: string, arg1: { style: string }, arg2: string) => any, { row }: any) {
+      return row.user?.user_nickname || '-';
+    },
+  },
+  {
+    title: '用户类型',
+    colKey: 'is_vip',
+    align: 'center',
+    width: 120,
+    cell(h: (arg0: string, arg1: { style: string }, arg2: string) => any, { row }: any) {
+      return row.user?.is_vip ? 'VIP' : '普通用户';
+    },
+  },
+  { title: '通知内容', colKey: 'content', align: 'center', width: 120 },
+  { title: '发送时间', colKey: 'send_time', align: 'center', width: 120 },
   { title: '操作', colKey: 'operation', align: 'center', width: 120 },
 ];
 
-const tableData = ref<TableRowData[]>([
-
-]);
-const pagination = ref<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
-   onChange: (pageInfo: { current: number; pageSize: number }) => {
+const tableData = ref<TableRowData[]>([]);
+const pagination = ref<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    pagination.value.current = pageInfo.current;
+    pagination.value.pageSize = pageInfo.pageSize;
     fetchDataList(pageInfo.current);
   },
- });
+});
 
-  // 新建逻辑
+// 新建逻辑
 const handleCreate = (row: TableRowData) => {
   editDialogRef.value?.open(row);
 };
- // 编辑逻辑
+// 编辑逻辑
 const handleEdit = (row: TableRowData) => {
   editDialogRef.value?.open(row);
+};
+
+// Dialog 确认回调
+const handleDialogConfirm = () => {
+  // 编辑/新建成功后停留在当前页
+  fetchDataList(pagination.value.current);
 };
 // 删除逻辑
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
-   const dialog = DialogPlugin.confirm({
+  const dialog = DialogPlugin.confirm({
     theme: 'danger',
     header: '确认删除',
-    body: `您确定要删除消息通知 ${row.notificationContent} 吗？`,
+    body: `您确定要删除消息通知吗？`,
     confirmBtn: '确认',
     cancelBtn: '取消',
     onConfirm: async () => {
       // 执行删除操作
       const res = await delInforms(row.id);
       MessagePlugin.success(res.message);
-      fetchDataList();
+      // 删除后停留在当前页
+      fetchDataList(pagination.value.current);
       dialog.destroy();
     },
     onCancel: () => {
@@ -119,17 +137,21 @@ const handleDelete = (row: TableRowData) => {
     },
   });
 };
-const fetchDataList = async (page: number= pagination.value.defaultCurrent) => {
+const fetchDataList = async (page: number = pagination.value.current || pagination.value.defaultCurrent) => {
   const params = {
     // ...formData.value,
-    page,
-    size: pagination.value.defaultPageSize,
+    currentPage: page,
+    pageSize: pagination.value.defaultPageSize,
   };
   console.log('🚀 ~ fetchDataList ~ params:', pagination.value);
   const res = await getInformsList(params);
   console.log('🚀 ~ fetchDataList ~ data:', res);
-  tableData.value = res.data.data;
-  pagination.value.total = res.data.total;
+  console.log('🚀 ~ 接口返回的数据条数:', res.data.results?.length);
+  console.log('🚀 ~ 接口返回的完整数据:', res.data.results);
+  tableData.value = res.data.results;
+  pagination.value.total = res.data.pagination.total;
+  pagination.value.current = page;
+  console.log('🚀 ~ 设置到表格的数据条数:', tableData.value.length);
 };
 // 查询
 // const handleQuery = () => {
