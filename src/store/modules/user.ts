@@ -28,15 +28,18 @@ export const useUserStore = defineStore('user', {
       console.log("🚀 ~ login ~ userInfo:", userInfo)
       const res = await login(userInfo);
       console.log("🚀 ~ res:", res)
+
       console.log("🚀 ~ res:", res.data.token, res.code)
 
-      if (res.code === 200) {
+      if (res.code === 200 && res.data.is_staff === true) {
       // if (res.code === 0 && res.data.token) {
         this.token = res.data.token;
         this.userInfo = res.data;
         console.log("🚀 ~ this.userInfo:", this.userInfo)
         return res;
-      } else {
+      } else
+      {
+        console.log(" 密码错误或无权限:", this.userInfo)
         throw res;
       }
     },
