@@ -1,202 +1,281 @@
 <template>
-  <div class="product-config-list-container">
-    <t-form :data="formData" :label-width="80">
-      <t-row>
-        <t-col :span="10">
-          <t-row :gutter="[24, 24]">
-            <!-- <t-col :span="4">
-              <t-form-item label="选择包" name="package">
-                  <t-input v-model="formData.packageName" type="search" placeholder="输入包名" />
-              </t-form-item>
-            </t-col> -->
-            <t-col :span="4">
-              <t-form-item label="选择状态" name="is_active">
-                <t-select v-model="formData.is_active" :options="statusOptions" placeholder="选择状态" clearable />
-              </t-form-item>
-            </t-col>
-            <t-col :span="4">
-              <t-form-item label="策略名称" name="strategyScene">
-                <t-input v-model="formData.strategy_scene" type="search" placeholder="输入策略名称" />
-              </t-form-item>
-            </t-col>
-          </t-row>
-        </t-col>
-        <t-col :span="2" class="operation-container">
-          <t-button theme="primary" @click="handleQuery"> 查询 </t-button>
-          <t-button theme="default" @click="handleReset"> 重置 </t-button>
-        </t-col>
-      </t-row>
-    </t-form>
+  <div class="channel-code-list-container">
+    <!-- 操作栏 -->
+    <t-row :style="{ marginBottom: 'var(--td-comp-margin-xxl)' }">
+      <t-button theme="primary" @click="handleCreate">新建</t-button>
+      <t-form :data="formData" >
+        <t-row :gutter="24">
+          <t-col :span="24">
+            <t-row :gutter="[24, 24]">
+              <t-col :span="8">
+                <t-form-item label="链接名称" name="search">
+                  <t-input
+                    v-model="formData.name"
+                    type="search"
+                    placeholder="输入链接名称"
+                    :style="{ minWidth: '134px' }"
+                  />
+                </t-form-item>
+              </t-col>
+              <t-col :span="8">
+                <t-form-item label="类型" name="type">
+                  <t-select v-model="formData.type" placeholder="选择类型" clearable>
+                    <t-option value="">全部</t-option>
+                    <t-option value="app">App</t-option>
+                    <t-option value="game">游戏</t-option>
+                    <t-option value="game_ads">游戏广告</t-option>
+                    <t-option value="string">字符串</t-option>
+                    <t-option value="vip">VIP</t-option>
+                    <t-option value="welcome">欢迎页</t-option>
+                    <t-option value="welcome_icon">欢迎图标</t-option>
+                  </t-select>
+                </t-form-item>
+              </t-col>
+            </t-row>
+          </t-col>
+          <t-col :span="4" class="operation-container">
+            <t-button theme="primary" @click="handleQuery">查询</t-button>
+            <t-button theme="default" @click="handleReset">重置</t-button>
+          </t-col>
+        </t-row>
+      </t-form>
 
-    <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
-      <t-button theme="primary" @click="handleCreate"> 新建 </t-button>
     </t-row>
 
-    <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
-        <template #operation="{ row }">
-          <t-space>
-            <t-link theme="success" @click="handleOnline(row)">
-              {{ row.is_active ? '下线' : '上线' }}
-            </t-link>
-            <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
-          </t-space>
-        </template>
-      </t-table>
-    </div>
-    <config-dialog ref="dialogRef" @confirm="featchDataList()" />
+    <!-- 数据表格 -->
+    <t-table
+      :data="linkList"
+      :columns="columns"
+      :loading="loading"
+      row-key="id"
+      :pagination="pagination"
+      @page-change="handlePageChange"
+    >
+      <template #operation="{ row }">
+        <t-link theme="primary" hover="color" @click="handleEdit(row)">编辑</t-link>
+        <t-popconfirm content="确认删除该链接吗？" @confirm="handleDelete(row)">
+          <t-link theme="danger" hover="color" style="margin-left: var(--td-comp-margin-s)">删除</t-link>
+        </t-popconfirm>
+      </template>
+    </t-table>
+
+    <!-- 编辑/创建弹窗 -->
+    <t-dialog
+      v-model:visible="formVisible"
+      :header="dialogTitle"
+      @confirm="handleConfirm"
+      @cancel="handleCancel"
+      :width="dialogWidth"
+    >
+      <t-form ref="formRef" :data="formData" :rules="formRules" @submit="onSubmit">
+        <t-form-item label="链接名称" name="name">
+          <t-input v-model="formData.name" placeholder="请输入链接名称" />
+        </t-form-item>
+
+        <t-form-item label="标题" name="title">
+          <t-input v-model="formData.title" placeholder="请输入标题" />
+        </t-form-item>
+
+        <t-form-item label="描述" name="description">
+          <t-textarea v-model="formData.description" placeholder="请输入描述" />
+        </t-form-item>
+        <t-form-item label="链接类型" name="type">
+          <t-select v-model="formData.type" placeholder="请选择链接类型">
+            <t-option value="app">App</t-option>
+            <t-option value="game">游戏</t-option>
+            <t-option value="game_ads">游戏广告</t-option>
+            <t-option value="string">字符串</t-option>
+            <t-option value="vip">VIP</t-option>
+            <t-option value="welcome">欢迎页</t-option>
+            <t-option value="welcome_icon">欢迎图标</t-option>
+          </t-select>
+        </t-form-item>
+        <t-form-item label="图片地址" name="image_url">
+          <t-input v-model="formData.image_url" placeholder="请输入图片地址" />
+        </t-form-item>
+
+        <t-form-item label="点击地址" name="click_url">
+          <t-input v-model="formData.click_url" placeholder="请输入点击地址" />
+        </t-form-item>
+
+        <t-form-item label="替代文本" name="alt_text">
+          <t-input v-model="formData.alt_text" placeholder="请输入替代文本" />
+        </t-form-item>
+      </t-form>
+    </t-dialog>
   </div>
 </template>
-<script lang="ts" setup>
-import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
-import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
-import { ref, reactive, onMounted } from 'vue';
 
+<script setup lang="ts">
+import { ref, reactive, onMounted, computed } from 'vue';
+import { MessagePlugin, type TdBaseTableProps } from 'tdesign-vue-next';
+import { getLinkList, createLink, updateLink, deleteLink } from '@/api/goods';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
-import { getGoodsList, deleteGoods, changeGoodsStatus } from '@/api/goods';
-
-import ConfigDialog from '../list/Dialog.vue';
-
-interface FormData {
-  pay_channel: string;
-  is_active: string | number;
-  strategy_scene: string;
+interface ExternalLink {
+  id: string;
+  name: string;
+  url: string;
+  description?: string;
+  type: 'app' | 'game' | 'game_ads' | 'string' | 'vip' | 'welcome' | 'welcome_icon';
+  createdAt: string;
+  updatedAt: string;
 }
 
-const formData = ref<FormData>({
-  pay_channel: '',
-  is_active: '',
-  strategy_scene: '',
-});
+// 数据状态
+const linkList = ref<ExternalLink[]>([]);
+const loading = ref(false);
+const formVisible = ref(false);
+const currentId = ref<string | null>(null);
+const formRef = ref();
+const searchName = ref('');
+const searchType = ref('');
 
-const packageOptions = [
-  { label: '包A', value: 'A' },
-  { label: '包B', value: 'B' },
-];
-const statusOptions = [
-  { label: '全部', value: '' },
-  { label: '上线', value: true },
-  { label: '下线', value: false },
-];
-const sceneOptions = [
-  { label: '场景1', value: 'scene1' },
-  { label: '场景2', value: 'scene2' },
-];
-
-const COLUMNS: PrimaryTableCol[] = [
-  { title: '序号', colKey: 'serial-number', width: 80 },
-  { title: '策略名称场景', colKey: 'strategy_scene', ellipsis: true },
-  { title: '商品描述', colKey: 'promotion_text', align: 'left', ellipsis: true },
-  { title: '价格', colKey: 'pay_price' },
-  {
-    title: '商品类型',
-    colKey: 'pay_channel',
-    ellipsis: true,
-
-    cell: (h, { row }) =>
-      row.pay_channel == 'gold'
-        ? '金币'
-        : row.pay_channel == 'goods'
-          ? '商品'
-          : row.pay_channel == 'vip'
-            ? 'VIP'
-            : '内容',
-  },
-  { title: '商品名称', colKey: 'pay_name', ellipsis: true },
-  {
-    title: '状态',
-    colKey: 'is_active',
-    cell: (h, { row }) => (row.is_active ? '上线' : '下线'),
-  },
-  { title: '操作', colKey: 'operation', width: 180 },
-];
-
-const pagination = reactive<TdBaseTableProps['pagination']>({
-  ...DEFAULT_PAGE_PARAMS,
-  current: 1,
-  onChange: (pageInfo: { current: number; pageSize: number }) => {
-    featchDataList(pageInfo.current);
-  },
-});
-const tableData = ref([]);
-
-const dialogRef = ref<InstanceType<typeof ConfigDialog>>();
-//新增
-const handleCreate = (row: TableRowData) => {
-  dialogRef.value?.open(row);
-};
-//编辑
-const handleEdit = (row: TableRowData) => {
-  dialogRef.value?.open(row);
-};
-
-const handleOnline = async (row: TableRowData) => {
-  console.log('🚀 ~ handleOnline ~ row:', row.status);
-  // let status = row.status == 'active' ? 'N' : 'active'
-  let status = row.is_active == true ? false : true;
-  console.log('🚀status', status);
-  // 上线/下线逻辑
-  const res = await changeGoodsStatus(row.id, status.toString());
-  MessagePlugin.success(res.message);
-  featchDataList();
-};
-const handleDelete = (row: TableRowData) => {
-  const dialog = DialogPlugin.confirm({
-    theme: 'danger',
-    header: '确认删除',
-    body: `您确定要删除吗？`,
-    confirmBtn: '确认',
-    cancelBtn: '取消',
-    onConfirm: async () => {
-      // 执行删除操作
-      console.log('删除分类:', row);
-      const res = await deleteGoods(row.id);
-      MessagePlugin.success(res.message);
-      // 删除后保持当前页面
-      featchDataList(pagination.current || pagination.defaultCurrent);
-      dialog.destroy();
-    },
-    onCancel: () => {
-      dialog.hide();
-    },
-  });
-};
-
-// 查询
 const handleQuery = () => {
-  featchDataList(pagination.current || pagination.defaultCurrent);
+  pagination.value.current = 1;
+  fetchData(1);
 };
-// 重置
+
 const handleReset = () => {
-  formData.value = {
-    pay_channel: '',
-    is_active: '',
-    strategy_scene: '',
-  };
-  // 重置后跳转到第1页
-  featchDataList(1);
+  formData.name = '';
+  formData.type = '';
+  pagination.value.current = 1;
+  fetchData(1);
 };
-const featchDataList = async (page: number = pagination.defaultCurrent) => {
-  const param = {
+// 表单数据
+const formData = reactive({
+  name: '',
+  title: '',
+  description: '',
+  type: '',
+  image_url: '',
+  click_url: '',
+  alt_text: '',
+});
+
+const formRules = {
+  name: [{ required: true, message: '请输入链接名称' }],
+  title: [{ required: true, message: '请输入标题' }],
+  type: [{ required: true, message: '请选择链接类型' }],
+  image_url: [{ required: true, message: '请输入图片地址' }],
+  click_url: [{ required: true, message: '请输入点击地址' }],
+};
+
+const dialogTitle = computed(() => (currentId.value ? '编辑链接' : '新建链接'));
+
+// 表格配置
+const columns = [
+  { title: '链接名称', colKey: 'name' },
+  { title: '标题', colKey: 'title' },
+  { title: '类型', colKey: 'type' },
+  {
+    title: '图片地址',
+    colKey: 'image_url',
+    ellipsis: true,
+  },
+  { title: '点击地址', colKey: 'click_url', ellipsis: true },
+  { title: '描述', colKey: 'description', ellipsis: true },
+  { title: '创建时间', colKey: 'createdAt' },
+  { title: '操作', colKey: 'operation', width: 150 },
+];
+
+const pagination = ref<TdBaseTableProps['pagination']>({
+  ...DEFAULT_PAGE_PARAMS,
+  onChange: (pageInfo: { current: number; pageSize: number }) => {
+    console.log('分页器切换:', pageInfo);
+    pagination.value.current = pageInfo.current;
+    pagination.value.pageSize = pageInfo.pageSize;
+    fetchData(pageInfo.current);
+  },
+});
+
+const fetchData = async (page: number = pagination.value.current || pagination.value.defaultCurrent) => {
+  const params = {
     ...formData.value,
-    currentPage: page,
-    pageSize: pagination.defaultPageSize,
+    name: formData.name,
+    type: formData.type,
+    currentPage: pagination.value.current,
+    pageSize: pagination.value.defaultPageSize,
   };
-  const res = await getGoodsList(param);
-  console.log('🚀 ~ featchDataList ~ res:', res);
-  tableData.value = res.data.results;
-  pagination.total = res.data.pagination.total;
-  pagination.current = page;
+  console.log('请求参数:', params);
+  try {
+    const res = await getLinkList(params);
+    console.log('接口返回数据:', res.data.data);
+    linkList.value = res.data.results;
+    pagination.value.total = res.data.pagination.total;
+    pagination.value.current = page;
+    console.log('分页状态更新:', { current: page, total: res.data.pagination.total });
+  } catch (error) {
+    console.error('获取任务列表失败:', error);
+    MessagePlugin.error('获取任务列表失败').then();
+  }
+};
+const handleCreate = () => {
+  currentId.value = null;
+  Object.assign(formData, { name: '', url: '', description: '' });
+  formVisible.value = true;
+};
+
+const handleEdit = (row: ExternalLink) => {
+  currentId.value = row.id;
+  Object.assign(formData, { ...row });
+  formVisible.value = true;
+};
+
+const handleDelete = async (row: ExternalLink) => {
+  try {
+    await deleteLink(row.id);
+    MessagePlugin.success('删除成功').then();
+    fetchData(1);
+  } catch (error) {
+    MessagePlugin.error('删除失败').then();
+  }
+};
+
+const handleConfirm = () => {
+  // 触发表单提交
+  formRef.value?.submit();
+};
+
+const handleCancel = () => {
+  formVisible.value = false;
+};
+
+const dialogWidth = computed(() => {
+  return '50vw';
+});
+
+const onSubmit = async ({ validateResult, firstError }: { validateResult: any; firstError: string }) => {
+  if (validateResult === true) {
+    try {
+      if (currentId.value) {
+        await updateLink(formData);
+      } else {
+        await createLink(formData);
+      }
+      MessagePlugin.success(currentId.value ? '更新成功' : '创建成功').then();
+      formVisible.value = false;
+      fetchData(1);
+    } catch (error) {
+      MessagePlugin.error(currentId.value ? '更新失败' : '创建失败').then();
+    }
+  } else {
+    MessagePlugin.warning(firstError).then();
+  }
+};
+
+const handlePageChange = (pageInfo: { current: number; pageSize: number }) => {
+  pagination.current = pageInfo.current;
+  pagination.pageSize = pageInfo.pageSize;
+  fetchData(pageInfo.current);
 };
 
 onMounted(() => {
-  featchDataList();
+  fetchData();
 });
 </script>
-<style lang="less" scoped>
-.product-config-list-container {
+<style scoped>
+.channel-code-list-container {
   background-color: var(--td-bg-color-container);
   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
   border-radius: var(--td-radius-medium);
@@ -204,9 +283,5 @@ onMounted(() => {
   .table-container {
     margin-top: var(--td-comp-margin-xxl);
   }
-}
-
-.operation-container {
-  text-align: right;
 }
 </style>
