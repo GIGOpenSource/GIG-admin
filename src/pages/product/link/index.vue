@@ -1,14 +1,14 @@
 <template>
-  <div class="product-config-list-container">
+  <div class="channel-code-list-container">
     <!-- 操作栏 -->
     <t-row :style="{ marginBottom: 'var(--td-comp-margin-xxl)' }">
       <t-button theme="primary" @click="handleCreate">新建</t-button>
-      <t-form :data="formData" :label-width="80">
-        <t-row>
-          <t-col :span="10">
+      <t-form :data="formData" >
+        <t-row :gutter="24">
+          <t-col :span="24">
             <t-row :gutter="[24, 24]">
-              <t-col :span="4">
-                <t-form-item label="链接名称" name="name">
+              <t-col :span="8">
+                <t-form-item label="链接名称" name="search">
                   <t-input
                     v-model="formData.name"
                     type="search"
@@ -17,7 +17,7 @@
                   />
                 </t-form-item>
               </t-col>
-              <t-col :span="4">
+              <t-col :span="8">
                 <t-form-item label="类型" name="type">
                   <t-select v-model="formData.type" placeholder="选择类型" clearable>
                     <t-option value="">全部</t-option>
@@ -33,7 +33,7 @@
               </t-col>
             </t-row>
           </t-col>
-          <t-col :span="2" class="operation-container">
+          <t-col :span="4" class="operation-container">
             <t-button theme="primary" @click="handleQuery">查询</t-button>
             <t-button theme="default" @click="handleReset">重置</t-button>
           </t-col>
@@ -147,7 +147,7 @@ const formData = reactive({
   name: '',
   title: '',
   description: '',
-  type: 'app',
+  type: '',
   image_url: '',
   click_url: '',
   alt_text: '',
@@ -275,17 +275,13 @@ onMounted(() => {
 });
 </script>
 <style scoped>
-.product-config-list-container {
+.channel-code-list-container {
+  background-color: var(--td-bg-color-container);
   padding: var(--td-comp-paddingTB-xxl) var(--td-comp-paddingLR-xxl);
-  background: var(--td-bg-color-container);
-  border-radius: var(--td-radius-default);
-}
+  border-radius: var(--td-radius-medium);
 
-.ellipsis {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  .table-container {
+    margin-top: var(--td-comp-margin-xxl);
+  }
 }
 </style>
