@@ -14,12 +14,18 @@ export default [
         component: () => import('@/pages/product/list/index.vue'),
         meta: { title: '商品列表(金币/VIP)' },
       },
-      // {
-      //   path: 'config',
-      //   name: 'productConfig',
-      //   component: () => import('@/pages/product/config/index.vue'),
-      //   meta: { title: 'VIP特权配置' },
-      // },
+      {
+        path: 'config',
+        name: 'productConfig',
+        component: () => import('@/pages/product/config/index.vue'),
+        meta: { title: '会员权益' },
+      },
+      {
+        path:"link",
+        name: 'productLink',
+        component: () => import('@/pages/product/link/index.vue'),
+        meta: { title: '外部链接' },
+      }
     ],
   },
 ];

@@ -7,7 +7,6 @@
     "dev": "vite --open --mode development",
     "dev:linux": "vite --mode development",
     "build:test": "vite build --mode test",
-
     "build": "vite build --mode release",
     "build:type": "vue-tsc --noEmit",
     "build:site": "vue-tsc --noEmit && vite build --mode site",
@@ -30,7 +29,7 @@
     "nprogress": "^0.2.0",
     "pinia": "2.1.7",
     "pinia-plugin-persistedstate": "^3.2.0",
-    "pnpm": "^10.14.0",
+    "pnpm": "^10.19.0",
     "qrcode.vue": "^3.4.1",
     "qs": "^6.13.1",
     "tdesign-icons-vue-next": "^0.3.6",
@@ -38,7 +37,8 @@
     "tvision-color": "^1.6.0",
     "vue": "^3.5.13",
     "vue-i18n": "^9.9.1",
-    "vue-router": "~4.3.0"
+    "vue-router": "~4.3.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.10.1",
