@@ -3,6 +3,7 @@ import { request } from '@/utils/request';
 const Api = {
   TaskList: '/tasks/template/',
   RewardTaskList: '/tasks/reward/',
+  UpdateRewardTask: '/tasks/reward/',
   CreateTask: '/tasks/template/',
   UpdateTask: '/tasks/template/',
   DeleteTask: '/tasks/template/',
@@ -42,6 +43,13 @@ export function deleteTask(id: number) {
 export function getRewardTaskList(data: any) {
   return request.get({
     url: Api.RewardTaskList,
+    data,
+  });
+}
+// 更新奖励任务
+export function updateRewardTask(data: any) {
+  return request.put({
+    url: Api.UpdateRewardTask + data.id + '/',
     data,
   });
 }

@@ -7,7 +7,7 @@
             <t-col :span="4">
               <t-form-item label="任务名称" name="name">
                 <t-input
-                  v-model="formData.name"
+                  v-model="formData.task_template__name__icontains"
                   type="search"
                   placeholder="输入任务名称"
                   :style="{ minWidth: '134px' }"
@@ -15,20 +15,24 @@
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="模板状态" name="is_active">
-                <t-select v-model="formData.is_active" placeholder="选择模板状态" clearable>
-                  <t-option key="true" :value="true" label="激活" />
-                  <t-option key="false" :value="false" label="未激活" />
+              <t-form-item label="领取状态" name="status">
+                <t-select v-model="formData.status" placeholder="选择任务领取状态" clearable>
+                  <t-option key="empty" value="" label="全部状态" />
+                  <t-option key="pending" value="pending" label="待领取" />
+                  <t-option key="claimed" value="claimed" label="已领取" />
+                  <t-option key="completed" value="completed" label="已完成" />
+                  <t-option key="expired" value="expired" label="已过期" />
                 </t-select>
               </t-form-item>
             </t-col>
             <t-col :span="4">
-              <t-form-item label="模板类型" name="type">
-                <t-select v-model="formData.type" placeholder="选择模板类型" clearable>
-                  <t-option key="daily" value="daily" label="每日任务" />
-                  <t-option key="checkin" value="checkin" label="签到任务" />
-                  <t-option key="novice" value="novice" label="新手任务" />
-                </t-select>
+              <t-form-item label="领取人" name="user_name">
+                <t-input
+                  v-model="formData.user__user_nickname__icontains"
+                  type="search"
+                  placeholder="输入领取人名称"
+                  :style="{ minWidth: '134px' }"
+                />
               </t-form-item>
             </t-col>
           </t-row>
@@ -66,18 +70,24 @@ import { ref, onMounted } from 'vue';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 import { getTaskList, deleteTask, getRewardTaskList } from '@/api/task';
 import EditDialog from './EditDialog.vue';
+import { int } from '@es-joy/jsdoccomment';
 
 interface FormData {
-  name: string;
-  is_active: boolean | null;
-  type: string;
+  user__user_nickname__icontains: string;
+  status: string;
+  task_template__name__icontains: string;
+  pageSize:string;
+  currentPage: int;
 }
 
 const searchForm = {
-  name: '',
-  is_active: null as boolean | null,
-  type: '',
+  user__user_nickname__icontains: '',
+  status: '',
+  task_template__name__icontains: '',
+  pageSize:'1',
+  currentPage:1,
 };
+
 
 const formData = ref<FormData>({
   ...searchForm,
@@ -95,7 +105,7 @@ const COLUMNS: PrimaryTableCol[] = [
   },
   {
     title: '任务类型',
-    colKey: 'type',
+    colKey: 'task_template_type',
     align: 'center',
     cell: (h, { row }: { row: any }) => {
       const typeMap: Record<string, string> = {
@@ -103,26 +113,49 @@ const COLUMNS: PrimaryTableCol[] = [
         checkin: '签到任务',
         novice: '新手任务',
       };
-      return typeMap[row.type] || row.type;
+      return typeMap[row.task_template_type] || row.task_template_type;
     },
   },
   {
     title: '任务名称',
-    colKey: 'is_active',
+    colKey: 'task_template_name',
     align: 'center',
-    cell: (h, { row }: { row: any }) => {
-      return row.is_active ? '激活' : '未激活';
-    },
   },
   {
     title: '任务状态',
     colKey: 'status',
     align: 'center',
+    cell: (h, { row }: { row: any }) => {
+      const typeMap: Record<string, string> = {
+        pending: '等待领取',
+        claimed: '已领取',
+      };
+      return typeMap[row.status] || row.status;
+    },
   },
   {
     title: '任务领取人',
-    colKey: 'status',
+    colKey: 'user_name',
     align: 'center',
+  },
+  {
+    title: '签到时长',
+    colKey: 'data',
+    align: 'center',
+    cell: (h, { row }: { row: any }) => {
+      // 检查是否为签到任务
+      if (row.task_template_type !== 'checkin') {
+        return '-';
+      }
+      // 获取签到时间数组
+      const claimedTimes = row.data?.claimed_times || [];
+      if (!Array.isArray(claimedTimes) || claimedTimes.length === 0) {
+        return '0天';
+      }
+      // 计算连续签到天数（仅基于日期）
+      const consecutiveDays = calculateConsecutiveDaysSimple(claimedTimes);
+      return `${consecutiveDays}天`;
+    },
   },
   {
     title: '领取时间',
@@ -145,12 +178,91 @@ const tableData = ref([]);
 const pagination = ref<TdBaseTableProps['pagination']>({
   ...DEFAULT_PAGE_PARAMS,
   onChange: (pageInfo: { current: number; pageSize: number }) => {
-    console.log('分页器切换:', pageInfo);
     pagination.value.current = pageInfo.current;
     pagination.value.pageSize = pageInfo.pageSize;
     fetchDataList(pageInfo.current);
   },
 });
+// 计算连续签到天数
+// 计算连续签到天数
+const calculateConsecutiveDaysSimple = (claimedTimes: string[]): number => {
+  // 添加类型检查，确保 claimedTimes 是数组
+  if (!Array.isArray(claimedTimes)) {
+    return 0;
+  }
+
+  if (claimedTimes.length === 0) {
+    return 0;
+  }
+
+  // 转换为 YYYY-MM-DD 格式的日期字符串并去重排序
+  const dates = Array.from(
+    new Set(
+      claimedTimes.map(time => {
+        // 添加对单个时间项的类型检查
+        if (typeof time !== 'string') {
+          return '';
+        }
+        const date = new Date(time);
+        // 检查日期是否有效
+        if (isNaN(date.getTime())) {
+          return '';
+        }
+        return date.toISOString().split('T')[0]; // 只取日期部分
+      }).filter(date => date !== '') // 过滤掉无效日期
+    )
+  ).sort();
+
+  // 如果没有有效日期
+  if (dates.length === 0) {
+    return 0;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+  // 如果只有一个签到记录
+  if (dates.length === 1) {
+    // 只有当这个记录是今天或昨天时才算1天
+    if (dates[0] === today || dates[0] === yesterdayStr) {
+      return 1;
+    }
+    // 如果唯一记录既不是今天也不是昨天，则返回0
+    return 0;
+  }
+
+  // 多个签到记录的情况 - 从最后一天开始计算连续天数
+  let consecutiveCount = 1;
+
+  // 检查今天是否有签到记录
+  const hasTodayCheck = dates.includes(today);
+  if (!hasTodayCheck) {
+    // 如果今天没有签到，则检查昨天是否有签到
+    if (!dates.includes(yesterdayStr)) {
+      // 如果昨天也没有签到，则连续天数为0
+      return 0;
+    }
+  }
+
+  // 从最近的日期开始向前查找连续签到
+  for (let i = dates.length - 1; i > 0; i--) {
+    const currentDate = new Date(dates[i]);
+    const previousDate = new Date(dates[i - 1]);
+    // 计算日期差（天）
+    const diffTime = Math.abs(currentDate.getTime() - previousDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) {
+      // 相邻日期，连续计数加1
+      consecutiveCount++;
+    } else {
+      // 非相邻日期，中断连续
+      break;
+    }
+  }
+  return consecutiveCount;
+};
 
 // 新增逻辑
 const handleCreate = () => {
@@ -165,7 +277,6 @@ const handleEdit = (row: TableRowData) => {
 // Dialog 确认回调
 const handleDialogConfirm = () => {
   // 编辑/新建成功后停留在当前页
-  console.log('Dialog确认回调触发，当前页:', pagination.value.current);
   fetchDataList(pagination.value.current);
 };
 
@@ -185,7 +296,6 @@ const handleDelete = (row: TableRowData) => {
         fetchDataList(pagination.value.current);
         dialog.destroy();
       } catch (error) {
-        console.error('删除失败:', error);
         MessagePlugin.error('删除失败，请重试');
         dialog.destroy();
       }
@@ -198,39 +308,32 @@ const handleDelete = (row: TableRowData) => {
 
 // 请求列表数据
 const fetchDataList = async (page: number = pagination.value.current || pagination.value.defaultCurrent) => {
+  console.log('请求参数:', formData.value);
   const params = {
     ...formData.value,
-    ...(formData.value.name ? { name: formData.value.name } : {}),
     currentPage: page,
     pageSize: pagination.value.defaultPageSize,
   };
-  console.log('请求参数:', params);
   try {
     const res = await getRewardTaskList(params);
-    console.log('接口返回数据:', res.data.data);
     tableData.value = res.data.results;
     pagination.value.total = res.data.pagination.total;
     pagination.value.current = page;
-    console.log('分页状态更新:', { current: page, total: res.data.pagination.total });
   } catch (error) {
-    console.error('获取任务列表失败:', error);
     MessagePlugin.error('获取任务列表失败');
   }
 };
-
 // 查询
 const handleQuery = () => {
   pagination.value.current = 1;
   fetchDataList(1);
 };
-
 // 重置
 const handleReset = () => {
   formData.value = { ...searchForm };
   pagination.value.current = 1;
   fetchDataList(1);
 };
-
 onMounted(() => {
   fetchDataList();
 });
