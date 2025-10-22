@@ -11,6 +11,11 @@ const Api = {
   VipCreate: '/vip-power/create',
   VipUpdate: '/vip-power/update',
   VipDelete: '/vip-power/delete/',
+
+  LinkList: '/ad/ads/',
+  createLink: '/ad/ads/',
+  updateLink: '/ad/ads/',
+  deleteLink: '/ad/ads/',
 };
 
 // 商品列表
@@ -82,5 +87,33 @@ export function updateVip(data: any) {
 export function deleteVip(id: number) {
   return request.delete({
     url: Api.VipDelete + id,
+  });
+}
+
+// 获取广告
+export function getLinkList(data: any) {
+  return request.get({
+    url: Api.LinkList,
+    data,
+  });
+}
+
+export function createLink(data: any) {
+  return request.post({
+    url: Api.createLink,
+    data,
+  });
+}
+
+export function updateLink(data: any) {
+  return request.put({
+    url: Api.updateLink + data.id + '/',
+    data,
+  });
+}
+
+export function deleteLink(id: string) {
+  return request.delete({
+    url: `${Api.deleteLink}/${id}/`,
   });
 }
