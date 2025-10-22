@@ -17,8 +17,8 @@ export default [
       {
         path:"distribute",
         name:"TaskDistribute",
-        component: () => import('@/pages/task/list/index.vue'),
-        meta: { title: '任务分发' },
+        component: () => import('@/pages/task/distribute/index.vue'),
+        meta: { title: '任务领取' },
       }
     ],
   },
