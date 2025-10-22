@@ -58,7 +58,6 @@
         </template>
       </t-table>
     </div>
-
     <edit-dialog ref="editDialogRef" @confirm="handleDialogConfirm" />
   </div>
 </template>

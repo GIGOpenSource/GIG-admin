@@ -18,21 +18,23 @@
       <t-form-item label="任务名称" name="task_template_name">
         <t-input v-model="data.task_template_name" class="form-item-content" placeholder="输入任务名称" />
       </t-form-item>
-      <t-form-item label="任务描述" name="description">
-        <t-textarea
-          v-model="data.description"
-          class="form-item-content"
-          placeholder="输入任务描述"
-          :autosize="{ minRows: 3, maxRows: 6 }"
-        />
-      </t-form-item>
-      <t-form-item label="模板状态" name="is_active">
+      <t-form-item label="任务领取状态" name="is_active">
         <t-select v-model="data.is_active" placeholder="选择模板状态" class="form-item-content">
           <t-option key="true" :value="true" label="激活" />
           <t-option key="false" :value="false" label="未激活" />
         </t-select>
       </t-form-item>
-
+      <t-form-item label="任务领取人" name="is_active">
+        <t-select v-model="data.is_active" placeholder="选择模板状态" class="form-item-content">
+          <t-input v-model="data.task_template_name" class="form-item-content" placeholder="输入任务名称" />
+        </t-select>
+      </t-form-item>
+      <t-form-item label="任务名称" name="task_template_name">
+        <t-input v-model="data.task_template_name" class="form-item-content" placeholder="输入任务名称" />
+      </t-form-item>
+      <t-form-item label="签到时间" name="task_template_name">
+        <t-input v-model="data.data" class="form-item-content" placeholder="输入任务名称" />
+      </t-form-item>
       <t-form-item label="模板类型" name="type">
         <t-select v-model="data.type" placeholder="选择模板类型" class="form-item-content">
           <t-option key="daily" value="daily" label="每日任务" />
@@ -58,6 +60,7 @@ interface FormData {
   description: string;
   is_active: boolean;
   type: string;
+  data: string,
 }
 
 const visible = ref(false);
@@ -68,6 +71,7 @@ const data = ref<FormData>({
   description: '',
   is_active: false,
   type: '',
+  data: '',
 });
 
 // 动态标题

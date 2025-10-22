@@ -49,6 +49,7 @@
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
+            <t-link theme="primary" @click="handleEdit(row)">分发</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
           </t-space>
         </template>
