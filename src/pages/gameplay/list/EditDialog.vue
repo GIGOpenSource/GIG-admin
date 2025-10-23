@@ -273,12 +273,34 @@ const rules = {
     }
   ],
   click_url: [{ required: true, message: '请输入游戏地址', type: 'error' as const }],
-  image_url: [{ required: true, message: '请上传游戏封面', type: 'error' as const }],
+  image_url: [{
+    required: true,
+    message: '请上传游戏封面',
+    type: 'error' as const,
+    trigger: 'change' as const // 只在内容变化时校验
+  }],
+  tags_id: [{
+    required: true,
+    message: '请选择游戏标签',
+    type: 'error' as const,
+    trigger: 'blur' as const // 只在失去焦点时校验
+  }],
+  banner_game_url: [{
+    required: true,
+    message: '请上传游戏图片',
+    type: 'error' as const,
+    trigger: 'change' as const // 只在内容变化时校验
+  }],
 };
 
 const open = async (data?: FormData) => {
   visible.value = true;
   isEdit.value = !!data;
+
+  // 清除之前的校验状态
+  if (formRef.value) {
+    formRef.value.clearValidate();
+  }
 
   if (data && data.id) {
     // 编辑模式：调用API获取完整详情
@@ -372,18 +394,68 @@ const resetForm = () => {
 };
 
 const handleConfirm = async () => {
-  let bannerUrls = '';
-
-
+  // 先进行表单校验
   const valid = await formRef.value?.validate();
-  if (!valid) return;
+  if (!valid) {
+    MessagePlugin.error('请检查表单填写是否完整');
+    return;
+  }
+
+  // 手动校验必填字段
+  if (!formData.name || formData.name.trim() === '') {
+    MessagePlugin.error('请输入游戏名称');
+    return;
+  }
+
+  if (!formData.title || formData.title.trim() === '') {
+    MessagePlugin.error('请输入游戏简介');
+    return;
+  }
+
+  if (!formData.description || formData.description.trim() === '') {
+    MessagePlugin.error('请输入游戏介绍');
+    return;
+  }
+
+  if (!formData.permission || formData.permission.trim() === '') {
+    MessagePlugin.error('请选择游戏权限');
+    return;
+  }
+
+  if (!formData.click_url || formData.click_url.trim() === '') {
+    MessagePlugin.error('请输入游戏地址');
+    return;
+  }
+
+  if (!formData.image_url || formData.image_url.length === 0) {
+    MessagePlugin.error('请上传游戏封面');
+    return;
+  }
+
+  if (!formData.tags_id || formData.tags_id.length === 0) {
+    MessagePlugin.error('请选择游戏标签');
+    return;
+  }
+
+  if (!formData.banner_game_url || formData.banner_game_url.length === 0) {
+    MessagePlugin.error('请上传游戏图片');
+    return;
+  }
+
+  // 校验金币权限的价格
+  if (formData.permission === 'gold' && (!formData.price || formData.price <= 0)) {
+    MessagePlugin.error('金币权限必须设置价格');
+    return;
+  }
 
   try {
+    let bannerUrls = '';
+
     if (formData.banner_game_url && formData.banner_game_url.length > 0) {
       console.log('处理banner_game_url数据:', formData.banner_game_url);
       const urls = formData.banner_game_url
         .map(file => {
-          const url =  file.response[0].url
+          const url = file.response?.[0]?.url || file.url || file.response?.url;
           return url;
         })
         .filter(url => url && url.trim() !== '');
@@ -395,14 +467,33 @@ const handleConfirm = async () => {
       }
     }
 
+    // 校验游戏图片是否成功上传
+    if (!bannerUrls || bannerUrls.trim() === '') {
+      MessagePlugin.error('游戏图片上传失败，请重新上传');
+      return;
+    }
+
+    // 校验游戏封面是否成功上传
+    const imageUrl = formData.image_url.length > 0 ?
+      formData.image_url[0].url || formData.image_url[0].response?.url || formData.image_url[0].name : '';
+
+    if (!imageUrl || imageUrl.trim() === '') {
+      MessagePlugin.error('游戏封面上传失败，请重新上传');
+      return;
+    }
+
     console.log('最终bannerUrls:', bannerUrls);
 
     const submitData = {
       ...formData,
-      image_url: formData.image_url.length > 0 ? formData.image_url[0].url || formData.image_url[0].response?.url || formData.image_url[0].name : '',
+      image_url: imageUrl,
       banner_game_url: bannerUrls,
       tags_id: formData.tags_id // 直接传递标签ID数组
     };
+
+    console.log('提交数据:', submitData);
+    console.log('封面图片URL:', submitData.image_url);
+    console.log('游戏图片URLs:', submitData.banner_game_url);
 
     if (isEdit.value) {
       await updateGame(submitData);

@@ -100,12 +100,22 @@ const rules = {
     }
   ],
   click_url: [{ required: true, message: '请输入APP地址', type: 'error' as const }],
-  image_url: [{ required: true, message: '请上传APP封面', type: 'error' as const }],
+  image_url: [{
+    required: true,
+    message: '请上传APP封面',
+    type: 'error' as const,
+    trigger: 'change' as const // 只在内容变化时校验
+  }],
 };
 
 const open = async (data?: FormData) => {
   visible.value = true;
   isEdit.value = !!data;
+
+  // 清除之前的校验状态
+  if (formRef.value) {
+    formRef.value.clearValidate();
+  }
 
   if (data && data.id) {
     // 编辑模式：调用API获取完整详情
@@ -180,13 +190,49 @@ const resetForm = () => {
 };
 
 const handleConfirm = async () => {
+  // 先进行表单校验
   const valid = await formRef.value?.validate();
-  if (!valid) return;
+  if (!valid) {
+    MessagePlugin.error('请检查表单填写是否完整');
+    return;
+  }
+
+  // 手动校验必填字段
+  if (!formData.name || formData.name.trim() === '') {
+    MessagePlugin.error('请输入APP名称');
+    return;
+  }
+
+  if (!formData.permission || formData.permission.trim() === '') {
+    MessagePlugin.error('请选择APP权限');
+    return;
+  }
+
+  if (!formData.click_url || formData.click_url.trim() === '') {
+    MessagePlugin.error('请输入APP地址');
+    return;
+  }
+
+  if (!formData.image_url || formData.image_url.length === 0) {
+    MessagePlugin.error('请上传APP封面');
+    return;
+  }
+
+  // 校验金币权限的价格
+  if (formData.permission === 'gold' && (!formData.price || formData.price <= 0)) {
+    MessagePlugin.error('金币权限必须设置价格');
+    return;
+  }
 
   try {
     // 处理图片数据
     const imageUrl = formData.image_url.length > 0 ?
       formData.image_url[0].url || formData.image_url[0].response?.url || formData.image_url[0].name : '';
+
+    if (!imageUrl || imageUrl.trim() === '') {
+      MessagePlugin.error('APP封面上传失败，请重新上传');
+      return;
+    }
 
     const submitData = {
       ...formData,
