@@ -19,13 +19,7 @@ export default [
         name: 'GameplayConfig',
         component: () => import('@/pages/gameplay/config/index.vue'),
         meta: { title: 'APP管理' },
-      },
-      {
-        path: 'rules',
-        name: 'GameplayRules',
-        component: () => import('@/pages/gameplay/rules/index.vue'),
-        meta: { title: '玩法状态' },
-      },
+      }
     ],
   },
 ];
