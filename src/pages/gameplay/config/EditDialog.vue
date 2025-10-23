@@ -12,7 +12,15 @@
         <t-input v-model="formData.name" placeholder="输入APP名称" />
       </t-form-item>
 
-      <t-form-item label="价格" name="price" required>
+      <t-form-item label="APP权限" name="permission" required>
+        <t-select v-model="permissionType" placeholder="请选择APP权限" @change="handlePermissionChange">
+          <t-option key="vip" value="vip" label="VIP" />
+          <t-option key="gold" value="gold" label="金币" />
+          <t-option key="free" value="free" label="免费" />
+        </t-select>
+      </t-form-item>
+
+      <t-form-item v-if="permissionType === 'gold'" label="价格" name="price" required>
         <t-input-number v-model="formData.price" placeholder="请输入价格" :min="0" :precision="2" />
       </t-form-item>
 
@@ -48,13 +56,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { createApp, updateApp, uploadImage, getAppDetail } from '@/api/gameplay';
 
 interface FormData {
   id?: number;
   name: string;
+  type: string;
   is_vip: boolean;
   price?: number;
   click_url: string;
@@ -65,8 +74,21 @@ const visible = ref(false);
 const isEdit = ref(false);
 const formRef = ref();
 
+// 计算权限类型，基于 is_vip 和 price 字段
+const permissionType = computed(() => {
+  if (formData.is_vip === true && formData.price > 0) {
+    return 'gold';
+  } else if (formData.is_vip === true && formData.price === 0) {
+    return 'vip';
+  } else if (formData.is_vip === false && formData.price === 0) {
+    return 'free';
+  }
+  return 'free';
+});
+
 const formData = reactive<FormData>({
   name: '',
+  type: 'app',
   is_vip: false,
   price: 0,
   click_url: '',
@@ -81,8 +103,8 @@ const rules = {
       message: '请输入价格',
       type: 'error' as const,
       validator: (val: any) => {
-        if (formData.is_vip === true && (!val || val <= 0)) {
-          return { result: false, message: 'VIP权限必须设置价格' };
+        if (formData.is_vip === true && formData.price > 0 && (!val || val <= 0)) {
+          return { result: false, message: '金币权限必须设置价格' };
         }
         return { result: true, message: '' };
       }
@@ -131,6 +153,7 @@ const open = async (data?: FormData) => {
       Object.assign(formData, {
         id: appData.id,
         name: appData.name || '',
+        type: appData.type || 'app',
         is_vip: appData.is_vip || false,
         price: appData.price || 0,
         click_url: appData.click_url || appData.url || '',
@@ -153,6 +176,7 @@ const open = async (data?: FormData) => {
 const resetForm = () => {
   Object.assign(formData, {
     name: '',
+    type: 'app',
     is_vip: false,
     price: 0,
     click_url: '',
@@ -174,7 +198,6 @@ const handleConfirm = async () => {
     return;
   }
 
-
   if (!formData.click_url || formData.click_url.trim() === '') {
     MessagePlugin.error('请输入APP地址');
     return;
@@ -185,9 +208,9 @@ const handleConfirm = async () => {
     return;
   }
 
-  // 校验价格
-  if (formData.is_vip && (!formData.price || formData.price <= 0)) {
-    MessagePlugin.error('VIP权限必须设置价格');
+  // 校验金币权限的价格
+  if (formData.is_vip === true && formData.price > 0 && (!formData.price || formData.price <= 0)) {
+    MessagePlugin.error('金币权限必须设置价格');
     return;
   }
 
@@ -228,6 +251,23 @@ const handleConfirm = async () => {
 const handleCancel = () => {
   visible.value = false;
   resetForm();
+};
+
+// 处理APP权限变化
+const handlePermissionChange = (value: any) => {
+  if (value === 'vip') {
+    formData.is_vip = true;
+    formData.price = 0;
+  } else if (value === 'gold') {
+    formData.is_vip = true;
+    // 保持当前价格，如果为空则设为0
+    if (!formData.price) {
+      formData.price = 0;
+    }
+  } else if (value === 'free') {
+    formData.is_vip = false;
+    formData.price = 0;
+  }
 };
 
 

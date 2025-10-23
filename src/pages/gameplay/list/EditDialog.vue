@@ -42,7 +42,6 @@
           multiple
           :options="tagOptions"
           :loading="tagLoading"
-          @focus="loadTags"
         />
       </t-form-item>
 
@@ -331,6 +330,9 @@ const open = async (data?: FormData) => {
     formRef.value.clearValidate();
   }
 
+  // 弹框打开时就加载标签列表
+  await loadTags();
+
   if (data && data.id) {
     // 编辑模式：调用API获取完整详情
     try {
@@ -392,7 +394,7 @@ const open = async (data?: FormData) => {
         click_url: gameData.click_url || gameData.url || '',
         image_url: imageUrlList,
         banner_game_url: bannerUrlList,
-        tags_id: Array.isArray(gameData.tags_id) ? gameData.tags_id : (gameData.tags_id ? gameData.tags_id.split(',').map(Number) : []),
+        tags_id: gameData.game_tags ? gameData.game_tags.map((tag: any) => tag.id) : [],
       });
 
       console.log('填充后的表单数据:', formData);
@@ -487,7 +489,17 @@ const handleConfirm = async () => {
       const urls = formData.banner_game_url
         .map(file => {
           // 处理不同的响应格式
-          const url = file.response[0].url
+          let url = '';
+          if (file.response && Array.isArray(file.response) && file.response[0]) {
+            // 新上传的图片格式
+            url = file.response[0].url;
+          } else if (file.response && file.response.url) {
+            // 单个响应格式
+            url = file.response.url;
+          } else if (file.url) {
+            // 编辑模式下已有的图片URL
+            url = file.url;
+          }
           return url;
         })
         .filter(url => url && url.trim() !== '');
@@ -516,7 +528,7 @@ const handleConfirm = async () => {
       ...formData,
       image_url: imageUrl,
       banner_game_url: bannerUrls,
-      tags_id: formData.tags_id // 直接传递标签ID数组
+      game_tags: formData.tags_id // 直接传递标签ID数组
     };
 
     // 移除permission字段，不传递给后端
@@ -601,7 +613,7 @@ const loadTags = async () => {
   try {
     tagLoading.value = true;
     console.log('开始加载标签列表');
-    const response = await getTages({type:'game'});
+    const response = await getTages({type:'content_game'});
     console.log('标签API返回:', response);
 
     const tags = response.data.results || response || [];

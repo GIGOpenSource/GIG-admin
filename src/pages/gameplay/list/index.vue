@@ -91,9 +91,20 @@ const COLUMNS: PrimaryTableCol[] = [
   },
   {
     title: '游戏标签',
-    colKey: 'tags',
+    colKey: 'game_tags',
     align: 'center',
     ellipsis: true,
+    cell: (h, { row }: { row: any }) => {
+      // 处理 game_tags 数组，提取 name 字段
+      if (row.game_tags && Array.isArray(row.game_tags)) {
+        return row.game_tags.map((tag: any) => tag.name || tag).join(', ');
+      }
+      // 兼容旧数据格式
+      if (row.tags) {
+        return row.tags;
+      }
+      return '-';
+    },
   },
   {
     title: '游戏地址',
@@ -129,13 +140,15 @@ const handleEdit = (row: TableRowData) => {
   const editData = {
     id: row.id,
     name: row.name || '',
-    brief: row.brief || '',
+    title: row.title || row.brief || '',
     description: row.description || '',
-    permission: row.permission || '',
-    tag: row.tag || '',
-    cover: row.cover || [],
-    images: row.images || [],
-    url: row.url || '',
+    type: row.type || 'game',
+    is_vip: row.is_vip || false,
+    price: row.price || 0,
+    click_url: row.click_url || row.url || '',
+    image_url: row.image_url || row.cover || '',
+    banner_game_url: row.banner_game_url || row.images || '',
+    game_tags: row.game_tags || [],
   };
   editDialogRef.value?.open(editData);
 };
