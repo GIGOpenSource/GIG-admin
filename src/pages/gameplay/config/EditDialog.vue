@@ -12,15 +12,7 @@
         <t-input v-model="formData.name" placeholder="输入APP名称" />
       </t-form-item>
 
-      <t-form-item label="APP权限" name="permission" required>
-        <t-select v-model="formData.permission" placeholder="请选择APP权限" @change="handlePermissionChange">
-          <t-option key="vip" value="vip" label="VIP" />
-          <t-option key="gold" value="gold" label="金币" />
-          <t-option key="free" value="free" label="免费" />
-        </t-select>
-      </t-form-item>
-
-      <t-form-item v-if="formData.permission === 'gold'" label="价格" name="price" required>
+      <t-form-item label="价格" name="price" required>
         <t-input-number v-model="formData.price" placeholder="请输入价格" :min="0" :precision="2" />
       </t-form-item>
 
@@ -63,7 +55,6 @@ import { createApp, updateApp, uploadImage, getAppDetail } from '@/api/gameplay'
 interface FormData {
   id?: number;
   name: string;
-  permission: string;
   is_vip: boolean;
   price?: number;
   click_url: string;
@@ -76,7 +67,6 @@ const formRef = ref();
 
 const formData = reactive<FormData>({
   name: '',
-  permission: '',
   is_vip: false,
   price: 0,
   click_url: '',
@@ -85,15 +75,14 @@ const formData = reactive<FormData>({
 
 const rules = {
   name: [{ required: true, message: '请输入APP名称', type: 'error' as const }],
-  permission: [{ required: true, message: '请选择APP权限', type: 'error' as const }],
   price: [
     {
       required: true,
       message: '请输入价格',
       type: 'error' as const,
       validator: (val: any) => {
-        if (formData.permission === 'gold' && (!val || val <= 0)) {
-          return { result: false, message: '金币权限必须设置价格' };
+        if (formData.is_vip === true && (!val || val <= 0)) {
+          return { result: false, message: 'VIP权限必须设置价格' };
         }
         return { result: true, message: '' };
       }
@@ -138,27 +127,10 @@ const open = async (data?: FormData) => {
         response: { url: imageUrl }
       }] : [];
 
-      // 根据is_vip和price字段判断权限类型
-      let permissionType = 'free';
-      if (appData.is_vip === true && appData.price > 0) {
-        permissionType = 'gold';
-      } else if (appData.is_vip === true && appData.price === 0) {
-        permissionType = 'vip';
-      } else if (appData.is_vip === false && appData.price === 0) {
-        permissionType = 'free';
-      }
-
-      console.log('权限判断:', {
-        is_vip: appData.is_vip,
-        price: appData.price,
-        permissionType: permissionType
-      });
-
       // 填充表单数据
       Object.assign(formData, {
         id: appData.id,
         name: appData.name || '',
-        permission: permissionType,
         is_vip: appData.is_vip || false,
         price: appData.price || 0,
         click_url: appData.click_url || appData.url || '',
@@ -181,7 +153,6 @@ const open = async (data?: FormData) => {
 const resetForm = () => {
   Object.assign(formData, {
     name: '',
-    permission: '',
     is_vip: false,
     price: 0,
     click_url: '',
@@ -203,10 +174,6 @@ const handleConfirm = async () => {
     return;
   }
 
-  if (!formData.permission || formData.permission.trim() === '') {
-    MessagePlugin.error('请选择APP权限');
-    return;
-  }
 
   if (!formData.click_url || formData.click_url.trim() === '') {
     MessagePlugin.error('请输入APP地址');
@@ -218,9 +185,9 @@ const handleConfirm = async () => {
     return;
   }
 
-  // 校验金币权限的价格
-  if (formData.permission === 'gold' && (!formData.price || formData.price <= 0)) {
-    MessagePlugin.error('金币权限必须设置价格');
+  // 校验价格
+  if (formData.is_vip && (!formData.price || formData.price <= 0)) {
+    MessagePlugin.error('VIP权限必须设置价格');
     return;
   }
 
@@ -239,9 +206,6 @@ const handleConfirm = async () => {
       type: 'app', // 默认传递app类型
       image_url: imageUrl
     };
-
-    // 移除permission字段，不传递给后端
-    delete submitData.permission;
 
     console.log('提交数据:', submitData);
 
@@ -266,22 +230,6 @@ const handleCancel = () => {
   resetForm();
 };
 
-// 处理APP权限变化
-const handlePermissionChange = (value: any) => {
-  if (value === 'vip') {
-    formData.is_vip = false;
-    formData.price = 0;
-  } else if (value === 'gold') {
-    formData.is_vip = true;
-    // 保持当前价格，如果为空则设为0
-    if (!formData.price) {
-      formData.price = 0;
-    }
-  } else if (value === 'free') {
-    formData.is_vip = false;
-    formData.price = 0;
-  }
-};
 
 // 单张图片上传处理（APP封面）
 const handleSingleUpload = async (file: any) => {

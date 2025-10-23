@@ -54,11 +54,11 @@
         <t-upload
           v-model="formData.image_url"
           :max="1"
-          :auto-upload="true"
-          :request-method="handleSingleUpload"
-          accept="image/*"
+          :autoUpload="true"
+          :requestMethod="handleSingleUpload"
+          accept="image/png"
           theme="image"
-          :size-limit="5 * 1024 * 1024"
+           :sizeLimit="5 * 1024 * 1024"
           @remove="handleRemoveCover"
         >
           <template #file-input>
@@ -71,26 +71,31 @@
       </t-form-item>
 
       <t-form-item label="游戏图片" name="banner_game_url">
-        <t-upload
-          v-model="formData.banner_game_url"
-          :max="5"
-          :auto-upload="true"
-          :request-method="handleMultipleUpload"
-          accept="image/*"
-          theme="image"
-          :size-limit="5 * 1024 * 1024"
-          multiple
-          @remove="handleRemoveBanner"
-          @success="handleBannerUploadSuccess"
-        >
-          <template #file-input>
-            <div class="upload-placeholder">
-              <t-icon name="image" size="24" />
-              <div class="upload-text">点击上传图片</div>
-            </div>
-          </template>
-        </t-upload>
-        <div class="upload-tip">最多上传5张，多张图片用逗号隔开</div>
+        <div class="upload-container">
+          <t-upload
+            v-model="formData.banner_game_url"
+            :max="5"
+            :autoUpload="true"
+            :requestMethod="handleMultipleUpload"
+            accept="image/*"
+            theme="image"
+            :sizeLimit="5 * 1024 * 1024"
+            multiple
+            :show-progress="false"
+            :show-file-name="false"
+            :display-progress="false"
+            @remove="handleRemoveBanner"
+            @success="handleBannerUploadSuccess"
+          >
+            <template #file-input>
+              <div class="upload-placeholder">
+                <t-icon name="image" size="24" />
+                <div class="upload-text">点击上传图片</div>
+              </div>
+            </template>
+          </t-upload>
+          <div class="upload-tip">最多上传5张</div>
+        </div>
       </t-form-item>
     </t-form>
   </t-dialog>
@@ -135,46 +140,9 @@ const uploadData = {
   type: 'img'
 };
 
-// 单张图片上传处理（游戏封面）
-const handleSingleUpload = async (file: any) => {
-  try {
-    console.log('开始上传单张图片:', file);
-
-    // 单张上传时，file是对象
-    const fileToUpload = file.raw || file;
-    if (!fileToUpload) {
-      throw new Error('文件对象不存在');
-    }
-
-    const fileName = fileToUpload.name || file.name || `image_${Date.now()}.jpg`;
-    console.log('上传文件名:', fileName);
-
-    const response = await uploadImage(fileToUpload);
-    console.log('上传成功:', response);
-    MessagePlugin.success('图片上传成功');
-
-    const imageUrl = response.data?.url || response.data?.path || response.url || response;
-    console.log('保存的图片URL:', imageUrl);
-
-    return {
-      url: imageUrl,
-      name: fileName,
-      status: 'success' as const,
-      response: {
-        url: imageUrl,
-        ...(response.data || {})
-      } as any
-    };
-  } catch (error) {
-    console.error('上传失败:', error);
-    MessagePlugin.error('图片上传失败，请重试');
-    return {
-      url: '',
-      name: file.name || 'unknown',
-      status: 'fail' as const,
-      response: null
-    };
-  }
+// 网格配置
+const gridConfig = {
+  column: 4,
 };
 
 // 多张图片上传处理（游戏图片）
@@ -182,8 +150,24 @@ const handleMultipleUpload = async (files: any) => {
   try {
     console.log('开始上传多张图片:', files);
 
-    // 多张上传时，files是数组
-    const fileList = Array.isArray(files) ? files : [files];
+    // 处理不同的文件格式
+    let fileList = [];
+
+    if (Array.isArray(files)) {
+      // 如果是数组，直接使用
+      fileList = files;
+    } else if (files && typeof files === 'object') {
+      // 如果是单个文件对象，包装成数组
+      fileList = [files];
+    } else {
+      console.warn('无效的文件格式:', files);
+      return {
+        status: 'fail' as const,
+        response: { error: '无效的文件格式' }
+      };
+    }
+
+    console.log('处理后的文件列表:', fileList);
     const results = [];
 
     for (const file of fileList) {
@@ -231,6 +215,51 @@ const handleMultipleUpload = async (files: any) => {
     };
   }
 };
+
+
+
+// 单张图片上传处理（游戏封面）
+const handleSingleUpload = async (file: any) => {
+  try {
+    console.log('开始上传单张图片:', file);
+
+    // 单张上传时，file是对象
+    const fileToUpload = file.raw || file;
+    if (!fileToUpload) {
+      throw new Error('文件对象不存在');
+    }
+
+    const fileName = fileToUpload.name || file.name || `image_${Date.now()}.jpg`;
+    console.log('上传文件名:', fileName);
+
+    const response = await uploadImage(fileToUpload);
+    console.log('上传成功:', response);
+    MessagePlugin.success('图片上传成功');
+
+    const imageUrl = response.data?.url || response.data?.path || response.url || response;
+    console.log('保存的图片URL:', imageUrl);
+
+    return {
+      url: imageUrl,
+      name: fileName,
+      status: 'success' as const,
+      response: {
+        url: imageUrl,
+        ...(response.data || {})
+      } as any
+    };
+  } catch (error) {
+    console.error('上传失败:', error);
+    MessagePlugin.error('图片上传失败，请重试');
+    return {
+      url: '',
+      name: file.name || 'unknown',
+      status: 'fail' as const,
+      response: null
+    };
+  }
+};
+
 
 const formData = reactive<FormData>({
   name: '',
@@ -283,7 +312,7 @@ const rules = {
     required: true,
     message: '请选择游戏标签',
     type: 'error' as const,
-    trigger: 'blur' as const // 只在失去焦点时校验
+    trigger: 'change' as const // 只在内容变化时校验
   }],
   banner_game_url: [{
     required: true,
@@ -328,6 +357,8 @@ const open = async (data?: FormData) => {
         bannerGameUrl.split(',').map((url: string, index: number) => ({
           url: url.trim(),
           name: `游戏图片${index + 1}`,
+          type: 'image',
+          removeBtn: false,
           status: 'success' as const,
           response: { url: url.trim() }
         })) : [];
@@ -450,23 +481,20 @@ const handleConfirm = async () => {
 
   try {
     let bannerUrls = '';
+    console.log(formData.banner_game_url,'formData.banner_game_urlformData.banner_game_url')
 
     if (formData.banner_game_url && formData.banner_game_url.length > 0) {
-      console.log('处理banner_game_url数据:', formData.banner_game_url);
       const urls = formData.banner_game_url
         .map(file => {
-          const url = file.response?.[0]?.url || file.url || file.response?.url;
+          // 处理不同的响应格式
+          const url = file.response[0].url
           return url;
         })
         .filter(url => url && url.trim() !== '');
-
-      console.log('提取到的URLs:', urls);
-
       if (urls.length > 0) {
-        bannerUrls = urls.join(',');
+        bannerUrls = urls.join(','); // 用逗号拼接数组
       }
     }
-
     // 校验游戏图片是否成功上传
     if (!bannerUrls || bannerUrls.trim() === '') {
       MessagePlugin.error('游戏图片上传失败，请重新上传');
@@ -490,6 +518,9 @@ const handleConfirm = async () => {
       banner_game_url: bannerUrls,
       tags_id: formData.tags_id // 直接传递标签ID数组
     };
+
+    // 移除permission字段，不传递给后端
+    delete submitData.permission;
 
     console.log('提交数据:', submitData);
     console.log('封面图片URL:', submitData.image_url);
@@ -562,6 +593,7 @@ const handleBannerUploadSuccess = (context: any) => {
   }
 };
 
+
 // 加载标签列表
 const loadTags = async () => {
   if (tagOptions.value.length > 0) return; // 已经加载过了
@@ -623,9 +655,23 @@ defineExpose({
   }
 }
 
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .upload-tip {
   margin-top: 8px;
   font-size: 12px;
   color: #999;
+  align-self: flex-start;
+}
+
+
+</style>
+<style>
+.t-upload__card-name{
+  display: none !important;
 }
 </style>
