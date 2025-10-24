@@ -20,12 +20,12 @@ export default [
         component: () => import('@/pages/product/config/index.vue'),
         meta: { title: '会员权益' },
       },
-      {
-        path:"link",
-        name: 'productLink',
-        component: () => import('@/pages/product/link/index.vue'),
-        meta: { title: '外部链接' },
-      }
+      // {
+      //   path:"link",
+      //   name: 'productLink',
+      //   component: () => import('@/pages/product/link/index.vue'),
+      //   meta: { title: '外部链接' },
+      // }
     ],
   },
 ];

@@ -1,47 +1,9 @@
 <template>
   <div class="gameplay-list-container">
-    <t-form :data="formData" :label-width="80">
-      <t-row>
-        <t-col :span="10">
-          <t-row :gutter="[24, 24]">
-            <t-col :span="4">
-              <t-form-item label="玩法名称" name="name">
-                <t-input
-                  v-model="formData.name"
-                  type="search"
-                  placeholder="输入玩法名称"
-                  :style="{ minWidth: '134px' }"
-                />
-              </t-form-item>
-            </t-col>
-            <t-col :span="4">
-              <t-form-item label="玩法状态" name="status">
-                <t-select v-model="formData.status" placeholder="选择玩法状态" clearable>
-                  <t-option key="active" value="active" label="启用" />
-                  <t-option key="inactive" value="inactive" label="禁用" />
-                </t-select>
-              </t-form-item>
-            </t-col>
-            <t-col :span="4">
-              <t-form-item label="玩法类型" name="type">
-                <t-select v-model="formData.type" placeholder="选择玩法类型" clearable>
-                  <t-option key="daily" value="daily" label="日常玩法" />
-                  <t-option key="event" value="event" label="活动玩法" />
-                  <t-option key="special" value="special" label="特殊玩法" />
-                </t-select>
-              </t-form-item>
-            </t-col>
-          </t-row>
-        </t-col>
-        <t-col :span="2" class="operation-container">
-          <t-button theme="primary" @click="handleQuery"> 查询 </t-button>
-          <t-button theme="default" @click="handleReset"> 重置 </t-button>
-        </t-col>
-      </t-row>
-    </t-form>
+
 
     <t-row :style="{ marginTop: 'var(--td-comp-margin-xxl)' }">
-      <t-button theme="primary" @click="handleCreate"> 新建玩法 </t-button>
+      <t-button theme="primary" @click="handleCreate"> 新增游戏 </t-button>
     </t-row>
 
     <div class="table-container">
@@ -49,14 +11,8 @@
         <template #operation="{ row }">
           <t-space>
             <t-link theme="primary" @click="handleEdit(row)">编辑</t-link>
-            <t-link theme="primary" @click="handleConfig(row)">配置</t-link>
             <t-link theme="danger" @click="handleDelete(row)">删除</t-link>
           </t-space>
-        </template>
-        <template #status="{ row }">
-          <t-tag :theme="row.status === 'active' ? 'success' : 'default'">
-            {{ row.status === 'active' ? '启用' : '禁用' }}
-          </t-tag>
         </template>
       </t-table>
     </div>
@@ -70,19 +26,19 @@ import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vu
 import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
 import { ref, onMounted } from 'vue';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
-import { getGameplayList, deleteGameplay } from '@/api/gameplay';
+import { getGameList, deleteGame } from '@/api/gameplay';
 import EditDialog from './EditDialog.vue';
 
 interface FormData {
   name: string;
-  status: string;
   type: string;
+  tags: string;
 }
 
 const searchForm = {
   name: '',
-  status: '',
   type: '',
+  tags: '',
 };
 
 const formData = ref<FormData>({
@@ -100,48 +56,61 @@ const COLUMNS: PrimaryTableCol[] = [
     width: 80,
   },
   {
-    title: '玩法名称',
+    title: '游戏名称',
     colKey: 'name',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '玩法状态',
-    colKey: 'status',
+    title: '游戏简介',
+    colKey: 'title',
     align: 'center',
+    ellipsis: true,
   },
   {
-    title: '玩法类型',
+    title: '游戏权限',
     colKey: 'type',
     align: 'center',
     cell: (h, { row }: { row: any }) => {
+      // 根据is_vip和price字段判断权限类型
+      if (row.is_vip === true && row.price && row.price !== '') {
+        return '金币';
+      } else if (row.is_vip === true && (!row.price || row.price === '')) {
+        return 'VIP';
+      } else if (row.is_vip === false) {
+        return '免费';
+      }
+      // 兼容旧数据，如果没有is_vip字段则使用type字段
       const typeMap: Record<string, string> = {
-        daily: '日常玩法',
-        event: '活动玩法',
-        special: '特殊玩法',
+        vip: 'VIP',
+        gold: '金币',
+        free: '免费',
       };
       return typeMap[row.type] || row.type;
     },
   },
   {
-    title: '玩法描述',
-    colKey: 'description',
+    title: '游戏标签',
+    colKey: 'game_tags',
     align: 'center',
+    ellipsis: true,
+    cell: (h, { row }: { row: any }) => {
+      // 处理 game_tags 数组，提取 name 字段
+      if (row.game_tags && Array.isArray(row.game_tags)) {
+        return row.game_tags.map((tag: any) => tag.name || tag).join(', ');
+      }
+      // 兼容旧数据格式
+      if (row.tags) {
+        return row.tags;
+      }
+      return '-';
+    },
   },
   {
-    title: '参与人数',
-    colKey: 'participant_count',
+    title: '游戏地址',
+    colKey: 'click_url',
     align: 'center',
-  },
-  {
-    title: '创建时间',
-    colKey: 'create_time',
-    align: 'center',
-  },
-  {
-    title: '更新时间',
-    colKey: 'update_time',
-    align: 'center',
+    ellipsis: true,
   },
   {
     title: '操作',
@@ -168,14 +137,22 @@ const handleCreate = () => {
 
 // 编辑逻辑
 const handleEdit = (row: TableRowData) => {
-  editDialogRef.value?.open(row);
+  const editData = {
+    id: row.id,
+    name: row.name || '',
+    title: row.title || row.brief || '',
+    description: row.description || '',
+    type: row.type || 'game',
+    is_vip: row.is_vip || false,
+    price: row.price || 0,
+    click_url: row.click_url || row.url || '',
+    image_url: row.image_url || row.cover || '',
+    banner_game_url: row.banner_game_url || row.images || '',
+    game_tags: row.game_tags || [],
+  };
+  editDialogRef.value?.open(editData);
 };
 
-// 配置逻辑
-const handleConfig = (row: TableRowData) => {
-  // 跳转到配置页面
-  window.location.href = `/gameplay/config?id=${row.id}`;
-};
 
 // Dialog 确认回调
 const handleDialogConfirm = () => {
@@ -188,12 +165,12 @@ const handleDelete = (row: TableRowData) => {
   const dialog = DialogPlugin.confirm({
     theme: 'danger',
     header: '确认删除',
-    body: `您确定要删除玩法"${row.name}"吗？`,
+    body: `您确定要删除游戏"${row.name}"吗？`,
     confirmBtn: '确认',
     cancelBtn: '取消',
     onConfirm: async () => {
       try {
-        const res = await deleteGameplay(row.id);
+        const res = await deleteGame(row.id);
         MessagePlugin.success(res.message);
         fetchDataList(pagination.value.current);
         dialog.destroy();
@@ -212,21 +189,22 @@ const handleDelete = (row: TableRowData) => {
 // 请求列表数据
 const fetchDataList = async (page: number = pagination.value.current || pagination.value.defaultCurrent) => {
   const params = {
-    ...formData.value,
+    // ...formData.value,
+    type:'game',
     currentPage: page,
     pageSize: pagination.value.defaultPageSize,
   };
   console.log('请求参数:', params);
   try {
-    const res = await getGameplayList(params);
+    const res = await getGameList(params);
     console.log('接口返回数据:', res.data.data);
     tableData.value = res.data.results;
     pagination.value.total = res.data.pagination.total;
     pagination.value.current = page;
     console.log('分页状态更新:', { current: page, total: res.data.pagination.total });
   } catch (error) {
-    console.error('获取玩法列表失败:', error);
-    MessagePlugin.error('获取玩法列表失败');
+    console.error('获取游戏列表失败:', error);
+    MessagePlugin.error('获取游戏列表失败');
   }
 };
 
