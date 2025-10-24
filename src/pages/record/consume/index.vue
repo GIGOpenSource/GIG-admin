@@ -4,7 +4,7 @@
       <t-row>
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
-            <t-col :span="4">
+            <!-- <t-col :span="4">
               <t-form-item label="选择包" name="packageName">
                <t-select
                   v-model="formData.packageName"
@@ -13,11 +13,11 @@
                   clearable
                 />
               </t-form-item>
-            </t-col>
+            </t-col> -->
             <t-col :span="4">
-              <t-form-item label="订单类型" name="orderType">
+              <t-form-item label="订单类型" name="content_type">
                 <t-select
-                  v-model="formData.orderType"
+                  v-model="formData.content_type"
                   :options="orderTypeOptions"
                   placeholder="选择订单类型"
                   clearable
@@ -34,101 +34,110 @@
     </t-form>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination"> </t-table>
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination">
+        <template #operation="{ row }">
+          <t-space>
+            <t-link theme="primary" @click="handleViewDetail(row)">详情</t-link>
+          </t-space>
+        </template>
+      </t-table>
     </div>
+
+    <!-- 详情弹窗 -->
+    <t-dialog
+      v-model:visible="detailDialogVisible"
+      header="消费记录详情"
+      width="600px"
+      :footer="false"
+    >
+      <div class="detail-content">
+        <div v-if="selectedRecord">
+          <p><strong>标题：</strong>{{ selectedRecord.title || '-' }}</p>
+          <p><strong>封面：</strong></p>
+          <div v-if="selectedRecord.images || selectedRecord.image_url || selectedRecord.cover_url">
+            <img
+              :src="selectedRecord.images || selectedRecord.image_url || selectedRecord.cover_url"
+              style="max-width: 200px; max-height: 150px; border-radius: 8px; margin-top: 8px;"
+              alt="封面图片"
+            />
+          </div>
+          <div v-else style="color: #999; margin-top: 8px;">暂无封面</div>
+
+        </div>
+      </div>
+    </t-dialog>
   </div>
 </template>
 <script lang="ts" setup>
 import type { PrimaryTableCol, TableRowData, TdBaseTableProps } from 'tdesign-vue-next';
 import { ref, onMounted,reactive } from 'vue';
-import { getConsumeList} from '@/api/record';
+import { getConsumeList, getConsumeDetails } from '@/api/record';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 interface FormData {
-  packageName: string | number;
-  orderType: string | number;
+  content_type: string | number;
 }
 
 const formData = ref<FormData>({
-  packageName: '',
-  orderType: '',
+  content_type:''
 });
-//包名选择 
+//包名选择
 const packageOptions = [
   { label: '全部', value: '' },
   { label: '正常', value: 1 },
   { label: '禁用', value: 0 },
 ];
 const orderTypeOptions = [
-  { label: '商品购买', value: 'goods' },
-  { label: '内容购买', value: 'content' },
-  { label: 'VIP购买', value: 'subscription' },
-  { label: '金币充值', value: 'coin' },
+  { label: '视频', value: 'content' },
+  { label: '动态', value: 'dynamic' },
+  { label: '广告', value: 'advertise' }
 ];
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '序号',
-    colKey: 'id',
+    colKey: 'index',
     align: 'center',
     width: 80,
+    cell: (h: any, { rowIndex }: any) => rowIndex + 1,
   },
   {
-    title: '订单ID',
-    colKey: 'orderNo',
-    align: 'left',
-    ellipsis: true,
-  },
-  {
-    title: '用户UID',
-    colKey: 'userId',
+    title: '用户',
+    colKey: 'user_nickname',
     align: 'center',
-    width: 80,
   },
   {
     title: '订单类型',
-    colKey: 'orderType',
+    colKey: 'content_type',
     align: 'center',
-    width: 100,
-    cell(h: (arg0: string, arg1: { style: string; }, arg2: string) => any, { row }: any) {
-    return orderTypeOptions.find(opt => opt.value === row.orderType)?.label || '';}
-  },
-  {
-    title: '消费类型',
-    colKey: 'consumptionType',
-    align: 'center',
-    width: 100,
+    cell: (h: any, { row }: any) => {
+      const channel = row.content_type
+      if (channel === 'content') {
+        return '视频';
+      } else if (channel === 'dynamic') {
+        return '动态';
+      }else if (channel === 'advertise') {
+        return '广告';
+      }
+      return channel || '未知';
+    },
   },
   {
     title: '消费金额',
-    colKey: 'amount',
-    align: 'left',
-    ellipsis: true,
-    width: 120,
-  },
-  {
-    title: '支付状态',
-    colKey: 'status',
-    align: 'center',
-    width: 140,
-  },
-  {
-    title: '包名',
-    colKey: 'packageName',
+    colKey: 'price',
     align: 'left',
     ellipsis: true,
   },
   {
     title: '订单时间',
-    colKey: 'createTime',
+    colKey: 'purchase_time',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '状态',
-    colKey: 'settlementStatus',
+    title: '操作',
+    colKey: 'operation',
     align: 'center',
-    width: 120,
-  },
+  }
 ];
 const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PARAMS,
   onChange: (pageInfo: { current: number; pageSize: number }) => {
@@ -136,8 +145,9 @@ const pagination = reactive<TdBaseTableProps['pagination']>({ ...DEFAULT_PAGE_PA
   },
  });
 
-const tableData = ref<TableRowData[]>([
-]);
+const tableData = ref<TableRowData[]>([]);
+const detailDialogVisible = ref(false);
+const selectedRecord = ref<TableRowData | null>(null);
 
 const fetchDataList = async (page: number = pagination.defaultCurrent) => {
   const params = {
@@ -147,8 +157,8 @@ const fetchDataList = async (page: number = pagination.defaultCurrent) => {
   };
   const res = await getConsumeList(params);
   console.log('🚀 ~ fetchDataList ~ data:', res);
-  tableData.value = res.data.data;
-  pagination.total = res.data.total;
+  tableData.value = res.data.results
+  pagination.total = res.data.pagination.total;
   pagination.current = page;
 };
 // 查询
@@ -178,6 +188,27 @@ const handleEdit = (row: TableRowData) => {
 
 const handleDelete = (row: TableRowData) => {
   // 删除逻辑
+};
+
+// 查看详情
+const handleViewDetail = async (row: TableRowData) => {
+  try {
+    selectedRecord.value = row;
+    detailDialogVisible.value = true;
+
+    // 调用详情接口获取完整信息
+    const res = await getConsumeDetails(row.object_id);
+    console.log('🚀 ~ 详情数据:', res);
+
+    // 如果有接口返回的详情数据，更新selectedRecord
+    if (res.data && res.data.content_detail) {
+      selectedRecord.value = { ...row, ...res.data.content_detail };
+    }
+  } catch (error) {
+    console.error('获取详情失败:', error);
+    // 如果接口调用失败，使用原始行数据
+    console.log('🚀 ~ 使用原始行数据:', row);
+  }
 };
 </script>
 <style lang="less" scoped>

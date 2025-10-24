@@ -5,18 +5,18 @@
         <t-col :span="10">
           <t-row :gutter="[24, 24]">
             <t-col :span="4">
-              <t-form-item label="订单类型" name="orderType">
+              <t-form-item label="充值类型" name="pay_channel">
                 <t-select
-                  v-model="formData.orderType"
-                  :options="orderTypeOptions"
-                  placeholder="选择订单类型"
+                  v-model="formData.pay_channel"
+                  :options="payChannelOptions"
+                  placeholder="选择充值类型"
                   clearable
                 />
               </t-form-item>
             </t-col>
           </t-row>
         </t-col>
-        <t-col :span="2" class="operation-container">
+        <t-col :span="2" align="right">
           <t-button theme="primary" @click="handleQuery"> 查询 </t-button>
           <t-button theme="default" @click="handleReset"> 重置 </t-button>
         </t-col>
@@ -24,7 +24,7 @@
     </t-form>
 
     <div class="table-container">
-      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" />
+      <t-table hover :data="tableData" :columns="COLUMNS" row-key="id" :pagination="pagination" :loading="loading" />
     </div>
   </div>
 </template>
@@ -35,89 +35,61 @@ import { getRechargeList } from '@/api/record';
 import { DEFAULT_PAGE_PARAMS } from '@/constants';
 
 interface FormData {
-  orderType: string | number;
+  pay_channel: string | number;
 }
 
 const formData = ref<FormData>({
-  orderType: '',
+  pay_channel: '',
 });
-//包名选择
-const packageOptions = [
-  { label: '全部', value: '' },
-  { label: '正常', value: 1 },
-  { label: '禁用', value: 0 },
-];
-const orderTypeOptions = [
-  { label: '商品购买', value: 'goods' },
-  { label: '内容购买', value: 'content' },
-  { label: 'VIP购买', value: 'subscription' },
-  { label: '金币充值', value: 'coin' },
+const payChannelOptions = [
+  { label: '金币', value: 'gold' },
+  { label: 'vip', value: 'vip' },
 ];
 
 const COLUMNS: PrimaryTableCol[] = [
   {
     title: '序号',
-    colKey: 'id',
+    colKey: 'index',
     align: 'center',
     width: 80,
+    cell: (h: any, { rowIndex }: any) => rowIndex + 1,
   },
   {
     title: '订单ID',
-    colKey: 'orderNo',
+    colKey: 'trade_no',
     align: 'left',
     ellipsis: true,
   },
   {
-    title: '用户UID',
-    colKey: 'userId',
+    title: '用户',
+    colKey: 'player_name',
     align: 'center',
-    width: 80,
-  },
-  {
-    title: '订单类型',
-    colKey: 'orderType',
-    align: 'center',
-    width: 100,
-    cell(h: (arg0: string, arg1: { style: string }, arg2: string) => any, { row }: any) {
-      return orderTypeOptions.find((opt) => opt.value === row.orderType)?.label || '';
-    },
   },
   {
     title: '充值名称',
-    colKey: 'goodsName',
+    colKey: 'pay_channel',
     align: 'center',
-    width: 100,
+    cell: (h: any, { row }: any) => {
+      const channel = row.pay_channel;
+      if (channel === 'gold') {
+        return '金币充值';
+      } else if (channel === 'vip') {
+        return 'VIP充值';
+      }
+      return channel || '未知';
+    },
   },
   {
     title: '消费金额',
-    colKey: 'amount',
-    align: 'left',
-    ellipsis: true,
-    width: 120,
-  },
-  {
-    title: '支付状态',
-    colKey: 'status',
-    align: 'center',
-    width: 140,
-  },
-  {
-    title: '包名',
-    colKey: 'packageName',
+    colKey: 'cash_amount',
     align: 'left',
     ellipsis: true,
   },
   {
     title: '订单时间',
-    colKey: 'createTime',
+    colKey: 'create_time',
     align: 'left',
     ellipsis: true,
-  },
-  {
-    title: '到账状态',
-    colKey: 'settlementStatus',
-    align: 'center',
-    width: 120,
   },
 ];
 const pagination = reactive<TdBaseTableProps['pagination']>({
@@ -128,18 +100,25 @@ const pagination = reactive<TdBaseTableProps['pagination']>({
 });
 
 const tableData = ref<TableRowData[]>([]);
+const loading = ref(false);
+
 const fetchDataList = async (page: number = pagination.defaultCurrent) => {
-  // ...existing code...
-  const params = {
-    ...formData.value,
-    page,
-    size: pagination.defaultPageSize,
-  };
-  const res = await getRechargeList(params);
-  console.log('🚀 ~ fetchDataList ~ data:', res);
-  tableData.value = res.data.data;
-  pagination.total = res.data.total;
-  // pagination.current = page;
+  try {
+    loading.value = true;
+    const params = {
+      ...formData.value,
+      page,
+      size: pagination.defaultPageSize,
+    };
+    const res = await getRechargeList(params);
+    console.log('🚀 ~ fetchDataList ~ data:', res);
+    tableData.value = res.data.results;
+    pagination.total = res.data.pagination.total;
+  } catch (error) {
+    console.error('获取充值记录失败:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 // 查询
 const handleQuery = () => {
@@ -148,25 +127,13 @@ const handleQuery = () => {
 // 重置
 const handleReset = () => {
   formData.value = {
-    packageName: '',
-    orderType: '',
+    pay_channel: '',
   };
   fetchDataList();
 };
 onMounted(() => {
   fetchDataList();
 });
-const handleCreate = () => {
-  // 新建逻辑
-};
-
-const handleEdit = (row: TableRowData) => {
-  // 编辑逻辑
-};
-
-const handleDelete = (row: TableRowData) => {
-  // 删除逻辑
-};
 </script>
 <style lang="less" scoped>
 .blogger-crawler-list-container {
@@ -177,9 +144,5 @@ const handleDelete = (row: TableRowData) => {
   .table-container {
     margin-top: var(--td-comp-margin-xxl);
   }
-}
-
-.operation-container {
-  text-align: right;
 }
 </style>

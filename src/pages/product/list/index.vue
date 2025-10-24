@@ -87,7 +87,7 @@ const sceneOptions = [
 
 const COLUMNS: PrimaryTableCol[] = [
   { title: '序号', colKey: 'serial-number', width: 80 },
-  { title: '策略名称场景', colKey: 'strategy_scene', ellipsis: true },
+  // { title: '策略名称场景', colKey: 'strategy_scene', ellipsis: true },
   { title: '商品描述', colKey: 'promotion_text', align: 'left', ellipsis: true },
   { title: '价格', colKey: 'pay_price' },
   {

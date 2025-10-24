@@ -9,9 +9,9 @@
     @close="handleClose"
   >
     <t-form :data="formData" :label-width="100">
-      <t-form-item label="策略名称场景" name="strategyScene">
+      <!-- <t-form-item label="策略名称场景" name="strategyScene">
         <t-input v-model="formData.strategyScene" placeholder="输入策略名称" />
-      </t-form-item>
+      </t-form-item> -->
       <t-form-item label="商品描述" name="promotion_text">
         <t-input v-model="formData.promotion_text" placeholder="输入商品描述" />
       </t-form-item>
