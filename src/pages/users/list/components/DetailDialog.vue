@@ -66,6 +66,14 @@
               <t-option v-for="op in MEMBER_LEVEL" :key="op.value" :label="op.text" :value="op.value"></t-option>
             </t-select>
           </t-form-item>
+          <t-form-item label="金币数量" name="gold_coin">
+            <t-input
+              v-model="data.userStatus.gold_coin"
+              class="form-item-content"
+              placeholder="输入金币数量"
+              type="number"
+            />
+          </t-form-item>
           <!-- <t-form-item label="设备" name="email">
             <t-input v-model="data.type" class="form-item-content" placeholder="输入邮箱" />
           </t-form-item>
@@ -141,6 +149,7 @@ const defaultData = {
   userStatus: {
     status: '',
     member_level: '',
+    gold_coin: 0,
     // lastLoginTime: '',
     // createTime: '',
   },
@@ -184,6 +193,7 @@ const initData = async (id: number) => {
     userStatus: {
       status: res.data.status !== undefined ? String(res.data.status) : '',
       member_level: res.data.member_level || '',
+      gold_coin: res.data.gold_coin || 0,
       createTime: res.data.date_joined || '',
       // lastLoginTime: '', // API 中没有最后登录时间
     },

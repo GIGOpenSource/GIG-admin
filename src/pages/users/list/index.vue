@@ -232,6 +232,25 @@ const COLUMNS: PrimaryTableCol[] = [
     },
   },
   {
+    title: '用户等级',
+    ellipsis: true,
+    colKey: 'member_level',
+    cell: (h, { row }) => {
+      const levelMap: { [key: string]: string } = {
+        normal: '普通',
+        vip: 'VIP',
+        svip: 'SVIP',
+      };
+      return levelMap[row.member_level] || row.member_level || '-';
+    },
+  },
+  {
+    title: '金币数量',
+    ellipsis: true,
+    colKey: 'gold_coin',
+    cell: (h, { row }) => row.gold_coin || 0,
+  },
+  {
     title: '注册时间',
     ellipsis: true,
     colKey: 'date_joined',

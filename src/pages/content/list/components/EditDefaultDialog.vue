@@ -8,7 +8,7 @@
     @confirm="onConfirm"
     @cancel="onCancel"
   >
-    <t-form ref="formRef" :model="data" label-width="80px" label-align="left">
+    <t-form ref="formRef" :model="data" label-width="100px" label-align="left">
       <t-form-item label="内容标题" name="title">
         <t-input v-model="data.title" placeholder="输入内容标题" />
       </t-form-item>
@@ -33,35 +33,39 @@
       <t-form-item label="封面地址" name="cover_url">
         <t-input v-model="data.cover_url" placeholder="输入封面地址" />
       </t-form-item>
-      <!-- 标签列表 -->
-      <div class="diversity-list">
-        <t-row
-          v-for="(item, index) in data.tags"
-          :key="index"
-          align="middle"
-          :gutter="16"
-          :style="{ marginTop: 'var(--td-comp-margin-xxl)' }"
-        >
-          <t-col :span="8">
-            <t-form-item label="标签" name="description">
-              <t-input v-model="data.tags[index]" class="form-item-content" placeholder="请输入标签" />
-            </t-form-item>
-          </t-col>
-          <t-col :span="1">
-            <t-link theme="danger" @click="handleDeletTages(index)">删除</t-link>
-          </t-col>
-        </t-row>
-      </div>
-      <!-- <t-button theme="primary" :style="{ marginTop: 'var(--td-comp-margin-xxl)' }" @click="addtages"
-        >添加标签</t-button
-      > -->
+      <t-form-item label="是否免费" name="is_free">
+        <t-space>
+          <t-select v-model="data.is_free" placeholder="选择是否免费" style="width: 120px">
+            <t-option key="true" :value="true" label="免费" />
+            <t-option key="false" :value="false" label="不免费" />
+          </t-select>
+          <t-input
+            v-if="!data.is_free"
+            v-model="data.price"
+            type="number"
+            placeholder="输入金币数量"
+            style="width: 200px"
+          />
+        </t-space>
+      </t-form-item>
+      <t-form-item label="标签" name="tags">
+        <t-select
+          v-model="data.tags"
+          placeholder="请选择标签"
+          multiple
+          clearable
+          :options="tagOptions"
+          :loading="tagLoading"
+        />
+      </t-form-item>
     </t-form>
   </t-dialog>
 </template>
 <script setup lang="ts">
 import { type DialogProps, MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { updateContent } from '@/api/content';
+import { getTagList } from '@/api/recommend';
 const emit = defineEmits(['confirm']);
 interface FormData {
   id: string;
@@ -71,12 +75,18 @@ interface FormData {
   is_vip: boolean;
   data: string;
   cover_url: string;
-  tags: Array<string | number>;
+  is_free: boolean;
+  price: number;
+  tags: Array<number>;
 }
 
 const title = ref('内容创建');
 
 const visible = ref(false);
+
+// 标签相关
+const tagOptions = ref([]);
+const tagLoading = ref(false);
 
 const data = ref<FormData>({
   id: '',
@@ -86,11 +96,14 @@ const data = ref<FormData>({
   is_vip: false,
   data: '',
   cover_url: '',
+  is_free: true,
+  price: 0,
   tags: [],
 });
 
 const open = (row?: any) => {
   console.log('🚀 ~ row:', row);
+  console.log('🚀 ~ row.tags:', row?.tags);
   title.value = row?.id ? '内容编辑' : '内容创建';
 
   if (row) {
@@ -103,7 +116,13 @@ const open = (row?: any) => {
       is_vip: row.is_vip || false,
       data: row.data || '',
       cover_url: row.cover_url || '',
-      tags: row.tags || [],
+      is_free: row.is_free !== undefined ? row.is_free : true,
+      price: row.price || 0,
+      tags: row.tags
+        ? Array.isArray(row.tags)
+          ? row.tags.map((tag: any) => (typeof tag === 'object' ? tag.id : tag))
+          : []
+        : [],
     };
   } else {
     // 新增模式：重置表单数据
@@ -115,17 +134,24 @@ const open = (row?: any) => {
       is_vip: false,
       data: '',
       cover_url: '',
+      is_free: true,
+      price: 0,
       tags: [],
     };
   }
 
   visible.value = true;
+  // 获取标签列表
+  fetchTagList();
 };
 
 const onConfirm: DialogProps['onConfirm'] = async () => {
   if (!data.value.title) return MessagePlugin.error('请输入内容标题');
   if (!data.value.description) return MessagePlugin.error('请输入内容描述');
   if (!data.value.type) return MessagePlugin.error('请选择内容类型');
+  if (!data.value.is_free && (!data.value.price || data.value.price <= 0)) {
+    return MessagePlugin.error('请输入有效的金币数量');
+  }
 
   try {
     let params = {
@@ -143,13 +169,24 @@ const onConfirm: DialogProps['onConfirm'] = async () => {
 const onCancel: DialogProps['onCancel'] = () => {
   visible.value = false;
 };
-// 添加标签
-const addtages = () => {
-  data.value.tags.push('');
-};
-// 删除标签
-const handleDeletTages = (key: number) => {
-  data.value.tags.splice(key, 1);
+// 获取标签列表
+const fetchTagList = async () => {
+  try {
+    tagLoading.value = true;
+    const res = await getTagList({ status: 'activate' }); // 只获取激活状态的标签
+    console.log('标签API返回数据:', res);
+    // 根据API返回的数据结构，使用 res.data.results 而不是 res.data
+    tagOptions.value = res.data.results.map((item: any) => ({
+      label: item.name,
+      value: item.id,
+    }));
+    console.log('处理后的标签选项:', tagOptions.value);
+  } catch (error) {
+    console.error('获取标签列表失败:', error);
+    MessagePlugin.error('获取标签列表失败');
+  } finally {
+    tagLoading.value = false;
+  }
 };
 defineExpose({
   open,

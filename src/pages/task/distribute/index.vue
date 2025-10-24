@@ -75,7 +75,7 @@ interface FormData {
   user__user_nickname__icontains: string;
   status: string;
   task_template__name__icontains: string;
-  pageSize:string;
+  pageSize: string;
   currentPage: int;
 }
 
@@ -83,10 +83,9 @@ const searchForm = {
   user__user_nickname__icontains: '',
   status: '',
   task_template__name__icontains: '',
-  pageSize:'1',
-  currentPage:1,
+  pageSize: '1',
+  currentPage: 1,
 };
-
 
 const formData = ref<FormData>({
   ...searchForm,
@@ -117,7 +116,7 @@ const COLUMNS: PrimaryTableCol[] = [
   },
   {
     title: '任务名称',
-    colKey: 'task_template_name',
+    colKey: 'name',
     align: 'center',
   },
   {
@@ -197,19 +196,21 @@ const calculateConsecutiveDaysSimple = (claimedTimes: string[]): number => {
   // 转换为 YYYY-MM-DD 格式的日期字符串并去重排序
   const dates = Array.from(
     new Set(
-      claimedTimes.map(time => {
-        // 添加对单个时间项的类型检查
-        if (typeof time !== 'string') {
-          return '';
-        }
-        const date = new Date(time);
-        // 检查日期是否有效
-        if (isNaN(date.getTime())) {
-          return '';
-        }
-        return date.toISOString().split('T')[0]; // 只取日期部分
-      }).filter(date => date !== '') // 过滤掉无效日期
-    )
+      claimedTimes
+        .map((time) => {
+          // 添加对单个时间项的类型检查
+          if (typeof time !== 'string') {
+            return '';
+          }
+          const date = new Date(time);
+          // 检查日期是否有效
+          if (isNaN(date.getTime())) {
+            return '';
+          }
+          return date.toISOString().split('T')[0]; // 只取日期部分
+        })
+        .filter((date) => date !== ''), // 过滤掉无效日期
+    ),
   ).sort();
 
   // 如果没有有效日期

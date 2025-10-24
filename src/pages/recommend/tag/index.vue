@@ -65,9 +65,9 @@ interface FormData {
 }
 
 const tagTypeOptions = [
-  { label: '内容', value: 'content' },
-  { label: '兴趣', value: 'interest' },
-  { label: '系统', value: 'system' },
+  { label: '发现', value: 'content_found' },
+  { label: '精选', value: 'content_sift' },
+  { label: '游戏', value: 'content_game' },
 ];
 const searchForm = {
   name: '',
@@ -124,6 +124,14 @@ const COLUMNS: PrimaryTableCol[] = [
     title: '标签描述',
     colKey: 'description',
     align: 'center',
+  },
+  {
+    title: '标签归属',
+    colKey: 'type',
+    align: 'center',
+    cell: (h, { row }) => {
+      return getLabel(tagTypeOptions, row.type);
+    },
   },
   {
     title: '操作',

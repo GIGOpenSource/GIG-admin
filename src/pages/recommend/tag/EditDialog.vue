@@ -20,6 +20,13 @@
       <t-form-item label="标签描述" name="description">
         <t-input v-model="data.description" class="form-item-content" placeholder="输入标签描述" />
       </t-form-item>
+      <t-form-item label="标签归属" name="type">
+        <t-select v-model="data.type" placeholder="请选择标签归属">
+          <t-option key="content_found" value="content_found" label="发现" />
+          <t-option key="content_sift" value="content_sift" label="精选" />
+          <t-option key="content_game" value="content_game" label="游戏" />
+        </t-select>
+      </t-form-item>
     </t-form>
   </t-dialog>
 </template>
@@ -33,6 +40,7 @@ interface FormData {
   name: string;
   status: string;
   description: string;
+  type: string;
 }
 const visible = ref(false);
 const isEdit = ref(false);
@@ -40,6 +48,7 @@ const data = ref<FormData>({
   name: '',
   status: '',
   description: '',
+  type: '',
 });
 
 // 动态标题
@@ -57,6 +66,7 @@ const open = (row?: any) => {
       name: '',
       status: 'activate', // 默认激活状态
       description: '',
+      type: 'content_found', // 默认发现类型
     };
   }
   visible.value = true;
@@ -74,6 +84,10 @@ const onConfirm: DialogProps['onConfirm'] = async () => {
     }
     if (!data.value.status) {
       MessagePlugin.error('请选择标签状态');
+      return;
+    }
+    if (!data.value.type) {
+      MessagePlugin.error('请选择标签归属');
       return;
     }
 
